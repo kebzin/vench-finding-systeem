@@ -52,6 +52,19 @@ body,
 .Header {
   margin-left: 215px;
   transition: all 1s;
+  margin-right: 15px;
+}
+
+.transition {
+  transition: all 1s;
+}
+
+/*  profile box */
+.profile-box {
+  width: 300px;
+  height: 200px;
+
+  position: absolute;
 }
 
 @media screen and (max-width: 754px) {
