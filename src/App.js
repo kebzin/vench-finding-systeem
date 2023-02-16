@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { ProSidebarProvider } from "react-pro-sidebar";
-
+import { Sidebar, Topbar } from "./global";
 import { Login, Welcome, Register } from "./pages/authentication";
 import { SideBar } from "./components";
-import { Topbar } from "./global";
-import { Dashboard } from "./pages";
+import { Dashboard, Pricing } from "./pages";
 
 function App() {
   const [login, setLogin] = useState(true);
@@ -32,16 +30,17 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          <ProSidebarProvider>
-            <main className="content">
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
+          <Sidebar />
+          <main className="content">
+            <Topbar />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="pricing" element={<Pricing />} />
 
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-              </Routes>
-            </main>
-          </ProSidebarProvider>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Routes>
+          </main>
         </div>
       </ThemeProvider>
     </ColorModeContext.Provider>

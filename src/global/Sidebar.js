@@ -102,7 +102,7 @@ const Sidebar = () => {
                   mt: 3,
                   "&:hover": { background: colors.greenAccent[700] },
                 }}
-                onClick={(event) => {}}
+                onClick={() => Navigate(item.link)}
               >
                 <IconButton
                   sx={{ cursor: "pointer", color: colors.greenAccent[500] }}
