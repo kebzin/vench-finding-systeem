@@ -88,7 +88,7 @@ const Dashboard = () => {
         {status === "client" ? (
           <Box sx={addButtonContainer} onClick={() => ToggleAddFunction()}>
             <IconButton sx={{ p: 3 }}>
-              <AddCircleRoundedIcon sx={{ fontSize: 30 }} />
+              <AddCircleRoundedIcon sx={{ fontSize: 44 }} />
             </IconButton>
           </Box>
         ) : null}

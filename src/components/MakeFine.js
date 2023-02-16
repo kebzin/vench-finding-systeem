@@ -9,7 +9,7 @@ const addButtonContainer = {
   alignItems: "center",
   justifyContent: "center",
   margin: "auto",
-  height: "100vh",
+  height: "100%",
 };
 
 const MakeFine = () => {
@@ -29,6 +29,8 @@ const MakeFine = () => {
       theme.palette.mode === "dark"
         ? COLORS.primary[400]
         : "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+    border: `1px solid 
+        ${theme.palette.mode === "dark" ? COLORS.greenAccent[400] : null}`,
   };
 
   return (
