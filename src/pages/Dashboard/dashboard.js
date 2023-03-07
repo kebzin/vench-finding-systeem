@@ -1,12 +1,15 @@
 import { useTheme } from "@emotion/react";
-import { Box, IconButton } from "@mui/material";
-import React, { useState } from "react";
+import { Box, colors, IconButton } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 import { tokens } from "../../theme";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { Header, MakeFine, StatBox } from "../../components";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import TrafficIcon from "@mui/icons-material/Traffic";
+import { useStateContext } from "../../context/Contex";
+import { useAuthContext } from "../../context/AuthContex";
+import { useNavigate } from "react-router-dom";
 
 const addButtonContainer = {
   position: "fixed",
@@ -16,13 +19,26 @@ const addButtonContainer = {
 };
 
 const Dashboard = () => {
+  const { setIsSidebar, setTopbar } = useStateContext();
+  const { user } = useAuthContext();
+  const Navigate = useNavigate();
+  useEffect(() => {
+    setTopbar(true);
+    setIsSidebar(true);
+    const LoginUser = localStorage.getItem("user");
+    if (LoginUser === null || LoginUser === undefined)
+      return Navigate("/login");
+  }, []);
+
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const [status, setStatus] = useState("client");
-  const [toggleAdd, setToggleAdd] = useState(true);
+  const [toggleAdd, setToggleAdd] = useState(false);
+
   const ToggleAddFunction = (event) => {
     setToggleAdd((previouseState) => !previouseState);
   };
+  console.log("user", user);
   const login = true;
   const loginstatus = "client";
   return (
@@ -79,7 +95,32 @@ const Dashboard = () => {
               }
             />
           </Box>
+          <Box
+            backgroundColor={color.primary[400]}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <StatBox
+              title="431,225"
+              subtitle="Sales Obtained"
+              progress="0.50"
+              increase="+21%"
+              icon={
+                <PointOfSaleIcon
+                  sx={{ color: color.greenAccent[600], fontSize: "26px" }}
+                />
+              }
+            />
+          </Box>
         </Box>
+
+        <Box
+          sx={{
+            backgroundColor: color.primary[400],
+            mt: 2,
+          }}
+        ></Box>
       </Box>
 
       <Box>

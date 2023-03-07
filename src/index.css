@@ -67,6 +67,17 @@ body,
   position: absolute;
 }
 
+/* my profile box  */
+.MyProfileBox {
+  top: 90px;
+  width: 300px;
+  height: 400px;
+  right: 50px;
+  z-index: 20;
+  border-radius: 0.7rem;
+  transition: all 1s;
+}
+
 @media screen and (max-width: 754px) {
   .inputBass {
     display: block;

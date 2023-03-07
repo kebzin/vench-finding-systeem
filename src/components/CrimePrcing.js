@@ -1,48 +1,89 @@
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
+  colors,
   FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
+import { color } from "@mui/system";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContex";
+import { useStateContext } from "../context/Contex";
+import { makeRequest } from "../hooks/axious";
+import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
+import PopUpMessage from "./PopUpMessage";
 
-const addButtonContainer = {};
-
-const CrimePrcing = ({ setToggleAdd }) => {
+const CrimePrcing = () => {
+  const { setUser, user } = useAuthContext();
+  const Navigate = useNavigate();
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    } else {
+      Navigate("/login");
+    }
+  }, []);
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(false);
-  const Navigate = useNavigate();
-  const [CrimeName, setCrimeName] = useState("");
-  const [Category, setCategory] = useState("");
-  const [price, setprice] = useState("");
 
+  const [OffenceName, setOffenceName] = useState("");
+  const [OffenceCategory, setOffenceCategory] = useState("");
+  const [OffencePrice, setOffencePrice] = useState("");
+  const [error, setError] = useState("");
+  const { setDialogMessage, setToggleAdd, setOPenDialog } = useStateContext();
+
+  const AxiousPrivate = useAxiousPrivate();
+
+  const queryclient = useQueryClient();
+
+  const mutation = useMutation(
+    (newPost) => {
+      return AxiousPrivate.post("price/prices/", newPost);
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        setLoading(false);
+        setOPenDialog(true);
+        setToggleAdd(false);
+        setDialogMessage("New Price have been successfully created");
+        queryclient.invalidateQueries("Price");
+      },
+    }
+  );
   // handle submit function
   const HandleSubmit = async (event) => {
     event.preventDefault();
     try {
       setLoading(true);
-      setTimeout(() => {
-        Navigate("");
-      }, 1000);
+      await mutation.mutate({
+        OffenceName: OffenceName,
+        OffencePrice: OffencePrice,
+        officerId: user.Officers.id,
+        OffenceCategory: OffenceCategory,
+      });
     } catch (error) {
       console.log(error.message);
+      setLoading(false);
+      setError(error.message);
     }
   };
 
   //   handle cancel
-  const HandleCancel = (event) => {
+  const HandleCancel = async (event) => {
     event.preventDefault();
     // a function will be inplemented late to stop the post from happen when the user click the button
-    setToggleAdd((previouse) => !previouse);
+
+    setToggleAdd(false);
   };
   return (
     <Box
@@ -86,102 +127,40 @@ const CrimePrcing = ({ setToggleAdd }) => {
             <FormControl sx={{ width: "100%" }} variant="outlined">
               <TextField
                 id="outlined-basic"
-                label="Enter Crime Name"
+                label="Enter Offence Name"
                 variant="outlined"
                 size="full"
                 type="email"
                 required="true"
-                onChange={(event) => setCrimeName(event.target.value)}
-                value={CrimeName}
+                onChange={(event) => setOffenceName(event.target.value)}
+                value={OffenceName}
               />
             </FormControl>
 
             <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
               <TextField
                 id="outlined-basic"
-                label=" Enter Category Namee .g cars, trucks"
+                label=" Enter offence category! eg:  cars, trucks"
                 variant="outlined"
                 size="full"
                 type="text"
                 required="true"
-                onChange={(event) => setCategory(event.target.value)}
-                value={Category}
+                onChange={(event) => setOffenceCategory(event.target.value)}
+                value={OffenceCategory}
               />
             </FormControl>
             <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
               <TextField
                 id="outlined-basic"
-                label=" Enter Fine Amount "
+                label=" Enter Offence Amount "
                 variant="outlined"
                 size="full"
                 type="number"
                 required="true"
-                onChange={(event) => setprice}
-                value={price}
+                onChange={(event) => setOffencePrice(event.target.value)}
+                value={OffencePrice}
               />
             </FormControl>
-
-            {/* <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel id="demo-simple-select-label">Age</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={"category"}
-                label="Age"
-                onChange={() => {}}
-              >
-                <MenuItem
-                  sx={{
-                    backgroundColor: COLORS.primary[400],
-
-                    mt: 0,
-                  }}
-                  value={"Vench"}
-                >
-                  Vench
-                </MenuItem>
-                <MenuItem
-                  sx={{
-                    backgroundColor: COLORS.primary[400],
-
-                    mt: 0,
-                  }}
-                  value={"Trucks"}
-                >
-                  Trucks
-                </MenuItem>
-                <MenuItem
-                  sx={{
-                    backgroundColor: COLORS.primary[400],
-
-                    mt: 0,
-                  }}
-                  value={"Bicycles"}
-                >
-                  Bicycles
-                </MenuItem>
-                <MenuItem
-                  sx={{
-                    backgroundColor: COLORS.primary[400],
-
-                    mt: 0,
-                  }}
-                  value={"MotoBicycle"}
-                >
-                  MotoBicycle
-                </MenuItem>
-                <MenuItem
-                  sx={{
-                    backgroundColor: COLORS.primary[400],
-
-                    mt: 0,
-                  }}
-                  value={"Bicycles"}
-                >
-                  Bicycles
-                </MenuItem>
-              </Select>
-            </FormControl> */}
 
             <Box
               sx={{
@@ -225,6 +204,16 @@ const CrimePrcing = ({ setToggleAdd }) => {
               </LoadingButton>
             </Box>
           </Box>
+
+          <Typography
+            sx={{
+              mt: 2,
+              color: COLORS.redAccent[300],
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </Typography>
         </Box>
       </Box>
     </Box>

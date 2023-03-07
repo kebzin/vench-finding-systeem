@@ -1,6 +1,6 @@
 import { Box, useTheme, Typography, IconButton, Avatar } from "@mui/material";
 import { Menu, MenuItem } from "react-pro-sidebar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dashboard } from "@mui/icons-material";
 import { tokens } from "../theme";
 import { color } from "@mui/system";
@@ -10,15 +10,19 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import { hover } from "@testing-library/user-event/dist/hover";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useFetcher, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContex";
 
 const Sidebar = () => {
   const theme = useTheme();
-  const [isCollaps, setIsCollaps] = useState();
   const [selected, setSelected] = useState("Dashboard");
   const colors = tokens(theme.palette.mode);
   const Navigate = useNavigate();
+  const { user } = useAuthContext();
 
+  useEffect(() => {
+    if (user === null) return Navigate("/login");
+  });
   // sidebar item clicked
 
   const userProfile = "";
@@ -76,7 +80,9 @@ const Sidebar = () => {
           >
             {userProfile === "" ? (
               <Avatar sizes="300px" sx={{ bgcolor: colors.greenAccent[600] }}>
-                KW
+                {/* {user.Officers.firstName.charAt(0) +
+                  "" +
+                  user.Officers.lastName.charAt(0)} */}
               </Avatar>
             ) : (
               <Avatar />
@@ -87,7 +93,7 @@ const Sidebar = () => {
             color={colors.grey[100]}
             sx={{ textAlign: "center" }}
           >
-            kebba waiga
+            {/* {user.Officers.firstName + " " + user.Officers.lastName} */}
           </Typography>
         </Box>
 

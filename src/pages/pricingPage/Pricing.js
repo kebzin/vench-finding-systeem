@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
-import { Box, Button, colors, IconButton, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { CrimePrcing, Header } from "../../components";
+import { Box, Button, IconButton, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { CrimePrcing, Header, PopUpMessage } from "../../components";
 import { tokens } from "../../theme";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
@@ -11,7 +11,12 @@ import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BackupIcon from "@mui/icons-material/Backup";
-import { KeyboardReturn } from "@mui/icons-material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContex";
+import { useStateContext } from "../../context/Contex";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { makeRequest } from "../../hooks/axious";
+import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 
 const addButtonContainer = {
   position: "fixed",
@@ -51,17 +56,63 @@ const pricingDummData = [
 //
 
 const Pricing = () => {
+  const { user, setUser } = useAuthContext();
+  const { setToggleAdd, toggleAdd, setDialogMessage, setOPenDialog } =
+    useStateContext();
+
+  // effect on component mount
+  useEffect(() => {
+    const isMounted = true;
+    const controllers = new AbortController();
+  }, []);
+
+  // states
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const status = "admin";
-  const [toggleAdd, setToggleAdd] = useState(true);
-  const [CrimeName, setCrimeName] = useState("");
-  const [Category, setCategory] = useState("");
-  const [price, setprice] = useState("");
-  const ToggleAddFunction = (event) => {
-    setToggleAdd((previouseState) => !previouseState);
+
+  // hooks
+  const Navigate = useNavigate();
+  const Location = useLocation();
+  const AxiousPrivate = useAxiousPrivate();
+  const queryclient = useQueryClient();
+
+  // functions
+  const { error, isLoading, data } = useQuery("Price", () =>
+    AxiousPrivate.get("/price/prices", {})
+      .then((res) => res.data)
+      .catch((err) => {
+        console.log(err);
+        navigator("/login", { status: { from: Location }, replace: true });
+      })
+  );
+
+  const mutation = useMutation(
+    (newPost) => {
+      return AxiousPrivate.delete(`price/prices/`, newPost);
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        // setLoading(false);
+        setOPenDialog(true);
+        setToggleAdd(false);
+        setDialogMessage("Price have been successfully deleted");
+        queryclient.invalidateQueries("Price");
+      },
+    }
+  );
+
+  const handleDelete = async (event) => {
+    event.preventDefault();
+    try {
+      await mutation.mutate({
+        AdminID: user?.Officers?.id,
+      });
+    } catch (error) {}
   };
 
+  console.log(data);
   return (
     <React.Fragment>
       <Box className="Header">
@@ -80,81 +131,99 @@ const Pricing = () => {
         >
           {/* ROW 1 */}
 
-          {pricingDummData.map((item, index) => (
-            <Box
-              backgroundColor={color.primary[400]}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              height="auto"
-            >
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyItems: "center",
-                  justifyContent: "space-between",
-                  m: "0 20px",
-                }}
-              >
+          {error
+            ? "something went wromg"
+            : isLoading
+            ? "isloading"
+            : data.map((item, index) => (
                 <Box
-                  sx={{
-                    objectFit: "contain",
-                  }}
+                  backgroundColor={color.primary[400]}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  height="auto"
+                  key={index}
                 >
-                  <IconButton
-                    sx={{ fontSize: 100, color: color.greenAccent[400] }}
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyItems: "center",
+                      justifyContent: "space-between",
+                      m: "0 20px",
+                    }}
                   >
-                    {item.icon}
-                  </IconButton>
-                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                    {item.name}
-                  </Typography>
-                  <Typography>
-                    priceng
-                    <Typography
-                      variant="h1"
-                      sx={{ fontSize: 15, color: color.greenAccent[400] }}
-                    >
-                      GMD{item.price}
-                    </Typography>
-                  </Typography>
-                </Box>
-                <Box display="flex" flexDirection="column">
-                  <Typography>Category</Typography>
-                  <Typography
-                    sx={{ textAlign: "center", color: color.greenAccent[400] }}
-                  >
-                    {"cars"}
-                  </Typography>
-                  {status === "admin" ? (
-                    <Button
+                    <Box
                       sx={{
-                        mt: 2,
-                        color: color.redAccent[400],
+                        objectFit: "contain",
                       }}
-                      variant="outlined"
-                      startIcon={<DeleteIcon />}
                     >
-                      Delete
-                    </Button>
-                  ) : null}
-                  {status === "admin" ? (
-                    <Button
-                      sx={{
-                        mt: 1,
-                        color: color.greenAccent[400],
-                      }}
-                      variant="outlined"
-                      startIcon={<BackupIcon />}
-                    >
-                      update
-                    </Button>
-                  ) : null}
+                      <IconButton
+                        sx={{ fontSize: 100, color: color.greenAccent[400] }}
+                      >
+                        {item?.OffenceCategory === "car" ? (
+                          <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />
+                        ) : item?.OffenceCategory === "truck" ? (
+                          <FireTruckIcon sx={{ fontSize: 100 }} />
+                        ) : item?.OffenceCategory === "bus" ? (
+                          <DirectionsBusIcon sx={{ fontSize: 100 }} />
+                        ) : item?.OffenceCategory === "motoBick" ? (
+                          <TwoWheelerIcon sx={{ fontSize: 100 }} />
+                        ) : (
+                          <TwoWheelerIcon sx={{ fontSize: 100 }} />
+                        )}
+                      </IconButton>
+                      <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                        {item?.OffenceName}
+                      </Typography>
+                      <Typography>
+                        priceng
+                        <Typography
+                          variant="h1"
+                          sx={{ fontSize: 15, color: color.greenAccent[400] }}
+                        >
+                          GMD{item?.OffencePrice}
+                        </Typography>
+                      </Typography>
+                    </Box>
+                    <Box display="flex" flexDirection="column">
+                      <Typography>{"Category"}</Typography>
+                      <Typography
+                        sx={{
+                          textAlign: "center",
+                          color: color.greenAccent[400],
+                        }}
+                      >
+                        {item?.OffenceCategory}
+                      </Typography>
+                      {status === "admin" ? (
+                        <Button
+                          sx={{
+                            mt: 2,
+                            color: color.redAccent[400],
+                          }}
+                          variant="outlined"
+                          startIcon={<DeleteIcon />}
+                        >
+                          Delete
+                        </Button>
+                      ) : null}
+                      {status === "admin" ? (
+                        <Button
+                          sx={{
+                            mt: 1,
+                            color: color.greenAccent[400],
+                          }}
+                          variant="outlined"
+                          startIcon={<BackupIcon />}
+                        >
+                          update
+                        </Button>
+                      ) : null}
+                    </Box>
+                  </Box>
                 </Box>
-              </Box>
-            </Box>
-          ))}
+              ))}
           <Box
             backgroundColor={color.primary[400]}
             display="flex"
@@ -163,11 +232,15 @@ const Pricing = () => {
           ></Box>
         </Box>
       </Box>
+      {/* {<PopUpMessage message={"your request have been succesfully added"} />} */}
       <Box>
         {/* add botten */}
-        {toggleAdd && <CrimePrcing setToggleAdd={setToggleAdd} />}
+        {toggleAdd && <CrimePrcing />}
         {status === "admin" ? (
-          <Box sx={addButtonContainer} onClick={() => ToggleAddFunction()}>
+          <Box
+            sx={addButtonContainer}
+            onClick={() => setToggleAdd((previousestate) => !previousestate)}
+          >
             <IconButton sx={{ p: 3 }}>
               <AddCircleRoundedIcon sx={{ fontSize: 44 }} />
             </IconButton>

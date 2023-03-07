@@ -10,24 +10,80 @@ import {
   InputLabel,
   OutlinedInput,
   TextField,
+  useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-const Login = () => {
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContex";
+import { useStateContext } from "../../context/Contex";
+import { tokens } from "../../theme";
+
+const Login = ({}) => {
+  const { setUser } = useAuthContext();
+  const { setIsSidebar, setTopbar } = useStateContext();
+  useEffect(() => {
+    setIsSidebar(false);
+    setTopbar(false);
+    setError(null);
+  }, []);
+
+  // states
+  const theme = useTheme();
+  const color = tokens(theme.palette.mode);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState("");
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  // hooks
   const Navigate = useNavigate();
+  const Location = useLocation();
+  const from = Location.state?.from?.pathname || "/";
 
   // functions
-  const handleClick = (event) => {
+  const handleClick = async (event) => {
     event.preventDefault();
     setLoading(true);
-    Navigate("/");
+    try {
+      const response = await axios.post(
+        "http://localhost:3009/api/auth/login",
+        {
+          email: email,
+          password: password,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const accessToken = response?.data?.accessToken;
+      await setUser(response.data, accessToken);
+
+      // store the user to the local storage
+      // localStorage.setItem("user", JSON.stringify(response.data));
+
+      return (
+        await setUser(response.data),
+        setLoading(false),
+        Navigate(from, { replace: true })
+      );
+    } catch (error) {
+      setLoading(false);
+      if (!error.response) {
+        setError("No Server Response");
+      }
+      console.log(error);
+      await setError(error.response.data.message);
+      setLoading(false);
+
+      console.log(error.message);
+    }
   };
 
+  console.log(email);
+  console.log(password);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   return (
@@ -42,8 +98,11 @@ const Login = () => {
         padding="2rem"
         minWidth={"25%"}
         borderRadius=".7rem "
-        backgroundColor="#ffff"
+        backgroundColor={color.primary}
         boxShadow="rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
+        border={`1px solid ${
+          theme.palette.mode === "dark" ? color.greenAccent[400] : null
+        }`}
       >
         <h1 style={{ textAlign: "center", fontSize: 40, fontWeight: "bolder" }}>
           Login
@@ -57,7 +116,10 @@ const Login = () => {
                 variant="outlined"
                 size="full"
                 type="email"
-                onChange={(event) => setUser(event.target.value)}
+                onChange={(event) => {
+                  setemail(event.target.value);
+                  setError(null);
+                }}
               />
             </FormControl>
 
@@ -79,7 +141,10 @@ const Login = () => {
                     </IconButton>
                   </InputAdornment>
                 }
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  setError(null);
+                }}
                 label="Password"
               />
               <Link
@@ -87,6 +152,10 @@ const Login = () => {
                   textDecoration: "none",
                   paddingTop: "10px",
                   paddingBlockEnd: "10px",
+                  color:
+                    theme.palette.mode === "dark"
+                      ? color.greenAccent[400]
+                      : null,
                 }}
               >
                 Forget Password
@@ -99,7 +168,7 @@ const Login = () => {
                 loading={loading}
                 loadingPosition="end"
                 variant="contained"
-                style={{ backgroundColor: "none" }}
+                style={{ backgroundColor: color.greenAccent[600] }}
               >
                 <span style={{ padding: "10px" }}>Login</span>
               </LoadingButton>
@@ -108,12 +177,17 @@ const Login = () => {
                   textDecoration: "none",
                   paddingTop: "10px",
                   paddingBlockEnd: "10px",
+                  color:
+                    theme.palette.mode === "dark"
+                      ? color.greenAccent[400]
+                      : null,
                 }}
                 to="/register"
               >
                 Don't have an Account
               </Link>
             </FormControl>
+            <span>{error && error}</span>
           </Box>
         </form>
       </Box>
