@@ -27,6 +27,10 @@ const Login = ({}) => {
     setIsSidebar(false);
     setTopbar(false);
     setError(null);
+    // const welcome = localStorage.getItem("welcome");
+    // if (welcome === null || welcome === undefined || welcome === true) {
+    //   Navigate("/welcom");
+    // }
   }, []);
 
   // states
@@ -64,11 +68,7 @@ const Login = ({}) => {
       // store the user to the local storage
       // localStorage.setItem("user", JSON.stringify(response.data));
 
-      return (
-        await setUser(response.data),
-        setLoading(false),
-        Navigate(from, { replace: true })
-      );
+      return await setUser(response.data), setLoading(false), Navigate("/");
     } catch (error) {
       setLoading(false);
       if (!error.response) {
@@ -82,8 +82,6 @@ const Login = ({}) => {
     }
   };
 
-  console.log(email);
-  console.log(password);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   return (
@@ -147,19 +145,18 @@ const Login = ({}) => {
                 }}
                 label="Password"
               />
-              <Link
-                style={{
-                  textDecoration: "none",
-                  paddingTop: "10px",
-                  paddingBlockEnd: "10px",
-                  color:
-                    theme.palette.mode === "dark"
-                      ? color.greenAccent[400]
-                      : null,
+
+              <Button
+                sx={{
+                  mt: 1,
+                  color: color.redAccent[400],
+                  textAlign: "left",
                 }}
+                variant="outlined"
+                onClick={() => Navigate("/forgetpassword")}
               >
                 Forget Password
-              </Link>
+              </Button>
 
               <LoadingButton
                 size="larger"

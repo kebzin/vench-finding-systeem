@@ -17,6 +17,10 @@ import { useStateContext } from "../../context/Contex";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { makeRequest } from "../../hooks/axious";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import CrimePrcingUpdate from "../../components/CrimePrcingUpdate";
+import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
+import fixing from "../../assets/illustration/fixing.svg";
+import { MarginTwoTone } from "@mui/icons-material";
 
 const addButtonContainer = {
   position: "fixed",
@@ -25,38 +29,40 @@ const addButtonContainer = {
   zindex: "10",
 };
 
-const pricingDummData = [
-  {
-    name: "Wrong Paking",
-    price: 200,
-    icon: <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />,
-  },
-  {
-    name: "Wrong Paking",
-    price: 250,
-    icon: <FireTruckIcon sx={{ fontSize: 100 }} />,
-  },
-  {
-    name: "Wrong Paking",
-    price: 50,
-    icon: <DirectionsBikeIcon sx={{ fontSize: 100 }} />,
-  },
-  {
-    name: "Wrong Paking",
-    price: 100,
-    icon: <TwoWheelerIcon sx={{ fontSize: 100 }} />,
-  },
-  {
-    name: "Wrong Paking",
-    price: 300,
-    icon: <DirectionsBusIcon sx={{ fontSize: 100 }} />,
-  },
-];
+// const pricingDummData = [
+//   {
+//     name: "Wrong Paking",
+//     price: 200,
+//     icon: <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />,
+//   },
+//   {
+//     name: "Wrong Paking",
+//     price: 250,
+//     icon: <FireTruckIcon sx={{ fontSize: 100 }} />,
+//   },
+//   {
+//     name: "Wrong Paking",
+//     price: 50,
+//     icon: <DirectionsBikeIcon sx={{ fontSize: 100 }} />,
+//   },
+//   {
+//     name: "Wrong Paking",
+//     price: 100,
+//     icon: <TwoWheelerIcon sx={{ fontSize: 100 }} />,
+//   },
+//   {
+//     name: "Wrong Paking",
+//     price: 300,
+//     icon: <DirectionsBusIcon sx={{ fontSize: 100 }} />,
+//   },
+// ];
 
 //
 
 const Pricing = () => {
   const { user, setUser } = useAuthContext();
+  const [updateitem, setupdateitem] = useState(null);
+  const [updateOpen, setUpdateOpen] = useState(false);
   const { setToggleAdd, toggleAdd, setDialogMessage, setOPenDialog } =
     useStateContext();
 
@@ -78,8 +84,8 @@ const Pricing = () => {
   const queryclient = useQueryClient();
 
   // functions
-  const { error, isLoading, data } = useQuery("Price", () =>
-    AxiousPrivate.get("/price/prices", {})
+  const { error, isLoading, data, refetch } = useQuery("Price", () =>
+    AxiousPrivate.get("/price/prices")
       .then((res) => res.data)
       .catch((err) => {
         console.log(err);
@@ -89,30 +95,35 @@ const Pricing = () => {
 
   const mutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.delete(`price/prices/`, newPost);
+      console.log(newPost);
+      return AxiousPrivate.delete(`/price/prices/${newPost.id}`, newPost);
     },
     {
       onSuccess: () => {
-        // Invalidate and refetch
-        // setLoading(false);
         setOPenDialog(true);
-        setToggleAdd(false);
-        setDialogMessage("Price have been successfully deleted");
+        setDialogMessage("New Price have been successfully deleted");
         queryclient.invalidateQueries("Price");
       },
     }
   );
-
-  const handleDelete = async (event) => {
-    event.preventDefault();
+  // handle submit function
+  const HandleDelet = async (id) => {
     try {
       await mutation.mutate({
-        AdminID: user?.Officers?.id,
+        AdminID: user.Officers.id,
+        id: id,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.message);
+      // setLoading(false);
+      // setError(error.message);
+    }
   };
 
-  console.log(data);
+  const HandleUpdate = (item) => {
+    setUpdateOpen(true);
+    setupdateitem(item);
+  };
   return (
     <React.Fragment>
       <Box className="Header">
@@ -131,105 +142,135 @@ const Pricing = () => {
         >
           {/* ROW 1 */}
 
-          {error
-            ? "something went wromg"
-            : isLoading
-            ? "isloading"
-            : data.map((item, index) => (
+          {error ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <img style={{ width: "50%", marginTop: "20rem" }} src={fixing} />
+              <Typography variant="h4">OOPs Something Went wrong </Typography>
+              <Button
+                sx={{
+                  mt: 2,
+                  color: color.redAccent[400],
+                }}
+                variant="outlined"
+                onClick={() => refetch()}
+              >
+                Refresh
+              </Button>
+            </Box>
+          ) : isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                mt: 40,
+              }}
+            >
+              <img width={"60%"} src={undraw_exams_re_4ios} />
+              <Typography variant="h3">Loading......</Typography>
+            </Box>
+          ) : (
+            data.map((item, index) => (
+              <Box
+                backgroundColor={color.primary[400]}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                height="auto"
+                key={index}
+              >
                 <Box
-                  backgroundColor={color.primary[400]}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  height="auto"
-                  key={index}
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyItems: "center",
+                    justifyContent: "space-between",
+                    m: "0 20px",
+                  }}
                 >
                   <Box
                     sx={{
-                      width: "100%",
-                      display: "flex",
-                      justifyItems: "center",
-                      justifyContent: "space-between",
-                      m: "0 20px",
+                      objectFit: "contain",
                     }}
                   >
-                    <Box
+                    <IconButton
+                      sx={{ fontSize: 100, color: color.greenAccent[400] }}
+                    >
+                      {item?.OffenceCategory === "car" ? (
+                        <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />
+                      ) : item?.OffenceCategory === "truck" ? (
+                        <FireTruckIcon sx={{ fontSize: 100 }} />
+                      ) : item?.OffenceCategory === "bus" ? (
+                        <DirectionsBusIcon sx={{ fontSize: 100 }} />
+                      ) : item?.OffenceCategory === "motoBick" ? (
+                        <TwoWheelerIcon sx={{ fontSize: 100 }} />
+                      ) : (
+                        <TwoWheelerIcon sx={{ fontSize: 100 }} />
+                      )}
+                    </IconButton>
+                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                      {item?.OffenceName}
+                    </Typography>
+                    <Typography>
+                      priceng
+                      <Typography
+                        variant="h1"
+                        sx={{ fontSize: 15, color: color.greenAccent[400] }}
+                      >
+                        GMD{item?.OffencePrice}
+                      </Typography>
+                    </Typography>
+                  </Box>
+                  <Box display="flex" flexDirection="column">
+                    <Typography>{"Category"}</Typography>
+                    <Typography
                       sx={{
-                        objectFit: "contain",
+                        textAlign: "center",
+                        color: color.greenAccent[400],
                       }}
                     >
-                      <IconButton
-                        sx={{ fontSize: 100, color: color.greenAccent[400] }}
-                      >
-                        {item?.OffenceCategory === "car" ? (
-                          <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />
-                        ) : item?.OffenceCategory === "truck" ? (
-                          <FireTruckIcon sx={{ fontSize: 100 }} />
-                        ) : item?.OffenceCategory === "bus" ? (
-                          <DirectionsBusIcon sx={{ fontSize: 100 }} />
-                        ) : item?.OffenceCategory === "motoBick" ? (
-                          <TwoWheelerIcon sx={{ fontSize: 100 }} />
-                        ) : (
-                          <TwoWheelerIcon sx={{ fontSize: 100 }} />
-                        )}
-                      </IconButton>
-                      <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                        {item?.OffenceName}
-                      </Typography>
-                      <Typography>
-                        priceng
-                        <Typography
-                          variant="h1"
-                          sx={{ fontSize: 15, color: color.greenAccent[400] }}
-                        >
-                          GMD{item?.OffencePrice}
-                        </Typography>
-                      </Typography>
-                    </Box>
-                    <Box display="flex" flexDirection="column">
-                      <Typography>{"Category"}</Typography>
-                      <Typography
+                      {item?.OffenceCategory}
+                    </Typography>
+                    {status === "admin" ? (
+                      <Button
                         sx={{
-                          textAlign: "center",
+                          mt: 2,
+                          color: color.redAccent[400],
+                        }}
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => HandleDelet(item.id)}
+                      >
+                        Delete
+                      </Button>
+                    ) : null}
+                    {status === "admin" ? (
+                      <Button
+                        sx={{
+                          mt: 1,
                           color: color.greenAccent[400],
                         }}
+                        variant="outlined"
+                        startIcon={<BackupIcon />}
+                        onClick={() => HandleUpdate(item)}
                       >
-                        {item?.OffenceCategory}
-                      </Typography>
-                      {status === "admin" ? (
-                        <Button
-                          sx={{
-                            mt: 2,
-                            color: color.redAccent[400],
-                          }}
-                          variant="outlined"
-                          startIcon={<DeleteIcon />}
-                        >
-                          Delete
-                        </Button>
-                      ) : null}
-                      {status === "admin" ? (
-                        <Button
-                          sx={{
-                            mt: 1,
-                            color: color.greenAccent[400],
-                          }}
-                          variant="outlined"
-                          startIcon={<BackupIcon />}
-                        >
-                          update
-                        </Button>
-                      ) : null}
-                    </Box>
+                        update
+                      </Button>
+                    ) : null}
                   </Box>
                 </Box>
-              ))}
-          <Box
-            backgroundColor={color.primary[400]}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          ></Box>
+                {/* <CrimePrcingUpdate /> */}
+              </Box>
+            ))
+          )}
         </Box>
       </Box>
       {/* {<PopUpMessage message={"your request have been succesfully added"} />} */}
@@ -247,6 +288,12 @@ const Pricing = () => {
           </Box>
         ) : null}
       </Box>
+      {updateOpen && (
+        <CrimePrcingUpdate
+          updateitem={updateitem}
+          setUpdateOpen={setUpdateOpen}
+        />
+      )}
     </React.Fragment>
   );
 };

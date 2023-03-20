@@ -49,7 +49,7 @@ const Sidebar = () => {
       icons: <PaymentsIcon />,
     },
     {
-      name: "Charts",
+      name: "Data Analysis",
       link: "/Charts",
       icons: <BarChartIcon />,
     },
@@ -80,9 +80,9 @@ const Sidebar = () => {
           >
             {userProfile === "" ? (
               <Avatar sizes="300px" sx={{ bgcolor: colors.greenAccent[600] }}>
-                {/* {user.Officers.firstName.charAt(0) +
+                {user?.Officers?.firstName?.charAt(0) +
                   "" +
-                  user.Officers.lastName.charAt(0)} */}
+                  user?.Officers?.lastName?.charAt(0)}
               </Avatar>
             ) : (
               <Avatar />
@@ -93,7 +93,7 @@ const Sidebar = () => {
             color={colors.grey[100]}
             sx={{ textAlign: "center" }}
           >
-            {/* {user.Officers.firstName + " " + user.Officers.lastName} */}
+            {user?.Officers?.firstName + " " + user?.Officers?.lastName}
           </Typography>
         </Box>
 

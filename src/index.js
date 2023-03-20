@@ -7,6 +7,8 @@ import { BrowserRouter } from "react-router-dom";
 import ContextProvider from "./context/Contex";
 import { AuthConteProvider } from "./context/AuthContex";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -16,7 +18,10 @@ root.render(
       <AuthConteProvider>
         <ContextProvider>
           <BrowserRouter>
-            <App />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {" "}
+              <App />
+            </LocalizationProvider>
           </BrowserRouter>
         </ContextProvider>
       </AuthConteProvider>

@@ -9,8 +9,8 @@ const useRefreshToken = () => {
     const response = await makeRequest.get("/auth/refresh");
     setUser((previouseState) => {
       // taking the previouse state
-      console.log(JSON.stringify(previouseState));
-      console.log(response.data.accessToken);
+      // console.log("refreshin1", JSON.stringify(previouseState));
+      // console.log("refresh", response.data.accessToken);
       return { ...previouseState, accessToken: response.data.accessToken }; // taking the previouse state of the access token and replaceing withe the new access token given to us by our refresing routh
     });
 

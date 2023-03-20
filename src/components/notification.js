@@ -1,4 +1,12 @@
-import { Avatar, Box, IconButton, Typography, useTheme } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { tokens } from "../theme";
 import React, { useContext } from "react";
 import Close from "@mui/icons-material/Close";
@@ -65,17 +73,24 @@ const Notification = () => {
             <Close sx={{ fontSize: "30px" }} />
           </IconButton>
         </Box>
-        <Typography
-          variant="h1"
-          sx={{
-            fontSize: "20px",
-            mt: 2,
-            textAlign: "center",
-            fontWeight: 900,
-          }}
-        >
-          Recent Notifications
-        </Typography>
+
+        <Box sx={{ p: 1 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ px: 2, py: 1 }}
+          >
+            <Typography sx={{ fontSize: 20 }}>
+              New User AddCircleRoundedIcon
+            </Typography>
+            <Typography sx={{ color: color.greenAccent[400], mr: 3 }}>
+              New
+            </Typography>
+          </Stack>
+        </Box>
+        <Divider />
+
         <Box sx={{ p: 1 }}>
           {notification.map((item, index) => (
             <Box>
@@ -84,7 +99,7 @@ const Notification = () => {
                   display: "flex",
                   alignItems: "center",
                   gap: 1,
-                  mb: 4,
+                  mb: 2,
                   cursor: "pointer",
                 }}
                 onClick={() => {
@@ -92,7 +107,7 @@ const Notification = () => {
                   HandleClickClose("notification");
                 }}
               >
-                <Avatar />
+                <Avatar sx={{ background: color.greenAccent[500] }} />
                 <Box
                   sx={{
                     display: "flex",
@@ -119,8 +134,23 @@ const Notification = () => {
                   </Typography>
                 </Box>
               </Box>
+              <Divider />
             </Box>
           ))}
+        </Box>
+
+        <Box>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ px: 2, py: 1 }}
+          >
+            <Typography sx={{ fontSize: 20 }}>Notifications</Typography>
+            <Typography sx={{ color: color.greenAccent[400], mr: 3 }}>
+              New
+            </Typography>
+          </Stack>
         </Box>
       </Box>
     </Box>

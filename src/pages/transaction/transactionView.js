@@ -6,25 +6,66 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Header } from "../../../components";
-import { useAuthContext } from "../../../context/AuthContex";
-import { tokens } from "../../../theme";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import { border, display } from "@mui/system";
+import ReplyIcon from "@mui/icons-material/Reply";
+import PrintIcon from "@mui/icons-material/Print";
+
+import { tokens } from "../../theme";
+import { useAuthContext } from "../../context/AuthContex";
+import { Header } from "../../components";
+import { useStateContext } from "../../context/Contex";
 
 const TransactionView = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
+  const [showprint, setShowPrint] = useState(false);
+
   const { user } = useAuthContext();
+  const {
+    setToggleDelete,
+    setToggleDeleteMessage,
+    callfunctions,
+    setCallFunctions,
+  } = useStateContext();
 
   // hooks
   const Navigate = useNavigate();
+  const { id } = useParams();
 
   //veriable
   const status = "pending";
+
+  //functions
+  // Handle delet
+  const HandleDelete = () => {
+    setToggleDelete(true);
+    setToggleDeleteMessage("Are you sure you want to delete this Record?");
+  };
+  //
+  // deleting
+  if (callfunctions === true) {
+    setCallFunctions(false);
+    Navigate("/transaction");
+  }
+
+  const handleMarkAsPaid = () => {
+    setToggleDelete(true);
+    setToggleDeleteMessage(
+      `Are you sure you want to mark this record as paid?   !!!!`
+    );
+  };
+
+  // handle print
+  const HandlePrint = (record) => {
+    setShowPrint((previouse) => !previouse);
+  };
+
+  // handle print
+
   return (
     <Box className="Header">
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -75,6 +116,7 @@ const TransactionView = () => {
             }}
             variant="outlined"
             startIcon={<DeleteIcon />}
+            onClick={HandleDelete}
           >
             Delete
           </Button>
@@ -89,6 +131,7 @@ const TransactionView = () => {
             }}
             variant="outlined"
             startIcon={<DoneAllIcon />}
+            onClick={handleMarkAsPaid}
           >
             mark as paid
           </Button>
@@ -195,7 +238,9 @@ const TransactionView = () => {
 
           {/* geolocarion */}
           <Box>
-            <Typography>Offence Location</Typography>
+            <Typography sx={{ color: color.greenAccent[500], p: 1 }}>
+              Offence Location
+            </Typography>
             <Box
               sx={{
                 border: `1px solid ${color.greenAccent[700]}`,
@@ -213,19 +258,99 @@ const TransactionView = () => {
                   height: 300,
                   border: "0px ",
                 }}
-                allowfullscreen={true}
+                allowFullScreen={true}
                 loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
+                referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
             </Box>
           </Box>
           <Box>
+            {" "}
             <Typography variant="h6" sx={{ color: color.greenAccent[500] }}>
               Officer who conduct this transaction
             </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box>
+                <Typography variant="h6" sx={{ p: 1 }}>
+                  Officer Name{" "}
+                </Typography>
+                <Typography variant="h6" sx={{ p: 1 }}>
+                  Officer Rank{" "}
+                </Typography>
+                <Typography variant="h6" sx={{ p: 1 }}>
+                  Police Station{" "}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography sx={{ color: color.grey[200], p: 1 }}>
+                  {" "}
+                  : Location of Offence{" "}
+                </Typography>
+                <Typography sx={{ color: color.grey[200], p: 1 }}>
+                  {" "}
+                  : Officer Rank{" "}
+                </Typography>
+                <Typography sx={{ color: color.grey[200], p: 1 }}>
+                  {" "}
+                  : Police Station{" "}
+                </Typography>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          background: color.primary[400],
+          borderRadius: 2,
+          p: 1,
+          mt: 2,
+          float: "right",
+          mb: 2,
+        }}
+      >
+        <Box
+          sx={{
+            p: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            flexWrap: "wrap",
+          }}
+        >
+          <Button
+            sx={{
+              backgroundColor:
+                theme.palette.mode === "light"
+                  ? color.redAccent[700]
+                  : color.redAccent[300],
+              border: "0px solid black",
+              color: "white",
+            }}
+            variant="outlined"
+            startIcon={<ReplyIcon />}
+          >
+            Back
+          </Button>
+          <Button
+            sx={{
+              backgroundColor:
+                theme.palette.mode === "light"
+                  ? color.greenAccent[700]
+                  : color.greenAccent[300],
+              border: "0px solid black",
+              color: "white",
+            }}
+            variant="outlined"
+            startIcon={<PrintIcon />}
+            onClick={() => Navigate(`/invoice/${id}`)}
+          >
+            View Invoice
+          </Button>
+        </Box>
+      </Box>
+      {/* {showprint && <PritTickets />} */}
     </Box>
   );
 };

@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { Box, colors, IconButton, Typography, useTheme } from "@mui/material";
+import {
+  Badge,
+  Box,
+  colors,
+  IconButton,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../theme";
 import { InputBase } from "@mui/material";
@@ -16,7 +23,7 @@ import { MyProfile, Notification } from "../components";
 
 const Topbar = ({ setIsSidebar }) => {
   const theme = useTheme();
-  const { isClicked, HandleClick, setIsClicked } = useStateContext();
+  const { isClicked, HandleClick } = useStateContext();
 
   const color = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
@@ -53,7 +60,10 @@ const Topbar = ({ setIsSidebar }) => {
             sx={{ p: 1 }}
             onClick={() => HandleClick("notification")}
           >
-            <NotificationsIcon />
+            {/* <NotificationsIcon /> */}
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
+            </Badge>
           </IconButton>
           <IconButton
             type="button"

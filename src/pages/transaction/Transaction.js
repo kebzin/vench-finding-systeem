@@ -1,13 +1,14 @@
 import { Avatar, Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
-import { Header } from "../../../components";
-import { useAuthContext } from "../../../context/AuthContex";
-import { tokens } from "../../../theme";
+
 import GppBadIcon from "@mui/icons-material/GppBad";
 import { useNavigate } from "react-router-dom";
 import GppMaybeIcon from "@mui/icons-material/GppMaybe";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { tokens } from "../../theme";
+import { useAuthContext } from "../../context/AuthContex";
+import { Header } from "../../components";
 
 const mockDataContacts = [
   {

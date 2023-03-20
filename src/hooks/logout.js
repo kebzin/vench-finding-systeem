@@ -4,11 +4,7 @@ import { useAuthContext } from "../context/AuthContex";
 export const useLogout = () => {
   const { setUser } = useAuthContext();
   const Navigate = useNavigate();
-  const logout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    Navigate("/login");
-  };
+  const logout = () => {};
 
   // remove user from local storage
 

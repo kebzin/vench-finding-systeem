@@ -16,6 +16,9 @@ const ContextProvider = ({ children }) => {
   const [OpenDialog, setOPenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [toggleAdd, setToggleAdd] = useState(false);
+  const [toggleDelete, setToggleDelete] = useState(false);
+  const [toggleDeleteMessage, setToggleDeleteMessage] = useState("");
+  const [callfunctions, setCallFunctions] = useState(false);
 
   // click function
   const HandleClick = (clicked) => {
@@ -44,6 +47,12 @@ const ContextProvider = ({ children }) => {
         setDialogMessage,
         toggleAdd,
         setToggleAdd,
+        toggleDelete,
+        setToggleDelete,
+        toggleDeleteMessage,
+        setToggleDeleteMessage,
+        callfunctions,
+        setCallFunctions,
       }}
     >
       {children}

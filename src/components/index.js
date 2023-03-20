@@ -7,6 +7,7 @@ import CrimePrcing from "./CrimePrcing";
 import MyProfile from "./MyProfile";
 import Notification from "./notification";
 import PopUpMessage from "./PopUpMessage";
+import LineChartAdmin from "./LineChartAdmin";
 
 export {
   SideBar,
@@ -18,4 +19,5 @@ export {
   MyProfile,
   Notification,
   PopUpMessage,
+  LineChartAdmin,
 };

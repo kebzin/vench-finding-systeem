@@ -12,13 +12,18 @@ import {
   ManageUser,
   Notification,
   UserProfile,
+  ForgetPassword,
+  Transaction,
+  TransactionView,
+  Invoice,
+  Charts,
 } from "./pages";
 import { useStateContext } from "./context/Contex";
 import { useAuthContext } from "./context/AuthContex";
 import RequirAuth from "./components/RequirAuth";
 import PersistLogin from "./components/PersistLogin";
-import Transaction from "./pages/Dashboard/transaction/Transaction";
-import TransactionView from "./pages/Dashboard/transaction/transactionView";
+import DialogBox from "./components/DialogBox";
+import NotFound from "./components/NotFound";
 
 function App() {
   const { isSidebar, istopbar } = useStateContext();
@@ -35,7 +40,7 @@ function App() {
   const [theme, colorMode] = useMode();
   // const [isSidebar, setIsSidebar] = useState(true);
   // const [istopbar, setTopbar] = useState(true);
-  const { OpenDialog } = useStateContext();
+  const { OpenDialog, toggleDelete } = useStateContext();
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -46,6 +51,7 @@ function App() {
             {OpenDialog && <PopUpMessage />}
             {isSidebar && <Sidebar />}
             {istopbar && <Topbar />}
+            {toggleDelete && <DialogBox />}
 
             <Routes>
               {/* protected routh */}
@@ -62,11 +68,16 @@ function App() {
                     path="/transaction/:id"
                     element={<TransactionView />}
                   />
+                  <Route path="/invoice/:id" element={<Invoice />} />
+                  <Route path="/Charts" element={<Charts />} />
                 </Route>
               </Route>
 
+              <Route path="/welcom" element={<Welcome />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgetpassword" element={<ForgetPassword />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
         </div>

@@ -1,49 +1,114 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/system";
+import React from "react";
+import { tokens } from "../theme";
+import { LoadingButton } from "@mui/lab";
+import { useStateContext } from "../context/Contex";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const DialogBox = () => {
-  const [open, setOpen] = React.useState(false);
+  const theme = useTheme();
+  const color = tokens(theme.palette.mode);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const { setToggleDelete, toggleDeleteMessage, setCallFunctions } =
+    useStateContext();
+
+  const HandleCancel = () => {
+    setToggleDelete(false);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const HandleOk = () => {
+    setToggleDelete(false);
+    setCallFunctions(true);
   };
+
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open alert dialog
-      </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+    <React.Fragment>
+      <Box
+        sx={{
+          position: "fixed",
+
+          height: "auto",
+          top: "30%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "auto",
+          justifyItems: "center",
+          left: "20%",
+          borderRadius: 2,
+
+          zIndex: 1000,
+
+          background:
+            theme.palette.mode === "dark" ? color.primary[400] : "white",
+
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? color.primary[400]
+              : " rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px",
+          border: `1px solid 
+         ${theme.palette.mode === "dark" ? color.greenAccent[400] : null}`,
+        }}
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+        <Box
+          sx={{
+            padding: 5,
+            textAlign: "center",
+          }}
+        >
+          <NotificationsIcon
+            sx={{
+              color: color.greenAccent[500],
+              textAlign: "center",
+              fontSize: 70,
+            }}
+          />
+          <Typography>{toggleDeleteMessage}</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+            }}
+          >
+            <LoadingButton
+              size="larger"
+              color="primary"
+              onClick={HandleCancel}
+              loading={false}
+              loadingPosition="end"
+              variant="contained"
+              sx={{ mt: 1 }}
+              style={{
+                backgroundColor: color.greenAccent[600],
+                width: "100%",
+                mt: 3,
+              }}
+            >
+              <span style={{ padding: "10px" }}>cancel</span>
+            </LoadingButton>
+            <LoadingButton
+              size="larger"
+              color="primary"
+              onClick={HandleOk}
+              loading={false}
+              loadingPosition="end"
+              variant="contained"
+              sx={{ mt: 1 }}
+              style={{
+                backgroundColor: color.greenAccent[600],
+                width: "100%",
+                mt: 3,
+              }}
+            >
+              <span style={{ padding: "10px" }}>OK</span>
+            </LoadingButton>
+          </Box>
+        </Box>
+      </Box>
+    </React.Fragment>
   );
 };
 

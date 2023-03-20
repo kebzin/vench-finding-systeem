@@ -22,7 +22,7 @@ export const AuthContex = createContext();
 // };
 export const AuthConteProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  console.log("access token", user?.acccessToken);
+  console.log("access token", user?.accessToken);
   // login functionn
 
   // useEffect(() => {

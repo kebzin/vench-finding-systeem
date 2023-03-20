@@ -4,7 +4,7 @@ body,
 #root,
 .app,
 .content {
-  height: 100%;
+  height: auto;
   width: 100%;
   font-family: "Poppins", sans-serif;
 }
@@ -36,7 +36,7 @@ body,
 /* sidebar */
 
 .Sidebar {
-  height: 100vh;
+  height: 100%;
   width: 200px;
   position: fixed;
   z-index: 200;
@@ -70,13 +70,19 @@ body,
 /* my profile box  */
 .MyProfileBox {
   top: 90px;
-  width: 300px;
+  min-width: 300px;
   height: 400px;
   right: 50px;
   z-index: 20;
   border-radius: 0.7rem;
   transition: all 1s;
 }
+
+.imageAinimation {
+  transition: all 1s;
+}
+
+/*  */
 
 @media screen and (max-width: 754px) {
   .inputBass {
@@ -97,6 +103,17 @@ body,
   }
   .DetailText {
     display: none;
+  }
+  .FineImade {
+    width: 100%;
+  }
+  .ProfileDetails {
+    width: 100%;
+  }
+  .Colum {
+    flex-direction: column;
+    width: 100%;
+    display: block;
   }
 }
 

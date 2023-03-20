@@ -20,7 +20,7 @@ import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
 import PopUpMessage from "./PopUpMessage";
 
-const CrimePrcing = () => {
+const CrimePrcingUpdate = ({ updateitem, setUpdateOpen }) => {
   const { setUser, user } = useAuthContext();
   const Navigate = useNavigate();
   // useEffect(() => {
@@ -31,13 +31,16 @@ const CrimePrcing = () => {
   //     Navigate("/login");
   //   }
   // }, []);
+  console.log(updateitem, setUpdateOpen);
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(false);
 
-  const [OffenceName, setOffenceName] = useState("");
-  const [OffenceCategory, setOffenceCategory] = useState("");
-  const [OffencePrice, setOffencePrice] = useState("");
+  const [OffenceName, setOffenceName] = useState(updateitem.OffenceName);
+  const [OffenceCategory, setOffenceCategory] = useState(
+    updateitem.OffenceCategory
+  );
+  const [OffencePrice, setOffencePrice] = useState(updateitem.OffencePrice);
   const [error, setError] = useState("");
   const { setDialogMessage, setToggleAdd, setOPenDialog } = useStateContext();
 
@@ -47,16 +50,20 @@ const CrimePrcing = () => {
 
   const mutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.post("/price/prices/", newPost);
+      return AxiousPrivate.patch(`/price/prices/${updateitem.id}`, newPost);
     },
     {
       onSuccess: () => {
         // Invalidate and refetch
         setLoading(false);
         setOPenDialog(true);
-        setToggleAdd(false);
-        setDialogMessage("New Price have been successfully created");
+        setUpdateOpen(false);
+        setDialogMessage(" Record have been successfully Updated");
         queryclient.invalidateQueries("Price");
+      },
+
+      onError: () => {
+        setLoading(false);
       },
     }
   );
@@ -70,6 +77,7 @@ const CrimePrcing = () => {
         OffencePrice: OffencePrice,
         officerId: user.Officers.id,
         OffenceCategory: OffenceCategory,
+        AdminID: user.Officers.id,
       });
     } catch (error) {
       console.log(error.message);
@@ -83,7 +91,7 @@ const CrimePrcing = () => {
     event.preventDefault();
     // a function will be inplemented late to stop the post from happen when the user click the button
 
-    setToggleAdd(false);
+    setUpdateOpen(false);
   };
   return (
     <Box
@@ -122,7 +130,7 @@ const CrimePrcing = () => {
         >
           <Box display="flex" flexDirection="column" alignItems="center">
             <Typography variant="h3" sx={{ mb: 2 }}>
-              Add Fine Prices
+              Update Fine Record
             </Typography>
             <FormControl sx={{ width: "100%" }} variant="outlined">
               <TextField
@@ -200,7 +208,7 @@ const CrimePrcing = () => {
                   mt: 3,
                 }}
               >
-                <span style={{ padding: "10px" }}>add pricing</span>
+                <span style={{ padding: "10px" }}>Update</span>
               </LoadingButton>
             </Box>
           </Box>
@@ -220,4 +228,4 @@ const CrimePrcing = () => {
   );
 };
 
-export default CrimePrcing;
+export default CrimePrcingUpdate;

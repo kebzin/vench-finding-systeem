@@ -9,6 +9,8 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import GppMaybeIcon from "@mui/icons-material/GppMaybe";
 import GppBadIcon from "@mui/icons-material/GppBad";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 
 const mockDataContacts = [
   {
@@ -150,8 +152,31 @@ const ManageUser = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  // hooks
+  const AxiousPrivate = useAxiousPrivate();
+
+  // fet the user data
+  // const { isLoading, data, error, refetch } = useQuery("user", async () => {
+  //   try {
+  //     const res = await AxiousPrivate.get("/officers/officers");
+  //     res.data;
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // });
+
+  const { isLoading, data, error, refetch } = useQuery("users", async () => {
+    try {
+      return await AxiousPrivate.get("/officers/officers")
+        .then((res) => res.data)
+        .catch((err) => console.log(err));
+    } catch (err) {
+      console.log(error);
+    }
+  });
+
   const columns = [
-    { field: "id", headerName: "NO" },
+    { field: "_id", headerName: "NO" },
     {
       field: "User",
       headerName: "User",
@@ -159,16 +184,16 @@ const ManageUser = () => {
       cursor: "pointer",
 
       headerAlign: "left",
-      renderCell: ({ row: { name, email } }) => {
+      renderCell: ({ row: { firstName, lastName, email, _id } }) => {
         return (
           <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
-            onClick={() => Navigate("/userprofile")}
+            onClick={() => Navigate(`/userprofile/${_id}`, { data: data })}
           >
             <Avatar
-              title="kebba"
+              title={firstName}
               sx={{
                 // setting the background bason the first letter of you name
                 backgroundColor:
@@ -189,7 +214,7 @@ const ManageUser = () => {
                   ml: 1,
                 }}
               >
-                {name}
+                {firstName + " " + lastName}
               </Typography>
               <Typography
                 variant="h6"
@@ -209,7 +234,7 @@ const ManageUser = () => {
       },
     },
     {
-      field: "phone",
+      field: "PhoneNumber",
       headerName: "Phone Number",
       flex: 1,
     },
@@ -219,12 +244,12 @@ const ManageUser = () => {
       headerName: "Verify",
       flex: 1,
       cellClassName: "name-column--cell",
-      renderCell: ({ row: { accountStatus } }) => {
+      renderCell: ({ row: { status } }) => {
         return (
           <Box display="flex" alignItems="center">
-            {accountStatus === "active" ? (
+            {status === "active" ? (
               <VerifiedUserIcon sx={{ color: colors.greenAccent[500] }} />
-            ) : accountStatus === "pending" ? (
+            ) : status === "pending" ? (
               <GppMaybeIcon sx={{ color: colors.blueAccent[500] }} />
             ) : (
               <GppBadIcon sx={{ color: colors.redAccent[400] }} />
@@ -233,9 +258,9 @@ const ManageUser = () => {
             <Typography
               sx={{
                 color:
-                  accountStatus === "suspended"
+                  status === "suspended"
                     ? colors.redAccent[400]
-                    : accountStatus === "pending"
+                    : status === "pending"
                     ? colors.blueAccent[400]
                     : colors.greenAccent[400],
                 ml: 1,
@@ -248,37 +273,37 @@ const ManageUser = () => {
       },
     },
     {
-      field: "age", // this field is talking about the data
+      field: "status", // this field is talking about the data
       headerName: "Status",
       headerAlign: "center",
       align: "center",
-      renderCell: ({ row: { accountStatus } }) => {
+      renderCell: ({ row: { status } }) => {
         return (
           <Typography
             variant="h6"
             sx={{
               fontSize: "12px",
               color:
-                accountStatus === "suspended"
+                status === "suspended"
                   ? colors.redAccent[400]
-                  : accountStatus === "pending"
+                  : status === "pending"
                   ? colors.blueAccent[400]
                   : colors.greenAccent[400],
             }}
           >
-            {accountStatus}
+            {status}
           </Typography>
         );
       },
     },
 
     {
-      field: "number of fines",
+      field: "fines",
       headerName: "No of Fines",
       flex: 1,
       align: "center",
-      renderCell: ({ row: {} }) => {
-        return <Typography>3</Typography>; // number of fine mad by the user
+      renderCell: ({ row: { fines } }) => {
+        return <Typography>{fines.length}</Typography>; // number of fine mad by the user
       },
     },
   ];
@@ -319,13 +344,18 @@ const ManageUser = () => {
             "& .MuiCheckbox-root": {},
           }}
         >
-          <DataGrid
-            pagination
-            pageSize={10}
-            rowsPerPageOptions={[5]}
-            rows={mockDataContacts}
-            columns={columns}
-          />
+          {isLoading === true ? (
+            "loading"
+          ) : (
+            <DataGrid
+              pagination
+              pageSize={10}
+              rowsPerPageOptions={[5]}
+              rows={data}
+              columns={columns}
+              getRowId={(row) => row._id}
+            />
+          )}
         </Box>
       </Box>
     </Box>
