@@ -13,7 +13,7 @@ import {
   Stack,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Header } from "../../components";
+import { Header, EditProfile } from "../../components";
 import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import { tokens } from "../../theme";
 import { LoadingButton } from "@mui/lab";
@@ -24,32 +24,28 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import ProfileChart from "./ProfileChart";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import PieChart from "./UserProfilePieChart";
 import { useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import fixing from "../../assets/illustration/fixing.svg";
 import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
+import BrushIcon from "@mui/icons-material/Brush";
+import { useStateContext } from "../../context/Contex";
+import { useAuthContext } from "../../context/AuthContex";
+import SendMEssage from "./SendMessage";
 
 const UserProfile = () => {
   const [messageOpen, setMessageOpen] = useState(false);
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
-  const status = "admin";
   const { id } = useParams();
+  const { user } = useAuthContext();
 
-  // states
-  const [role, setRole] = useState(false);
-  const [accountStatus, setAccountStatus] = useState(true);
-  const [emailVerify, setEvailVerify] = useState(false);
-  const [emailVerifyText, setEvailVerifyText] = useState("");
-  const [accountStatusText, setAccountStatusText] = useState(true);
-  const [AdminstratorStatus, setAdminstratorStatus] = useState(false);
-  const [AdminstratorStatusText, setAdminstratorStatusText] = useState(false);
-
-  // fetch the users datat
+  // hooks
   const AxiousPrivate = useAxiousPrivate();
+  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const Navigate = useNavigate();
 
+  //data fetching
   const { isLoading, data, error, refetch } = useQuery("user", async () => {
     return await AxiousPrivate.get(`/officers/officers/${id}`)
       .then((res) => res.data)
@@ -57,32 +53,78 @@ const UserProfile = () => {
         return error.message;
       });
   });
-  // const hello = 'kebba'
-  // hello.charAt
 
-  console.log(data);
-  // veriablw
-  const Navigate = useNavigate();
+  // state
+
+  const [accountStatus, setAccountStatus] = useState(
+    data?.status === "Active" ? true : false
+  );
+  const [emailVerify, setEvailVerify] = useState(
+    data?.status === "Active" ? true : false
+  );
+  const [editProfile, setEditProfile] = useState(false);
+
+  const [AdminstratorStatus, setAdminstratorStatus] = useState(
+    data?.role === "Administrator" ? true : false
+  );
+  const [suspemdAccount, setSupemdAccount] = useState(
+    data?.status === "Suspended" ? true : false
+  );
+  const [message, setMessage] = useState(false);
 
   //  function
   const HandleMessageOPen = () => {
     return setMessageOpen((previouseState) => !previouseState);
   };
 
-  const HanleAccountChange = (event) => {
-    setAccountStatus(event.target.checked);
-    setAccountStatusText(accountStatus === true ? "Active" : "Suspended");
-  };
-  const HandleEmailVerify = (event) => {
-    setEvailVerify(event.target.checked);
-    setEvailVerifyText(emailVerify === true ? "Verifyed" : "Not Verifyed");
-  };
-  const HandleAdminstrator = (event) => {
+  const HanleAccountChange = async (event) => {
     setAdminstratorStatus(event.target.checked);
-    setAdminstratorStatusText(
-      AdminstratorStatus === true ? "Administrator" : "Client"
-    );
+
+    try {
+      const update = await AxiousPrivate.put(`/officers/officers/${id}`, {
+        role: AdminstratorStatus === true ? "Administrator" : "Employee",
+      });
+      setOPenDialog(true);
+      setDialogMessage(update.data.message);
+    } catch (error) {
+      setOPenDialog(true);
+      setDialogMessage(error.message);
+    }
   };
+
+  const HandleEmailVerify = async (event) => {
+    try {
+      setEvailVerify(event.target.checked);
+      const verify = await AxiousPrivate.put(`/officers/officers/${id}`, {
+        status: emailVerify === true ? "Active" : "Pending",
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const HandleSuspendAccount = async (event) => {
+    try {
+      setSupemdAccount(event.target.checked);
+      const suspend = await AxiousPrivate.put(`/officers/officers/${id}`, {
+        status: suspemdAccount === true ? "Suspended" : "Active",
+      });
+      setOPenDialog(true);
+      setDialogMessage(suspend.data.message);
+    } catch (error) {
+      setOPenDialog(true);
+      setDialogMessage(error.message);
+    }
+  };
+
+  const DisableSwitch = user?.Officers?.id === id ? true : false;
+
+  const HandleSendingMessage = () => {
+    user?.Officers?.id === id
+      ? Navigate(`/notification/${id}`)
+      : setMessage((prev) => !prev);
+  };
+
   return (
     <Box className="Header">
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -165,8 +207,26 @@ const UserProfile = () => {
                 <Typography
                   sx={{ fontWeight: 700, fontSize: 20, mb: 1, ml: 2, pt: 2 }}
                 >
-                  Profile Details
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    sx={{ px: 2, py: 1 }}
+                  >
+                    <Typography>Profile Details</Typography>
+                    <IconButton
+                      sx={{ borderRadius: 2 }}
+                      onClick={() =>
+                        setEditProfile((previouseState) => !previouseState)
+                      }
+                    >
+                      {" "}
+                      <BrushIcon />
+                      <Typography>Edit</Typography>
+                    </IconButton>
+                  </Stack>
                 </Typography>
+
                 <Box
                   sx={{
                     display: "flex",
@@ -193,6 +253,7 @@ const UserProfile = () => {
                     </Typography>
                     {/* <Typography sx={{}}>Role: Client</Typography> */}
                     <LoadingButton
+                      onClick={HandleSendingMessage}
                       sx={{
                         width: "100%",
                         mb: 1,
@@ -202,7 +263,7 @@ const UserProfile = () => {
                             : color.greenAccent[500],
                         "&:hover": { background: color.greenAccent[500] },
                       }}
-                      onClick={{}}
+                      // onClick={{}}
                     >
                       <span style={{}}>Message</span>
                     </LoadingButton>
@@ -292,6 +353,7 @@ const UserProfile = () => {
                       checked={accountStatus}
                       onChange={(event) => HanleAccountChange(event)}
                       sx={{}}
+                      disabled={DisableSwitch}
                     />
                   </Stack>
 
@@ -302,7 +364,12 @@ const UserProfile = () => {
                     sx={{ px: 2, py: 1 }}
                   >
                     <Typography>Verify Email</Typography>
-                    <Switch color="secondary" onChange={HandleEmailVerify} />
+                    <Switch
+                      color="secondary"
+                      onChange={HandleEmailVerify}
+                      checked={emailVerify}
+                      disabled={DisableSwitch}
+                    />
                   </Stack>
 
                   <Stack
@@ -311,171 +378,186 @@ const UserProfile = () => {
                     justifyContent="space-between"
                     sx={{ px: 2, py: 1 }}
                   >
-                    <Typography>Active account</Typography>
-                    <Switch color="secondary" onChange={HandleAdminstrator} />
+                    <Typography>Suspend Account</Typography>
+                    <Switch
+                      color="secondary"
+                      onChange={HandleSuspendAccount}
+                      checked={suspemdAccount}
+                      disabled={DisableSwitch}
+                    />
+                  </Stack>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    sx={{ px: 2, py: 1 }}
+                  >
+                    <Typography>Adminstrator Role</Typography>
+                    <Switch
+                      color="secondary"
+                      onChange={HanleAccountChange}
+                      checked={AdminstratorStatus}
+                      disabled={DisableSwitch}
+                    />
                   </Stack>
                 </Box>
               </Box>
             </Box>
 
-            <Box
-              className="FineImade"
-              sx={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                minWidth: "75%",
-                gap: 1,
-              }}
-            >
-              {/* transaction info */}
-
-              {/* chat */}
+            {data?.role === "Administrator" ? (
+              <Box></Box>
+            ) : (
               <Box
+                className="FineImade"
                 sx={{
-                  background: color.primary[400],
-                  p: 1,
-                  borderRadius: 2,
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: "75%",
+                  gap: 1,
                 }}
               >
-                <Box>
-                  <ProfileChart />
-                </Box>
-              </Box>
+                {/* transaction info */}
 
-              <Box
-                // className="Colum"
-                display="grid"
-                gridTemplateColumns="repeat(auto-fit, minmax(325px, 1fr));"
-                gridAutoRows="140px"
-                gap="20px"
-                // sx={{
-                //   display: "flex",
-                //   alignItems: "center",
-                //   flexWrap: "wrap",
-                //   gap: 1,
-                // }}
-              >
+                {/* chat */}
                 <Box
                   sx={{
                     background: color.primary[400],
                     p: 1,
-                    flex: 1,
-                    borderRadius: 1,
-                    p: 2,
-                    borderBottom: `2px solid ${color.greenAccent[200]}`,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography sx={{ fontSize: 20, fontWeight: 700 }}>
-                      {"500"}
-                    </Typography>
-                    <LocalMallIcon sx={{ fontSize: 40 }} />
-                  </Box>
-                  <Typography
-                    sx={{
-                      fontSize: 20,
-                      mt: 3,
-                    }}
-                  >
-                    Number Of Fine I Made
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    background: color.primary[400],
-                    p: 1,
-                    flex: 1,
-                    borderRadius: 1,
-                    p: 2,
-                    borderBottom: `2px solid ${color.greenAccent[200]}`,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography sx={{ fontSize: 20, fontWeight: 700 }}>
-                      {"500"}
-                    </Typography>
-                    <LocalMallIcon sx={{ fontSize: 30 }} />
-                  </Box>
-                  <Typography
-                    sx={{
-                      fontSize: 20,
-                      mt: 2,
-                    }}
-                  >
-                    Number of messaiga I received
-                  </Typography>
-                  <IconButton
-                    sx={{
-                      borderRadius: 2,
-                      // background: color.redAccent[100],
-                      color: color.greenAccent[600],
-                    }}
-                  >
-                    <Typography>View Messages</Typography>
-                  </IconButton>
-                </Box>
-                <Box
-                  sx={{
-                    background: color.primary[400],
-                    p: 1,
-                    flex: 1,
-                    borderRadius: 1,
-                    borderBottom: `2px solid ${color.greenAccent[200]}`,
+                    borderRadius: 2,
                   }}
                 >
                   <Box>
-                    <Typography>GMD: {"500"}</Typography>
+                    <ProfileChart />
+                  </Box>
+                </Box>
+
+                <Box
+                  // className="Colum"
+                  display="grid"
+                  gridTemplateColumns="repeat(auto-fit, minmax(325px, 1fr));"
+                  gridAutoRows="140px"
+                  gap="20px"
+                  // sx={{
+                  //   display: "flex",
+                  //   alignItems: "center",
+                  //   flexWrap: "wrap",
+                  //   gap: 1,
+                  // }}
+                >
+                  <Box
+                    sx={{
+                      background: color.primary[400],
+                      p: 1,
+                      flex: 1,
+                      borderRadius: 1,
+                      p: 2,
+                      borderBottom: `2px solid ${color.greenAccent[200]}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 20, fontWeight: 700 }}>
+                        {data?.fines?.length}
+                      </Typography>
+                      <LocalMallIcon sx={{ fontSize: 40 }} />
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: 20,
+                        mt: 3,
+                      }}
+                    >
+                      Number Of Fine I Made
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      background: color.primary[400],
+                      p: 1,
+                      flex: 1,
+                      borderRadius: 1,
+                      p: 2,
+                      borderBottom: `2px solid ${color.greenAccent[200]}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 20, fontWeight: 700 }}>
+                        {"500"}
+                      </Typography>
+                      <LocalMallIcon sx={{ fontSize: 30 }} />
+                    </Box>
                     <Typography
                       sx={{
                         fontSize: 20,
                         mt: 2,
                       }}
                     >
-                      Total Earning from Bonuses
+                      Number of messaiga I received
                     </Typography>
-
-                    <LoadingButton
+                    <IconButton
                       sx={{
-                        // width: "100%",
-                        mb: 1,
-                        mt: 2,
-                        float: "right",
-                        background:
-                          theme.palette.mode === "dark"
-                            ? color.greenAccent[600]
-                            : color.greenAccent[500],
-                        "&:hover": { background: color.greenAccent[500] },
+                        borderRadius: 2,
+                        // background: color.redAccent[100],
+                        color: color.greenAccent[600],
                       }}
-                      onClick={{}}
                     >
-                      <span style={{}}>Print Recit</span>
-                    </LoadingButton>
+                      <Typography>View Messages</Typography>
+                    </IconButton>
+                  </Box>
+                  <Box
+                    sx={{
+                      background: color.primary[400],
+                      p: 1,
+                      flex: 1,
+                      borderRadius: 1,
+                      borderBottom: `2px solid ${color.greenAccent[200]}`,
+                    }}
+                  >
+                    <Box>
+                      <Typography>GMD: {"500"}</Typography>
+                      <Typography
+                        sx={{
+                          fontSize: 20,
+                          mt: 2,
+                        }}
+                      >
+                        Total Earning from Bonuses
+                      </Typography>
+
+                      <LoadingButton
+                        sx={{
+                          // width: "100%",
+                          mb: 1,
+                          mt: 2,
+                          float: "right",
+                          background:
+                            theme.palette.mode === "dark"
+                              ? color.greenAccent[600]
+                              : color.greenAccent[500],
+                          "&:hover": { background: color.greenAccent[500] },
+                        }}
+                        onClick={{}}
+                      >
+                        <span style={{}}>Print Recit</span>
+                      </LoadingButton>
+                    </Box>
                   </Box>
                 </Box>
+                <Box></Box>
               </Box>
-              <Box>
-                <Box
-                  sx={{
-                    background: color.primary[400],
-                  }}
-                >
-                  <PieChart />
-                </Box>
-              </Box>
-            </Box>
+            )}
           </Box>
 
           <Box
@@ -496,6 +578,10 @@ const UserProfile = () => {
         </Box>
       )}
       {messageOpen && <SendMessage setMessageOpen={setMessageOpen} />}
+      {editProfile && (
+        <EditProfile setEditProfile={setEditProfile} data={data} />
+      )}
+      {message && <SendMEssage data={data} setMessage={setMessage} />}
     </Box>
   );
 };

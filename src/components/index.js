@@ -8,6 +8,8 @@ import MyProfile from "./MyProfile";
 import Notification from "./notification";
 import PopUpMessage from "./PopUpMessage";
 import LineChartAdmin from "./LineChartAdmin";
+import EditProfile from "../pages/profile/EditProfile";
+import WantedAdd from "./WantedAdd";
 
 export {
   SideBar,
@@ -20,4 +22,6 @@ export {
   Notification,
   PopUpMessage,
   LineChartAdmin,
+  EditProfile,
+  WantedAdd,
 };

@@ -3,25 +3,59 @@ import {
   Box,
   Button,
   ButtonBase,
-  colors,
   IconButton,
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components";
 import { tokens } from "../../theme";
 import undraw_books_re_8gea from "../../assets/illustration/undraw_books_re_8gea.svg";
-import { height } from "@mui/system";
-
-const notificatio = [{}];
+import { useState } from "react";
+import { useStateContext } from "../../context/Contex";
+import { useAuthContext } from "../../context/AuthContex";
+import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import { useQuery, useQueryClient } from "react-query";
+import fixing from "../../assets/illustration/fixing.svg";
+import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
+import ReactTimeAgo from "react-time-ago";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 const Notification = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
-  const status = "admin";
   const Navigate = useNavigate();
+  const { setToggleAdd, toggleAdd, setDialogMessage, setOPenDialog } =
+    useStateContext();
+  // get all my messages
+  const { user } = useAuthContext();
+  const AxiousPrivate = useAxiousPrivate();
+  const queryclient = useQueryClient();
+  const { id } = useParams();
+
+  // functions
+  const { error, isLoading, data, refetch } = useQuery("message", (newPost) =>
+    AxiousPrivate.get(
+      user?.Officers?.role === "Administrator"
+        ? `/message/messages/${user?.Officers?.id}`
+        : `/message/messages/${id}`
+    )
+      .then((res) => res.data)
+      .catch((err) => {
+        console.log(err);
+        navigator("/login");
+      })
+  );
+
+  useEffect(() => {
+    const lastIndex = data.length - 1;
+    const result = data.find((element, index) => index === lastIndex);
+    console.log(result);
+
+    // const HandleUpdateMessage = AxiousPrivate.put(`/message/messages/${id}`);
+  }, [data]);
+
   return (
     <Box>
       <Box className="Header">
@@ -45,63 +79,122 @@ const Notification = () => {
           gap="20px"
         >
           {/* map throufht the botification */}
-          <>
-            {notificatio.length > 0 ? (
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignContent: "center",
-                    alignItems: "center",
-                    m: "auto",
-                    textAlign: "center",
-                    mt: 5,
-                  }}
-                >
-                  <img
-                    style={{ width: "50%", height: "100%" }}
-                    src={undraw_books_re_8gea}
-                  />
-                </Box>
-                <Typography textAlign="center" marginTop="1rem">
-                  Ooops no notification avelabee yet.
-                </Typography>
-              </Box>
-            ) : (
-              notificatio.map((item, index) => (
-                <Box
-                  sx={{
-                    backgroundColor: color.primary[400],
-                    borderRadius: ".7rem",
-                    p: 2,
-                  }}
-                >
+          {isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                mt: 40,
+              }}
+            >
+              <img width={"60%"} src={undraw_exams_re_4ios} />
+              <Typography variant="h3">Loading......</Typography>
+            </Box>
+          ) : error ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <img
+                alt="Error fetching data"
+                style={{ width: "50%", marginTop: "20rem" }}
+                src={fixing}
+              />
+              <Typography variant="h4">OOPs Something Went wrong </Typography>
+              <Button
+                sx={{
+                  mt: 2,
+                  color: color.redAccent[400],
+                }}
+                variant="outlined"
+                onClick={() => refetch()}
+              >
+                Refresh
+              </Button>
+            </Box>
+          ) : (
+            <>
+              {data.length === 0 ? (
+                <Box>
                   <Box
                     sx={{
                       display: "flex",
+                      alignContent: "center",
                       alignItems: "center",
-                      gap: 3,
-                      width: "100%",
+                      m: "auto",
+                      textAlign: "center",
+                      mt: 5,
                     }}
                   >
-                    <Typography variant="h3">From</Typography>
-                    <Typography>Kebba waiga</Typography>
-                    <Typography>2 days ago</Typography>
+                    <img
+                      alt="loading resources"
+                      style={{ width: "50%", height: "100%" }}
+                      src={undraw_books_re_8gea}
+                    />
                   </Box>
-                  <Typography sx={{ color: color.greenAccent[500] }}>
-                    Adminstrator
-                  </Typography>
-
-                  <Typography>
-                    This page Contains all the notificationn you receive so fa
-                    This page Contains all the notificationn you receive so fa
-                    This page Contains all the notificationn you receive so fa
-                    This page Contains all the notificationn you receive so fa
+                  <Typography textAlign="center" marginTop="1rem">
+                    Ooops no notification avelabee yet.
                   </Typography>
                 </Box>
-              ))
-            )}
-          </>
+              ) : (
+                data.map((item, index) => (
+                  <Box
+                    sx={{
+                      backgroundColor: color.primary[400],
+                      borderRadius: ".7rem",
+                      p: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 3,
+                        width: "100%",
+                      }}
+                    >
+                      <Typography variant="h3">
+                        {user?.Officers?.role === "Administrator"
+                          ? "To :"
+                          : "From"}
+                      </Typography>
+                      <Typography fontSize={20}>
+                        {item?.officerId?.firstName +
+                          " " +
+                          item.officerId?.lastName}
+                      </Typography>
+                      <Typography>
+                        <ReactTimeAgo date={item?.createdAt} />
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: color.greenAccent[500], mt: 2 }}>
+                      {item?.officerId?.role}
+                    </Typography>
+
+                    <Typography fontSize={18}>
+                      {item?.MessageContent}
+                    </Typography>
+                    <IconButton sx={{ float: "right" }}>
+                      <DoneAllIcon
+                        sx={{
+                          color:
+                            item?.view === true
+                              ? color.greenAccent[500]
+                              : "white",
+                        }}
+                      />
+                    </IconButton>
+                  </Box>
+                ))
+              )}
+            </>
+          )}
         </Box>
       </Box>
     </Box>

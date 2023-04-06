@@ -9,20 +9,12 @@ const data = [
     color: "hsl(139, 70%, 50%)",
     data: [
       {
-        x: "boat",
-        y: 253,
-      },
-      {
-        x: "train",
-        y: 35,
-      },
-      {
-        x: "subway",
-        y: 171,
+        x: "Vench",
+        y: 1,
       },
       {
         x: "bus",
-        y: 125,
+        y: 12,
       },
       {
         x: "car",
@@ -30,23 +22,20 @@ const data = [
       },
       {
         x: "moto",
-        y: 151,
+        y: 15,
       },
       {
         x: "bicycle",
         y: 32,
       },
-      {
-        x: "horse",
-        y: 17,
-      },
+
       {
         x: "Trucks",
         y: 34,
       },
       {
         x: "others",
-        y: 183,
+        y: 18,
       },
     ],
   },
@@ -55,20 +44,12 @@ const data = [
     color: "hsl(293, 70%, 50%)",
     data: [
       {
-        x: "boat",
-        y: 148,
-      },
-      {
-        x: "train",
-        y: 145,
-      },
-      {
-        x: "subway",
-        y: 291,
+        x: "Vench",
+        y: 9,
       },
       {
         x: "bus",
-        y: 153,
+        y: 13,
       },
       {
         x: "car",
@@ -76,23 +57,20 @@ const data = [
       },
       {
         x: "moto",
-        y: 226,
+        y: 26,
       },
       {
         x: "bicycle",
-        y: 80,
+        y: 10,
       },
-      {
-        x: "horse",
-        y: 152,
-      },
+
       {
         x: "Trucks",
-        y: 49,
+        y: 29,
       },
       {
         x: "others",
-        y: 210,
+        y: 20,
       },
     ],
   },
@@ -101,44 +79,33 @@ const data = [
     color: "hsl(220, 70%, 50%)",
     data: [
       {
-        x: "boat",
-        y: 77,
-      },
-      {
-        x: "train",
-        y: 184,
-      },
-      {
-        x: "subway",
-        y: 58,
+        x: "Vench",
+        y: 2,
       },
       {
         x: "bus",
-        y: 226,
+        y: 22,
       },
       {
         x: "car",
-        y: 52,
+        y: 32,
       },
       {
         x: "moto",
-        y: 182,
+        y: 18,
       },
       {
         x: "bicycle",
-        y: 45,
+        y: 15,
       },
-      {
-        x: "horse",
-        y: 298,
-      },
+
       {
         x: "Trucks",
-        y: 285,
+        y: 25,
       },
       {
         x: "others",
-        y: 175,
+        y: 17,
       },
     ],
   },
@@ -147,16 +114,8 @@ const data = [
     color: "hsl(215, 70%, 50%)",
     data: [
       {
-        x: "boat",
-        y: 178,
-      },
-      {
-        x: "train",
-        y: 64,
-      },
-      {
-        x: "subway",
-        y: 228,
+        x: "Vench",
+        y: 2,
       },
       {
         x: "bus",
@@ -164,23 +123,20 @@ const data = [
       },
       {
         x: "car",
-        y: 196,
+        y: 19,
       },
       {
         x: "moto",
-        y: 165,
+        y: 14,
       },
       {
         x: "bicycle",
-        y: 251,
+        y: 11,
       },
-      {
-        x: "horse",
-        y: 235,
-      },
+
       {
         x: "Trucks",
-        y: 104,
+        y: 10,
       },
       {
         x: "others",
@@ -193,24 +149,16 @@ const data = [
     color: "hsl(290, 70%, 50%)",
     data: [
       {
-        x: "boat",
-        y: 109,
-      },
-      {
-        x: "train",
-        y: 91,
-      },
-      {
-        x: "subway",
-        y: 154,
+        x: "Vench",
+        y: 0,
       },
       {
         x: "bus",
-        y: 161,
+        y: 16,
       },
       {
         x: "car",
-        y: 184,
+        y: 18,
       },
       {
         x: "moto",
@@ -218,19 +166,16 @@ const data = [
       },
       {
         x: "bicycle",
-        y: 71,
+        y: 0,
       },
-      {
-        x: "horse",
-        y: 169,
-      },
+
       {
         x: "Trucks",
-        y: 178,
+        y: 2,
       },
       {
         x: "others",
-        y: 207,
+        y: 20,
       },
     ],
   },
@@ -242,7 +187,7 @@ const LineChartAdmin = () => {
   return (
     <Box
       sx={{
-        height: 350,
+        height: 400,
       }}
     >
       <Typography variant="h4" sx={{ textAlign: "center", mt: 2 }}>

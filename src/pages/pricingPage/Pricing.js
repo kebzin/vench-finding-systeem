@@ -239,7 +239,7 @@ const Pricing = () => {
                     >
                       {item?.OffenceCategory}
                     </Typography>
-                    {status === "admin" ? (
+                    {user?.Officers?.role === "Employee" ? null : (
                       <Button
                         sx={{
                           mt: 2,
@@ -251,8 +251,8 @@ const Pricing = () => {
                       >
                         Delete
                       </Button>
-                    ) : null}
-                    {status === "admin" ? (
+                    )}
+                    {user?.Officers?.role === "Employee" ? null : (
                       <Button
                         sx={{
                           mt: 1,
@@ -264,7 +264,7 @@ const Pricing = () => {
                       >
                         update
                       </Button>
-                    ) : null}
+                    )}
                   </Box>
                 </Box>
                 {/* <CrimePrcingUpdate /> */}
@@ -277,7 +277,7 @@ const Pricing = () => {
       <Box>
         {/* add botten */}
         {toggleAdd && <CrimePrcing />}
-        {status === "admin" ? (
+        {user?.Officers?.role === "Employee" ? null : (
           <Box
             sx={addButtonContainer}
             onClick={() => setToggleAdd((previousestate) => !previousestate)}
@@ -286,7 +286,7 @@ const Pricing = () => {
               <AddCircleRoundedIcon sx={{ fontSize: 44 }} />
             </IconButton>
           </Box>
-        ) : null}
+        )}
       </Box>
       {updateOpen && (
         <CrimePrcingUpdate

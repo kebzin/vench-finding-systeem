@@ -1,76 +1,51 @@
-import { Box } from "@mui/material";
-import { ResponsiveSunburst } from "@nivo/sunburst";
+import { ResponsivePie } from "@nivo/pie";
+import { Box, Typography, useTheme } from "@mui/material";
+import { tokens } from "../../theme";
 
-const data = [
+export const mockPieData = [
   {
-    id: "My Fines",
-    color: "hsl(293, 70%, 50%)",
-    data: [
-      {
-        x: "bus",
-        y: 5,
-      },
-      {
-        x: "car",
-        y: 10,
-      },
-      {
-        x: "moto",
-        y: 15,
-      },
-      {
-        x: "bicycle",
-        y: 20,
-      },
-
-      {
-        x: "Trucks",
-        y: 30,
-      },
-      {
-        x: "others",
-        y: 35,
-      },
-    ],
+    id: "Vench",
+    label: "Vehch",
+    value: 485,
+    color: "hsl(244, 70%, 50%)",
+  },
+  {
+    id: "Truck",
+    label: "Truck",
+    value: 446,
+    color: "hsl(164, 70%, 50%)",
+  },
+  {
+    id: "Bus  ",
+    label: "Bus ",
+    value: 333,
+    color: "hsl(327, 70%, 50%)",
+  },
+  {
+    id: "",
+    label: "Motocycle",
+    value: 570,
+    color: "hsl(271, 70%, 50%)",
+  },
+  {
+    id: "Others",
+    label: "others",
+    value: 190,
+    color: "hsl(241, 70%, 50%)",
   },
 ];
 
-const PieChart = () => {
+const WeekilyDataAnalysys = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   return (
     <Box
       sx={{
-        height: 200,
+        height: 250,
       }}
     >
-      <ResponsiveSunburst
-        data={data}
-        margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        id="name"
-        value="loc"
-        cornerRadius={2}
-        borderWidth={0}
-        borderColor={{ theme: "background" }}
-        colors={{ scheme: "nivo" }}
-        childColor={{ theme: "background" }}
-        enableArcLabels={true}
-        arcLabel="value"
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor={{
-          from: "color",
-          modifiers: [["darker", 1.4]],
-        }}
-        motionConfig={{
-          mass: 500,
-          tension: 500,
-          friction: 500,
-          clamp: true,
-          precision: 0.01,
-          velocity: 0,
-        }}
-        transitionMode="pushIn"
-      />
-      {/* <ResponsivePie
-        data={data}
+      <ResponsivePie
+        data={mockPieData}
         theme={{
           axis: {
             domain: {
@@ -99,11 +74,14 @@ const PieChart = () => {
             },
           },
         }}
-        margin={{ top: 10, right: 50, bottom: 100, left: 50 }}
+        margin={{ top: 20, right: 10, bottom: 20, left: 20 }}
+        valueFormat=" >-"
+        sortByValue={true}
         innerRadius={0.5}
-        padAngle={0.7}
+        padAngle={1}
         cornerRadius={3}
         activeOuterRadiusOffset={8}
+        borderWidth={1}
         borderColor={{
           from: "color",
           modifiers: [["darker", 0.2]],
@@ -112,9 +90,8 @@ const PieChart = () => {
         arcLinkLabelsTextColor={colors.grey[100]}
         arcLinkLabelsThickness={2}
         arcLinkLabelsColor={{ from: "color" }}
-        enableArcLabels={false}
-        arcLabelsRadiusOffset={0.4}
         arcLabelsSkipAngle={7}
+        arcLabelsRadiusOffset={0.4}
         arcLabelsTextColor={{
           from: "color",
           modifiers: [["darker", 2]],
@@ -139,15 +116,65 @@ const PieChart = () => {
             spacing: 10,
           },
         ]}
+        fill={[
+          {
+            match: {
+              id: "ruby",
+            },
+            id: "dots",
+          },
+          {
+            match: {
+              id: "c",
+            },
+            id: "dots",
+          },
+          {
+            match: {
+              id: "go",
+            },
+            id: "dots",
+          },
+          {
+            match: {
+              id: "python",
+            },
+            id: "dots",
+          },
+          {
+            match: {
+              id: "scala",
+            },
+            id: "lines",
+          },
+          {
+            match: {
+              id: "lisp",
+            },
+            id: "lines",
+          },
+          {
+            match: {
+              id: "elixir",
+            },
+            id: "lines",
+          },
+          {
+            match: {
+              id: "javascript",
+            },
+            id: "lines",
+          },
+        ]}
         legends={[
           {
-            anchor: "bottom",
-            direction: "row",
+            anchor: "right",
+            direction: "column",
             justify: false,
-            translateX: 0,
-            translateY: 56,
+            translateX: -20,
+            translateY: 50,
             itemsSpacing: 0,
-            itemWidth: 100,
+            itemWidth: 50,
             itemHeight: 18,
             itemTextColor: "#999",
             itemDirection: "left-to-right",
@@ -164,9 +191,9 @@ const PieChart = () => {
             ],
           },
         ]}
-      /> */}
+      />
     </Box>
   );
 };
 
-export default PieChart;
+export default WeekilyDataAnalysys;

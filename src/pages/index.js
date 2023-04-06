@@ -8,6 +8,10 @@ import Transaction from "./transaction/Transaction";
 import TransactionView from "./transaction/transactionView";
 import Invoice from "./transaction/Invoice";
 import Charts from "./charts/Charts";
+import WeekilyDataAnalysys from "./charts/WeekilyDataAnalysys";
+import Wanted from "./transaction/Wanted";
+import SendMEssage from "./profile/SendMessage";
+import Payment from "./charts/Payment/Payment";
 
 export {
   Dashboard,
@@ -20,4 +24,8 @@ export {
   TransactionView,
   Invoice,
   Charts,
+  WeekilyDataAnalysys,
+  Wanted,
+  SendMEssage,
+  Payment,
 };

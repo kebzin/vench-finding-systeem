@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Sidebar, Topbar } from "./global";
 import { Login, Welcome, Register } from "./pages/authentication";
-import { PopUpMessage, SideBar } from "./components";
+import { PopUpMessage } from "./components";
 
 import {
   Dashboard,
@@ -15,11 +15,11 @@ import {
   ForgetPassword,
   Transaction,
   TransactionView,
-  Invoice,
   Charts,
+  Wanted,
+  Payment,
 } from "./pages";
 import { useStateContext } from "./context/Contex";
-import { useAuthContext } from "./context/AuthContex";
 import RequirAuth from "./components/RequirAuth";
 import PersistLogin from "./components/PersistLogin";
 import DialogBox from "./components/DialogBox";
@@ -27,9 +27,6 @@ import NotFound from "./components/NotFound";
 
 function App() {
   const { isSidebar, istopbar } = useStateContext();
-  const [login, setLogin] = useState(true);
-  const { setUser } = useAuthContext();
-  const Navigate = useNavigate();
 
   // useEffect(() => {
   //   if (localStorage.getItem("token")) {
@@ -38,8 +35,7 @@ function App() {
   // }, []);
 
   const [theme, colorMode] = useMode();
-  // const [isSidebar, setIsSidebar] = useState(true);
-  // const [istopbar, setTopbar] = useState(true);
+
   const { OpenDialog, toggleDelete } = useStateContext();
 
   return (
@@ -60,7 +56,7 @@ function App() {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="pricing" element={<Pricing />} />
                   <Route path="/users" element={<ManageUser />} />
-                  <Route path="/notification" element={<Notification />} />
+                  <Route path="/notification/:id" element={<Notification />} />
                   <Route path="/userprofile" element={<UserProfile />} />
                   <Route path="/userprofile/:id" element={<UserProfile />} />
                   <Route path="/transaction" element={<Transaction />} />
@@ -68,12 +64,13 @@ function App() {
                     path="/transaction/:id"
                     element={<TransactionView />}
                   />
-                  <Route path="/invoice/:id" element={<Invoice />} />
+                  <Route path="/wanted" element={<Wanted />} />
                   <Route path="/Charts" element={<Charts />} />
                 </Route>
               </Route>
 
               <Route path="/welcom" element={<Welcome />} />
+              <Route path="/Payment" element={<Payment />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgetpassword" element={<ForgetPassword />} />

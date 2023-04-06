@@ -6,13 +6,15 @@ import { LoadingButton } from "@mui/lab";
 import { useStateContext } from "../context/Contex";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../hooks/logout";
+import { useAuthContext } from "../context/AuthContex";
 
 const MyProfile = () => {
-  const { currentUser, HandleClickClose } = useStateContext();
+  const { HandleClickClose } = useStateContext();
   const Navigate = useNavigate();
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const { logout } = useLogout();
+  const { user } = useAuthContext();
 
   const handleLogout = () => {
     logout();
@@ -82,17 +84,20 @@ const MyProfile = () => {
               borderBottom: `1px solid ${color.grey[700]}`,
               pb: 2,
             }}
+            onClick={() => Navigate(`/userprofile/${user?.Officers?.id}`)}
           >
-            <Avatar sx={{ height: 60, width: 60 }} />
+            <Avatar
+              sx={{ height: 60, width: 60, background: color.greenAccent[400] }}
+            />
             <Box display="flex" flexDirection="column">
               <Typography variant="h3" fontSize={20}>
-                {"kebba waiga"}
+                {user?.Officers?.firstNme}
               </Typography>
               <Typography sx={{ color: color.grey[500], pt: 0.5 }}>
-                Adminstrator
+                {user?.Officers?.role}
               </Typography>
               <Typography sx={{ color: color.grey[500] }}>
-                kebbawaiga@gmail.com
+                {user?.Officers?.email}
               </Typography>
             </Box>
           </Box>

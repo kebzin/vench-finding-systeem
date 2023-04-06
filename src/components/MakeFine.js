@@ -1,8 +1,20 @@
 import { useTheme } from "@emotion/react";
+import { CheckBox, Preview } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Box, FormControl, TextField } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Box,
+  Chip,
+  FormControl,
+  MenuItem,
+  Select,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useAuthContext } from "../context/AuthContex";
 import { useStateContext } from "../context/Contex";
 import { axiousePrive } from "../hooks/axious";
 import useAxiousPrivate from "../hooks/useAxiousPrivate";
@@ -14,6 +26,18 @@ const addButtonContainer = {
   justifyContent: "center",
   margin: "auto",
   height: "100%",
+  miniWidth: "50%",
+};
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
 };
 
 const MakeFine = ({ setToggleAdd }) => {
@@ -22,44 +46,99 @@ const MakeFine = ({ setToggleAdd }) => {
   const [NumberPlat, setNumberPlat] = useState("");
   const [LicenNumber, setLicenNumber] = useState(null);
   const [DriverName, setDriverName] = useState("");
-  const [OffenceCommited, setOffenceCommited] = useState("");
-  const [Offerprice, setOfferprice] = useState("");
-  const [offenceDescription, setOfferdescription] = useState("");
+  const [OffenceCommited, setOffenceCommited] = useState();
+  const [fineAmount, setfineAmount] = useState("");
+  const [fineDescription, setfineDescription] = useState("");
   const [DriverAddress, setDriverAddress] = useState(null);
+  const [wanted, setwanted] = useState(false);
+  const [category, setcategory] = useState();
 
-  const { setDialogMessage } = useStateContext();
+  const { setDialogMessage, setOPenDialog } = useStateContext();
+
+  const [latituid, setLatituid] = useState(null);
+  const [longitituid, setLongitituid] = useState(null);
+  // useEffect(() => {
+  //   const getLocation = () => {
+  //     if (!navigator.geolocation) {
+  //       window.alert("Geolocation is not supported by this browser");
+  //     }
+  //     navigator.geolocation.getCurrentPosition((position) => {
+  //       setLatituid(position.coords.latitude);
+  //       setLongitituid(position.coords.longitude);
+  //       console.log(latituid, " ", longitituid);
+  //     });
+  //   };
+  // });
 
   // hooks
+  const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
   // fetch officers
-  const { isLoading, data, error, refetch } = useQuery("driver", () => {
-    return axiousePrive
-      .get("driver/driver")
+  const { data, error } = useQuery("driver", async () => {
+    return await AxiousPrivate.get("/driver/driver")
       .then((res) => res.data)
       .catch((err) => {
-        console.log(error);
+        console.log(err);
       });
   });
 
-  // console.log(data);
+  const result = useQuery(
+    "Price",
+    async () =>
+      await AxiousPrivate.get("/price/prices")
+        .then((res) => res.data)
+        .catch((err) => {
+          console.log(err);
+        })
+  );
 
   const mutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.post("/price/prices/", newPost);
+      console.log("new posy", newPost);
+      console.log(newPost);
+      return AxiousPrivate.post(`/fine/fine/${user?.Officers?.id}`, newPost);
     },
     {
-      onSuccess: (response) => {},
-      onError: () => {},
+      onSuccess: (response) => {
+        setOPenDialog(true);
+        setDialogMessage(" successfully Fined ");
+        setLoading(false);
+        console.log(response);
+      },
+      onError: (error) => {
+        setOPenDialog(true);
+        console.log(error);
+        setDialogMessage(error.message);
+
+        setLoading(false);
+      },
     }
   );
 
+  const HandleFineSubmit = async () => {
+    try {
+      setLoading(true);
+      mutation.mutate({
+        OffenceCommited: OffenceCommited?.OffenceName,
+        fineAmount: fineAmount,
+        fineDescription: fineDescription,
+        DriverAddress: DriverAddress,
+        DriverName: DriverName,
+        NumberPlat: NumberPlat,
+        LicenNumber: LicenNumber,
+        wanted: wanted,
+        category: category,
+      });
+      console.log(fineDescription);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
   //  function ::::::::::::::::::
   // making fine function
-  const HandleFine = (event) => {
-    event.preventDefault();
-  };
 
   // handle filter
   // Filter array items based on search criteria (query)
@@ -71,22 +150,32 @@ const MakeFine = ({ setToggleAdd }) => {
   const HandleFilter = (event) => {
     setLicenNumber(event.target.value);
     const driver = filterItems(data, LicenNumber);
-    console.log("i found", driver);
+
     setDriverName(driver?.driversFirstName + " " + driver?.driversLastName);
     setDriverAddress(driver?.driversAddress);
-    console.log(driver?.driversFirstName);
+  };
+
+  const HandleOffenceCommited = (event) => {
+    // setOffenceCommited(result?.data?.OffencePrice)
+    setOffenceCommited(event.target.value);
+    setfineAmount("GMD" + " " + OffenceCommited?.OffencePrice);
+    setcategory(OffenceCommited?.OffenceCategory);
+  };
+
+  const HandleWanted = (event) => {
+    setwanted((previouseState) => !previouseState);
   };
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const AddButtonContainerContent = {
     position: "fixed",
-    top: "25%",
+    top: "17%",
     borderRadius: ".7rem",
     height: "auto",
     background: theme.palette.mode === "dark" ? COLORS.primary[400] : "white",
     padding: 3,
     margin: "auto",
-    miniWidth: "50%",
+    miniWidth: "70%",
     boxShadow:
       theme.palette.mode === "dark"
         ? COLORS.primary[400]
@@ -100,25 +189,33 @@ const MakeFine = ({ setToggleAdd }) => {
       <Box sx={AddButtonContainerContent}>
         <form>
           <Box display="flex" flexDirection="column" alignItems="center">
-            <FormControl sx={{ width: "100%" }} variant="outlined">
+            <Typography sx={{ pb: 1, fontSize: 20, fontWeight: 600 }}>
+              Make a Fine
+            </Typography>
+            <FormControl
+              sx={{ width: "100%" }}
+              variant="outlined"
+              onChange={(event) => setNumberPlat(event.target.value)}
+            >
               <TextField
                 id="outlined-basic"
                 label="Enter Number Plate"
                 variant="outlined"
                 size="full"
                 type="email"
+                value={NumberPlat}
               />
             </FormControl>
 
             <FormControl
               sx={{ mt: 2, width: "100%" }}
               variant="outlined"
-              onChange={(event) => HandleFilter(event)}
+              onChange={HandleFilter}
               value={LicenNumber}
             >
               <TextField
                 id="outlined-basic"
-                label=" Dreiver Licen Number"
+                placeholder=" Enter Dreiver Licen Number"
                 variant="outlined"
                 size="full"
                 type="text"
@@ -131,8 +228,14 @@ const MakeFine = ({ setToggleAdd }) => {
                 variant="outlined"
                 size="full"
                 type="text"
-                value={DriverName}
                 placeholder="Drivers Full Name"
+                value={
+                  DriverName === undefined ||
+                  DriverName === "" ||
+                  DriverName === undefined + " " + undefined
+                    ? "Drivers Name"
+                    : DriverName
+                }
                 disabled
               />
             </FormControl>
@@ -146,30 +249,64 @@ const MakeFine = ({ setToggleAdd }) => {
                 id="outlined-basic"
                 variant="outlined"
                 size="full"
-                type="email"
-                value={DriverAddress}
+                type="text"
+                value={
+                  DriverAddress == undefined ||
+                  DriverAddress == null ||
+                  DriverAddress === "" ||
+                  DriverAddress === undefined + " " + undefined
+                    ? "Drivers Address"
+                    : DriverAddress
+                }
                 placeholder="Driver Address"
                 disabled
               />
             </FormControl>
 
             <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
-              <TextField
+              {/* <TextField
                 id="outlined-basic"
                 label="Offence  Commited"
                 variant="outlined"
                 size="full"
                 type="text"
                 onChange={() => {}}
-              />
+              /> */}
+              <Select
+                labelId="demo-multiple-chip-label"
+                id="demo-multiple-chip"
+                MenuProps={MenuProps}
+                onChange={(event) => HandleOffenceCommited(event)}
+                value={
+                  OffenceCommited === undefined || OffenceCommited === ""
+                    ? "Select Offence Commited"
+                    : OffenceCommited
+                }
+              >
+                <MenuItem selected disabled value={"Select Offence Commited"}>
+                  Select Offence Commited
+                </MenuItem>
+                {result?.data?.map((name, index) => (
+                  <MenuItem key={index} value={name}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                    >
+                      <Typography sx={{}}>{name?.OffenceName} </Typography>
+                      <Typography>{" " + name?.OffenceCategory}</Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
             <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
               <TextField
                 id="outlined-basic"
-                label="Offence  Commited"
+                placeholder="Offence Price"
                 variant="outlined"
                 size="full"
                 type="text"
+                value={fineAmount}
+                disabled
               />
             </FormControl>
 
@@ -191,8 +328,24 @@ const MakeFine = ({ setToggleAdd }) => {
                 }}
                 minRows={2}
                 placeholder={"Enter some Describtion"}
+                onChange={(event) => setfineDescription(event.target.value)}
               />
             </FormControl>
+
+            {/* <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{ px: 2, py: 1, gap: 6 }}
+            >
+              <Typography>Wanted</Typography>
+              <Switch
+                color="secondary"
+                checked={wanted}
+                onClick={(event) => HandleWanted(event)}
+                sx={{}}
+              />
+            </Stack> */}
 
             <LoadingButton
               sx={{
@@ -204,7 +357,7 @@ const MakeFine = ({ setToggleAdd }) => {
                     : COLORS.greenAccent[500],
                 "&:hover": { background: COLORS.greenAccent[500] },
               }}
-              onClick={() => {}}
+              onClick={HandleFineSubmit}
               loading={loading}
               loadingPosition="end"
               variant="contained"
@@ -212,7 +365,7 @@ const MakeFine = ({ setToggleAdd }) => {
               <span style={{ padding: "10px" }}>Post</span>
             </LoadingButton>
 
-            <LoadingButton
+            {/* <LoadingButton
               sx={{
                 width: "100%",
                 mt: 2,
@@ -228,7 +381,7 @@ const MakeFine = ({ setToggleAdd }) => {
               variant="contained"
             >
               <span style={{ padding: "10px" }}>Cancel</span>
-            </LoadingButton>
+            </LoadingButton> */}
           </Box>
         </form>
       </Box>

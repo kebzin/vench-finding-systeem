@@ -1,20 +1,30 @@
 import { RingVolume, Today } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
 import React from "react";
 import { tokens } from "../theme";
 
-const PritTickets = () => {
+const PritTickets = ({ data }) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const timeElaps = Date.now();
   const today = new Date(timeElaps);
 
+  const HandlePrint = () => {
+    const printContents =
+      document.getElementsByClassName(".certificate").innerHTML;
+    const originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+  };
+
   return (
     <React.Fragment>
       <Box sx={{ width: "100%" }}>
         <Box
+          className="certificate"
           sx={{
             position: "fixed",
 
@@ -42,63 +52,148 @@ const PritTickets = () => {
           <Typography variant="h2" sx={{ fontWeight: 700 }}>
             Invoice
           </Typography>
-          <Typography variant="h5"> ID: 283636f7f</Typography>
+          <Typography variant="h5"> ID: {data?.id}</Typography>
           <Box sx={{ textAlign: "right" }}>
             <Typography>info</Typography>
-            <Typography> kebbawaiga@gmail.com</Typography>
-            <Typography>+220 2493268</Typography>
+            <Typography> {data?.officerId?.email}</Typography>
+            <Typography>+220 {data?.officerId?.PhoneNumber}</Typography>
             <Typography>{today.toUTCString()}</Typography>
           </Box>
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
               mt: 2,
               borderBottom: "1px solid gray",
               borderTop: "1px solid gray",
             }}
           >
             <Box>
-              <Typography variant="h6" sx={{ p: 0.4 }}>
-                Car Number Plate:{" "}
-              </Typography>
-              <Typography variant="h6" sx={{ p: 0.4 }}>
-                Driver Licen Number:{" "}
-              </Typography>
-              <Typography variant="h6" sx={{ p: 0.4 }}>
-                Offence Commited:{" "}
-              </Typography>
-              <Typography variant="h6" sx={{ p: 0.4 }}>
-                Offence Location:{" "}
-              </Typography>
-              <Typography variant="h6" sx={{ p: 0.4 }}>
-                Offence Charge:{" "}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="h6" sx={{ color: color.grey[200], mt: 1.3 }}>
-                BJL_366ET
-              </Typography>
-              <Typography variant="h6" sx={{ color: color.grey[200], mt: 1.3 }}>
-                2735r7fr6484639f8e647
-              </Typography>
-              <Typography variant="h6" sx={{ color: color.grey[200], mt: 1.3 }}>
-                Asulting police officer{" "}
-              </Typography>
-              <Typography variant="h6" sx={{ color: color.grey[200], mt: 1.3 }}>
-                Serrekunda:{" "}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{ color: color.grey[200], mt: 1.3, mb: 3 }}
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ py: 1, gap: 4, textAlign: "left" }}
               >
-                GMD {"500"}
-              </Typography>
+                <Typography variant="h6" sx={{}}>
+                  Number Plate
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  {" "}
+                  {data?.NumberPlat}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{}}
+              >
+                <Typography variant="h6" sx={{}}>
+                  Driver Licen Number
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  {" "}
+                  {data?.LicenNumber}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{}}
+              >
+                <Typography variant="h6" sx={{}}>
+                  Offence Commited
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  {" "}
+                  {data?.OffenceCommited}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{}}
+              >
+                <Typography variant="h6" sx={{}}>
+                  Offence Location
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  {" "}
+                  {data?.OffenceCommited}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{}}
+              >
+                <Typography variant="h6" sx={{}}>
+                  Charge Amount:
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  {" "}
+                  {data?.fineAmount}
+                </Typography>
+              </Stack>
+
+              {/* 
+              
+            
+            
+              */}
             </Box>
           </Box>
 
-          <Box
+          <Box sx={{ mt: 4 }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{}}
+            >
+              <Typography variant="h6" sx={{}}>
+                Charge Amount:
+              </Typography>
+              <Typography sx={{ color: color.grey[400] }}>
+                {" "}
+                {data?.fineAmount}
+              </Typography>
+            </Stack>
+
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{}}
+            >
+              <Typography variant="h6" sx={{}}>
+                Balance:
+              </Typography>
+              <Typography sx={{ color: color.grey[400] }}>
+                {" "}
+                {data?.fineAmount}
+              </Typography>
+            </Stack>
+
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              sx={{}}
+            >
+              <Typography variant="h6" sx={{}}>
+                Total:
+              </Typography>
+              <Typography sx={{ color: color.grey[400] }}>
+                {" "}
+                {data?.fineAmount}
+              </Typography>
+            </Stack>
+          </Box>
+
+          {/* <Box
             sx={{
               mb: 3,
               textAlign: "left",
@@ -108,9 +203,7 @@ const PritTickets = () => {
             }}
           >
             <Box>
-              <Typography variant="h6" sx={{ p: 0.2 }}>
-                Offence Charge:{" "}
-              </Typography>
+             
               <Typography variant="h6" sx={{ p: 0.2 }}>
                 Current Balance:{" "}
               </Typography>
@@ -129,9 +222,9 @@ const PritTickets = () => {
                 GMD {"500"}
               </Typography>
             </Box>
-          </Box>
+          </Box> */}
 
-          <Box sx={{ display: "flex", alignItems: "center", mt: 13 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
             <Box>
               <Typography variant="h6" sx={{ p: 0.2 }}>
                 Bank Name:{" "}
@@ -177,7 +270,7 @@ const PritTickets = () => {
             <LoadingButton
               size="larger"
               color="primary"
-              // onClick={HandleOk}
+              onClick={HandlePrint}
               loading={false}
               loadingPosition="end"
               variant="contained"
@@ -187,7 +280,6 @@ const PritTickets = () => {
                 width: "100%",
                 mt: 3,
               }}
-              onClick={() => window.print()}
             >
               <span style={{ padding: "10px" }}>Print</span>
             </LoadingButton>

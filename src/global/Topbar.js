@@ -17,7 +17,6 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Person4Icon from "@mui/icons-material/Person4";
 import SearchSharpIcon from "@mui/icons-material/SearchSharp";
-import { height, width } from "@mui/system";
 import { StateContex, useStateContext } from "../context/Contex";
 import { MyProfile, Notification } from "../components";
 

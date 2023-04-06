@@ -12,18 +12,13 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import { hover } from "@testing-library/user-event/dist/hover";
 import { Link, useFetcher, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
+import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 
 const Sidebar = () => {
   const theme = useTheme();
-  const [selected, setSelected] = useState("Dashboard");
   const colors = tokens(theme.palette.mode);
   const Navigate = useNavigate();
   const { user } = useAuthContext();
-
-  useEffect(() => {
-    if (user === null) return Navigate("/login");
-  });
-  // sidebar item clicked
 
   const userProfile = "";
 
@@ -37,6 +32,7 @@ const Sidebar = () => {
       name: "Manage Users",
       link: "/users",
       icons: <Person3Icon />,
+      admin: user?.Officers?.role,
     },
     {
       name: "Transactions",
@@ -52,6 +48,12 @@ const Sidebar = () => {
       name: "Data Analysis",
       link: "/Charts",
       icons: <BarChartIcon />,
+      admin: user?.Officers?.role,
+    },
+    {
+      name: "Wanted  ",
+      link: "/wanted",
+      icons: <DirectionsRunIcon sx={{ fontSize: 30 }} />,
     },
   ];
 
@@ -99,31 +101,35 @@ const Sidebar = () => {
 
         <Box sx={{ mt: 15 }}>
           <Box>
-            {Menues.map((item, iindex) => (
-              <Box
-                display="flex"
-                alignItems="center"
-                cursor="pointer"
-                sx={{
-                  mt: 3,
-                  "&:hover": { background: colors.greenAccent[700] },
-                }}
-                onClick={() => Navigate(item.link)}
-              >
-                <IconButton
-                  sx={{ cursor: "pointer", color: colors.greenAccent[500] }}
+            {Menues.map((item, iindex) =>
+              item.admin === "Employee" ? null : (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  cursor="pointer"
+                  sx={{
+                    mt: 3,
+                    "&:hover": { background: colors.greenAccent[700] },
+                  }}
+                  onClick={() =>
+                    Navigate(item.admin === "Employee" ? null : item.link)
+                  }
                 >
-                  {item.icons}
-                </IconButton>
-                <Typography
-                  variant="h6"
-                  sx={{ cursor: "pointer" }}
-                  className="DetailText"
-                >
-                  {item.name}
-                </Typography>
-              </Box>
-            ))}
+                  <IconButton
+                    sx={{ cursor: "pointer", color: colors.greenAccent[500] }}
+                  >
+                    {item.admin === "Employee" ? null : item.icons}
+                  </IconButton>
+                  <Typography
+                    variant="h6"
+                    sx={{ cursor: "pointer" }}
+                    className="DetailText"
+                  >
+                    {item.admin === "Employee" ? null : item.name}
+                  </Typography>
+                </Box>
+              )
+            )}
           </Box>
         </Box>
       </Box>
