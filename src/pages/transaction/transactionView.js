@@ -6,41 +6,40 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import DeleteIcon from "@mui/icons-material/Delete";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
 import ReplyIcon from "@mui/icons-material/Reply";
 import PrintIcon from "@mui/icons-material/Print";
 import { tokens } from "../../theme";
-import { useAuthContext } from "../../context/AuthContex";
 import { Header } from "../../components";
-import { useStateContext } from "../../context/Contex";
+
 import PritTickets from "../../components/PritTickets";
 import { useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import { useReactToPrint } from "react-to-print";
 
 const TransactionView = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const [showprint, setShowPrint] = useState(false);
 
-  const { user } = useAuthContext();
-
   //veriable
-  const status = "pending";
+
   // hooks
   const Navigate = useNavigate();
   const AxiousPrivate = useAxiousPrivate();
   const { id } = useParams();
 
   // handle print
-  const HandlePrint = (record) => {
-    setShowPrint((previouse) => !previouse);
-  };
 
   // handle print
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    onBeforeGetContent: () => setShowPrint(true),
+    content: () => componentRef.current,
+    onAfterPrint: () => setShowPrint(false),
+  });
 
   // fetch data
   const { isLoading, error, data, refetch } = useQuery("transaction", () =>
@@ -48,6 +47,9 @@ const TransactionView = () => {
       .then((result) => result.data)
       .catch((err) => console.log(err))
   );
+
+  const amountpa = parseInt(data?.fineAmount?.slice(3));
+  const total = amountpa - data?.amountPaid;
 
   return (
     <Box className="Header">
@@ -179,7 +181,7 @@ const TransactionView = () => {
                   Amount Paid
                 </Typography>
                 <Typography sx={{ color: color.grey[400] }}>
-                  {"GMD 0"}
+                  GMD {data?.amountPaid}
                 </Typography>
               </Stack>
               <Stack
@@ -193,8 +195,7 @@ const TransactionView = () => {
                   Amount Left
                 </Typography>
                 <Typography sx={{ color: color.grey[400] }}>
-                  {" "}
-                  {data?.fineAmount}
+                  GMD {total}
                 </Typography>
               </Stack>
               <Stack
@@ -352,13 +353,14 @@ const TransactionView = () => {
             }}
             variant="outlined"
             startIcon={<PrintIcon />}
-            onClick={() => setShowPrint((previouse) => !previouse)}
+            onClick={handlePrint}
           >
             Print
           </Button>
         </Box>
       </Box>
-      {showprint && <PritTickets data={data} />}
+
+      {showprint && <PritTickets ref={componentRef} data={data} />}
     </Box>
   );
 };

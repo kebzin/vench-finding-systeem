@@ -27,10 +27,6 @@ const Login = ({}) => {
     setIsSidebar(false);
     setTopbar(false);
     setError(null);
-    // const welcome = localStorage.getItem("welcome");
-    // if (welcome === null || welcome === undefined || welcome === true) {
-    //   Navigate("/welcom");
-    // }
   }, []);
 
   // states

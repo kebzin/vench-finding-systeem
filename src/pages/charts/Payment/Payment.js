@@ -1,23 +1,15 @@
 import { useTheme } from "@emotion/react";
 import { LoadingButton } from "@mui/lab";
-import {
-  Box,
-  colors,
-  Divider,
-  FormControl,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, FormControl, TextField, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import React, { useEffect, useState, useRef } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useStateContext } from "../../../context/Contex";
-import { makeRequest } from "../../../hooks/axious";
-import useAxiousPrivate from "../../../hooks/useAxiousPrivate";
+
 import { tokens } from "../../../theme";
-import { Try } from "@mui/icons-material";
+import { useReactToPrint } from "react-to-print";
+import PaymentDetails from "./paymentDetails";
 
 const Payment = () => {
   // states
@@ -30,48 +22,22 @@ const Payment = () => {
   }, []);
   // hooks
   const Navigate = useNavigate();
-  const Location = useLocation();
-  const AxiousPrivate = useAxiousPrivate();
+  const queryclient = useQueryClient();
 
   // state
   const [hideAmmount, setHideAmmount] = useState(false);
   const [TicketNumber, setTicketNumber] = useState("");
-  const [TicketAmount, setTicketAmount] = useState("");
+  const [Price, setPrice] = useState();
   const [hideButton, setHideButton] = useState(true);
   const [showButton, setShowButton] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [Error, SetError] = useState("");
+  const [Erro, SetError] = useState("");
+  const { setDialogMessage, setOPenDialog } = useStateContext();
 
-  //   functions
-
-  // const { isLoading, error, data, refetch } = useQuery(
-  //   "transaction",() =>
-  //     axios.get(`http://localhost:3009/api/fine/single/${TicketNumber}`)
-  //       .then((result) => {
-  //         if (result.data.response === "401") {
-  //           setLoading(false);
-  //         }
-  //       })
-  //       .catch((err) => console.log(err)),
-
-  //   {
-  //     enabled: false,
-  //     onSuccess: (result) => {
-  //       console.log("result", result);
-  //       if (result.data.response === "401") {
-  //         setLoading(false);
-  //       }
-  //       setLoading(false);
-  //       setHideAmmount(true);
-  //       setShowButton(true);
-  //       setHideButton(false);
-  //     },
-  //     onError: (err) => {
-  //       console.log(err);
-  //       setLoading(false);
-  //     },
-  //   }
-  // );
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   const { isLoading, error, data, refetch } = useQuery(
     "transaction",
@@ -79,17 +45,15 @@ const Payment = () => {
       return await axios
         .get(`http://localhost:3009/api/fine/single/${TicketNumber}`)
         .then((respond) => {
-          if (respond.ok) {
-            setLoading(false);
-            throw new Error(SetError(respond.data.message));
-          }
-
           setLoading(false);
+          setHideAmmount(true);
+          setShowButton(true);
+          setHideButton(false);
           return respond.data;
         })
         .catch((err) => {
-          console.log(err);
-          SetError(err.response.data.message);
+          console.log("err", err);
+          SetError(err?.response?.data.message);
           setLoading(false);
         });
     },
@@ -97,8 +61,36 @@ const Payment = () => {
       enabled: false,
     }
   );
-  console.log(error);
+
   console.log(data);
+  const mutation = useMutation(
+    (newPost) => {
+      return axios.put(
+        `http://localhost:3009/api/fine/single/${TicketNumber}`,
+        newPost
+      );
+    },
+    {
+      onSuccess: (response) => {
+        setOPenDialog(true);
+        setDialogMessage(" Payment Successful Made ");
+        setLoading(false);
+        setHideAmmount(false);
+        setShowButton(false);
+        setHideButton(true);
+        refetch();
+        handlePrint();
+        queryclient.invalidateQueries("transaction");
+      },
+      onError: (error) => {
+        setOPenDialog(true);
+        console.log(error);
+        setDialogMessage(error.message);
+        setLoading(false);
+      },
+    }
+  );
+
   const HandleRequesstTicket = async (event) => {
     event.preventDefault();
     if (TicketNumber.length < 24)
@@ -119,17 +111,23 @@ const Payment = () => {
       setLoading(false);
     }
   };
+  const amountpa = parseInt(data?.fineAmount?.slice(3));
+  const total = amountpa - data?.amountPaid;
+
   const HandlePaymentUpdate = (event) => {
     event.preventDefault();
-
+    setLoading(true);
     try {
-      setHideAmmount(false);
-      setShowButton(false);
-      setHideButton(true);
+      mutation.mutate({
+        amountPaid: data?.amountPaid + parseInt(Price),
+        status: data?.amountPaid === amountpa ? "Compleated" : "Pending",
+      });
     } catch (error) {
       setLoading(false);
     }
   };
+
+  // handle print
 
   return (
     <Box>
@@ -206,6 +204,9 @@ const Payment = () => {
                       size="full"
                       type="text"
                       placeholder="Enter Amount"
+                      onChange={(event) => {
+                        setPrice(event.target.value);
+                      }}
                     />
                   </FormControl>
                 )}
@@ -247,101 +248,19 @@ const Payment = () => {
                 maxWidth: "50%",
               }}
             >
-              {Error}
+              {Erro}
             </Typography>
           </Box>
         </Box>
         {/* detail part */}
-        <Box sx={{ flex: 1, background: color.primary[400] }}>
-          <Typography
-            sx={{
-              textAlign: "center",
-              fontSize: 30,
-              marginTop: 5,
-              fontWeight: 1000,
-            }}
-          >
-            Ticket Info{" "}
-          </Typography>
-          <Divider sx={{ mt: 1 }} />
-
-          <Box sx={{ mt: 5, pl: 10, pr: 10 }}>
-            <Box>
-              {" "}
-              <Stack direction="row" spacing={2}>
-                <Typography>Issue Date: </Typography>
-                <Typography>{data?.createdAt}</Typography>
-              </Stack>
-              <Stack direction="row" spacing={2}>
-                <Typography> Ticket ID : </Typography>
-                <Typography>{data?.id}</Typography>
-              </Stack>
-            </Box>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Number Plate :</Typography>
-              <Typography>{data?.NumberPlat}</Typography>
-            </Stack>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Drivers Licen Number : </Typography>
-              <Typography> {data?.LicenNumber} </Typography>
-            </Stack>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Offence Commited :</Typography>
-              <Typography>{data?.OffenceCommited}</Typography>
-            </Stack>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Offence Location :</Typography>
-              <Typography>Serrekunda </Typography>
-            </Stack>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Charge Amount :</Typography>
-              <Typography>{data?.fineAmount}</Typography>
-            </Stack>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Amount Paid : </Typography>
-              <Typography>GMD 0 </Typography>
-            </Stack>
-            <Stack
-              sx={{ mt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-            >
-              <Typography variant="h6">Remaining Balance :</Typography>
-              <Typography>GMD 200 </Typography>
-            </Stack>
-          </Box>
-          <Divider sx={{ mt: 3 }} />
+        <Box sx={{ flex: 1, background: color.primary[400], width: "25%" }}>
+          {isLoading ? (
+            <Box>loading</Box>
+          ) : error ? (
+            <Box>error</Box>
+          ) : (
+            <PaymentDetails data={data} ref={componentRef} />
+          )}
         </Box>
       </Box>
     </Box>

@@ -1,10 +1,18 @@
-import { Box, Button, Typography, Chip, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Chip,
+  IconButton,
+  Avatar,
+} from "@mui/material";
 import { useTheme } from "@mui/system";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import { Header, WantedAdd } from "../../components";
 import { tokens } from "../../theme";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import ViewWanted from "../../components/ViewWanted";
 const mockDataTeam = [
   {
     id: 1,
@@ -87,6 +95,8 @@ const Wanted = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const [preview, setPreview] = useState();
+  const [showDetails, setShowDetails] = useState(false);
   const columns = [
     { field: "id", headerName: "NO" },
 
@@ -94,9 +104,31 @@ const Wanted = () => {
       field: "name",
       headerName: "Name",
       flex: 1,
+
       cursor: "pointer",
       headerAlign: "left",
       align: "left",
+      renderCell: ({ row: { name } }) => {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              p: 2,
+            }}
+          >
+            <Avatar
+              sx={{
+                borderRadius: 1,
+                width: 55,
+                height: 55,
+                background: colors.greenAccent[100],
+              }}
+            />
+            <Typography variant="h6">{name}</Typography>
+          </Box>
+        ); // payment status
+      },
     },
 
     {
@@ -244,10 +276,13 @@ const Wanted = () => {
       headerName: "Preview",
       headerAlign: "center",
       align: "center",
-      renderCell: ({ row: { id } }) => {
+      renderCell: ({ row }) => {
         return (
           <Box
-            // onClick={() => Navigate(`${id}`)}
+            onClick={() => {
+              setPreview(row);
+              setShowDetails(true);
+            }}
             sx={{
               background:
                 theme.palette.mode === "light"
@@ -264,42 +299,10 @@ const Wanted = () => {
         );
       },
     },
-    // {
-    //   field: "",
-    //   headerName: "Delete",
-    //   renderCell: ({ row: { id } }) => {
-    //     return (
-    //       <Box
-    //         // onClick={() => Navigate(`${id}`)}
-    //         sx={{
-    //           // background:
-    //           //   theme.palette.mode === "light"
-    //           //     ? colors.redAccent[700]
-    //           //     : colors.redAccent[400],
-    //           p: 1,
-    //           cursor: "pointer",
-    //           // color: colors.primary[700],
-    //         }}
-    //       >
-    //         {" "}
-    //         <Button
-    //           sx={{
-    //             mt: 2,
-    //             color: colors.redAccent[400],
-    //           }}
-    //           variant="outlined"
-    //           //   startIcon={<DeleteIcon />}
-    //           //   onClick={() => HandleDelete(id)}
-    //         >
-    //           Delete
-    //         </Button>
-    //       </Box>
-    //     );
-    //   },
-    // },
   ];
 
   const [addWanted, setAddWanted] = useState(false);
+
   return (
     <Box className="Header">
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -329,7 +332,11 @@ const Wanted = () => {
         </IconButton>
 
         {addWanted && <WantedAdd setAddWanted={setAddWanted} />}
+        {showDetails && (
+          <ViewWanted preview={preview} setShowDetails={setShowDetails} />
+        )}
       </Box>
+      {/* <WantedAdd/> */}
       <Box>
         <Box
           m="40px 0 0 0"
@@ -359,7 +366,14 @@ const Wanted = () => {
           }}
         >
           {" "}
-          {<DataGrid pagination rows={mockDataTeam} columns={columns} />}
+          {
+            <DataGrid
+              pagination
+              rows={mockDataTeam}
+              columns={columns}
+              rowHeight={64}
+            />
+          }
         </Box>
       </Box>
     </Box>
