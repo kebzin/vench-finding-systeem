@@ -6,6 +6,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useStateContext } from "../../../context/Contex";
+import BarcodeReader from "react-barcode-reader";
 
 import { tokens } from "../../../theme";
 import { useReactToPrint } from "react-to-print";
@@ -128,9 +129,17 @@ const Payment = () => {
   };
 
   // handle print
+  const Handlescannn = (event) => {
+    setTicketNumber(event);
+    refetch();
+  };
 
   return (
     <Box>
+      <BarcodeReader
+        onScan={(event) => Handlescannn(event)}
+        onError={(error) => SetError(error)}
+      />
       <Box
         sx={{
           display: "flex",
@@ -184,7 +193,12 @@ const Payment = () => {
                     variant="outlined"
                     size="full"
                     type="text"
-                    placeholder="Enter Request Ticket  Number"
+                    placeholder={
+                      TicketNumber === null
+                        ? "Enter Request Ticket  Number"
+                        : null
+                    }
+                    value={TicketNumber}
                     onChange={(event) => {
                       setTicketNumber(event.target.value);
                       SetError(null);
@@ -202,10 +216,11 @@ const Payment = () => {
                       label="Enter Amount"
                       variant="outlined"
                       size="full"
-                      type="text"
+                      type="number"
                       placeholder="Enter Amount"
                       onChange={(event) => {
                         setPrice(event.target.value);
+                        SetError(null);
                       }}
                     />
                   </FormControl>

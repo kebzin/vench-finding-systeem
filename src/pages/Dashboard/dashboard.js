@@ -16,10 +16,12 @@ import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import { useStateContext } from "../../context/Contex";
 import { useAuthContext } from "../../context/AuthContex";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { LoadingButton } from "@mui/lab";
 import { WeekilyDataAnalysys } from "../../pages/index";
+import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import { useQuery, useQueryClient } from "react-query";
 
 const addButtonContainer = {
   position: "fixed",
@@ -52,6 +54,38 @@ const Dashboard = () => {
   const [dateValue, setDateValue] = useState();
 
   // functions
+
+  const Location = useLocation();
+  const AxiousPrivate = useAxiousPrivate();
+  const queryclient = useQueryClient();
+
+  // functions
+
+  const { isLoading, error, data, refetch } = useQuery(
+    "transaction",
+    async () =>
+      await AxiousPrivate.get(
+        user?.Officers?.role === "Employee"
+          ? `/fine/fine/${user?.Officers?.id}`
+          : `/fine/fine/`
+      )
+        .then((result) => result.data)
+        .catch((err) => console.log(err))
+  );
+  if (isLoading) {
+    return (
+      <Box>
+        <Typography>loading</Typography>
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box>
+        <Typography>error</Typography>
+      </Box>
+    );
+  }
   const HandleDate = (event) => {
     setDateValue(event.target.value);
   };
@@ -59,6 +93,11 @@ const Dashboard = () => {
   const ToggleAddFunction = (event) => {
     setToggleAdd((previouseState) => !previouseState);
   };
+
+  //length of the total fine
+
+  const PendingLength = data?.filter((element) => element.status === "Pending");
+  const Compleate = data?.filter((element) => element.status === "Compleated");
 
   const loginstatus = "Administrator";
   return (
@@ -86,15 +125,15 @@ const Dashboard = () => {
                 justifyContent="center"
               >
                 <StatBox
-                  title="12,361"
+                  title={data.length}
                   subtitle={
                     loginstatus === "Administrator"
                       ? "Total Fines"
                       : "Number of Fines I Made"
                   }
                   progress="0.7"
-                  increase="+14"
-                  complete={"+83"}
+                  increase={`+ ${PendingLength.length}`}
+                  complete={`+ ${Compleate.length}`}
                   icon={
                     <TrafficIcon
                       sx={{ color: color.greenAccent[600], fontSize: "26px" }}
@@ -112,7 +151,8 @@ const Dashboard = () => {
                   title="431,225"
                   subtitle="Revenue Generated"
                   progress="0.50"
-                  increase="+21%"
+                  increase={`+ ${PendingLength.length}`}
+                  complete={`+ ${Compleate.length}`}
                   icon={
                     <PointOfSaleIcon
                       sx={{ color: color.greenAccent[600], fontSize: "26px" }}

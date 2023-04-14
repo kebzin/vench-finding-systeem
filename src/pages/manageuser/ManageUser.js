@@ -255,9 +255,16 @@ const ManageUser = () => {
       renderCell: ({ row: { status } }) => {
         return (
           <Box display="flex" alignItems="center">
-            {status === "active" ? (
+            {/* {status === "Active" ? (
               <VerifiedUserIcon sx={{ color: colors.greenAccent[500] }} />
-            ) : status === "pending" ? (
+            ) : status === "Pending" ? (
+              <GppMaybeIcon sx={{ color: colors.blueAccent[500] }} />
+            ) : (
+              <GppBadIcon sx={{ color: colors.redAccent[400] }} />
+            )} */}
+            {status === "Active" ? (
+              <VerifiedUserIcon sx={{ color: colors.greenAccent[500] }} />
+            ) : status === "Pending" ? (
               <GppMaybeIcon sx={{ color: colors.blueAccent[500] }} />
             ) : (
               <GppBadIcon sx={{ color: colors.redAccent[400] }} />
@@ -266,9 +273,9 @@ const ManageUser = () => {
             <Typography
               sx={{
                 color:
-                  status === "suspended"
+                  status === "Suspended"
                     ? colors.redAccent[400]
-                    : status === "pending"
+                    : status === "Pending"
                     ? colors.blueAccent[400]
                     : colors.greenAccent[400],
                 ml: 1,
@@ -294,9 +301,9 @@ const ManageUser = () => {
               color:
                 status === "suspended"
                   ? colors.redAccent[400]
-                  : status === "pending"
-                  ? colors.blueAccent[400]
-                  : colors.greenAccent[400],
+                  : status === "Active"
+                  ? colors.greenAccent[400]
+                  : colors.blueAccent[400],
             }}
           >
             {status}

@@ -48,7 +48,7 @@ const UserProfile = () => {
   //data fetching
   const { isLoading, data, error, refetch } = useQuery("user", async () => {
     return await AxiousPrivate.get(`/officers/officers/${id}`)
-      .then((res) => res.data)
+      .then((res) => res?.data)
       .catch((error) => {
         return error.message;
       });
@@ -85,7 +85,7 @@ const UserProfile = () => {
         role: AdminstratorStatus === true ? "Administrator" : "Employee",
       });
       setOPenDialog(true);
-      setDialogMessage(update.data.message);
+      setDialogMessage(update.data?.message);
     } catch (error) {
       setOPenDialog(true);
       setDialogMessage(error.message);
@@ -96,10 +96,14 @@ const UserProfile = () => {
     try {
       setEvailVerify(event.target.checked);
       const verify = await AxiousPrivate.put(`/officers/officers/${id}`, {
-        status: emailVerify === true ? "Active" : "Pending",
+        status: "Active",
       });
+      setOPenDialog(true);
+      setDialogMessage(verify.data?.message);
     } catch (error) {
       console.log(error.message);
+      setOPenDialog(true);
+      setDialogMessage(error.message);
     }
   };
 
@@ -107,7 +111,7 @@ const UserProfile = () => {
     try {
       setSupemdAccount(event.target.checked);
       const suspend = await AxiousPrivate.put(`/officers/officers/${id}`, {
-        status: suspemdAccount === true ? "Suspended" : "Active",
+        status: "Suspended",
       });
       setOPenDialog(true);
       setDialogMessage(suspend.data.message);
