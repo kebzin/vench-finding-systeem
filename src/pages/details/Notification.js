@@ -49,9 +49,8 @@ const Notification = () => {
   );
 
   useEffect(() => {
-    const lastIndex = data.length - 1;
-    const result = data.find((element, index) => index === lastIndex);
-    console.log(result);
+    const lastIndex = data?.length - 1;
+    const result = data?.find((element, index) => index === lastIndex);
 
     // const HandleUpdateMessage = AxiousPrivate.put(`/message/messages/${id}`);
   }, [data]);

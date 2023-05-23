@@ -3,7 +3,11 @@ import {
   Avatar,
   Box,
   Divider,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Typography,
 } from "@mui/material";
@@ -17,11 +21,10 @@ import TrafficIcon from "@mui/icons-material/Traffic";
 import { useStateContext } from "../../context/Contex";
 import { useAuthContext } from "../../context/AuthContex";
 import { useLocation, useNavigate } from "react-router-dom";
-import { DateTimePicker } from "@mui/x-date-pickers";
-import { LoadingButton } from "@mui/lab";
 import { WeekilyDataAnalysys } from "../../pages/index";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useQuery, useQueryClient } from "react-query";
+import { GMD_CURRENC_FORMAT } from "../../global/GlobalVeriableFormat";
 
 const addButtonContainer = {
   position: "fixed",
@@ -34,7 +37,13 @@ const addButtonContainer = {
 const recentTransaction = [{}, {}, {}, {}, {}];
 
 const Dashboard = () => {
-  const { setIsSidebar, setTopbar } = useStateContext();
+  const {
+    setIsSidebar,
+    setTopbar,
+    setOPenDialog,
+    setDialogMessage,
+    setErrorIcon,
+  } = useStateContext();
   const { user } = useAuthContext();
   const Navigate = useNavigate();
   useEffect(() => {
@@ -47,17 +56,24 @@ const Dashboard = () => {
 
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
-  const [status, setStatus] = useState("client");
   const [toggleAdd, setToggleAdd] = useState(true);
+
+  // veribles
+  const date = Date.now(); // getting the date
+  const todayMonth = new Date(date); // getting the full date of the current year
 
   // states
   const [dateValue, setDateValue] = useState();
+  const [month, setMonth] = useState(todayMonth.getMonth()); // the current month
+  const [year, setYear] = useState(todayMonth.getFullYear()); // the current year
+  const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
+  const [TopOfficersYear, setTopOfficersYear] = useState(
+    todayMonth.getFullYear() // the current year
+  );
 
-  // functions
+  // hooks
 
-  const Location = useLocation();
-  const AxiousPrivate = useAxiousPrivate();
-  const queryclient = useQueryClient();
+  const AxiousPrivate = useAxiousPrivate(); // hooks that take the user accesstoken  to validate befor sending the request
 
   // functions
 
@@ -82,24 +98,72 @@ const Dashboard = () => {
   if (error) {
     return (
       <Box>
-        <Typography>error</Typography>
+        <Typography>{refetch()}</Typography>
       </Box>
     );
   }
-  const HandleDate = (event) => {
-    setDateValue(event.target.value);
+
+  // filtering to show the data base on the user selection date
+  const currentMonthAndYear = data?.filter((element) =>
+    element?.createdAt?.startsWith(`${year}-${month}`)
+  );
+
+  const HandleMonthFilter = (event) => {
+    setMonth(event.target.value);
+    if (month > todayMonth.getMonth()) {
+      // checking if the usere click on the a particulare month that is yet to come
+      setOPenDialog(true);
+      setErrorIcon(true);
+      return setDialogMessage(
+        // if thats the case then the user will be notefied that, that particuler month is not valid for data processing to be perform
+        `OOps this month you selected is yet to come. No data processing will be performed`
+      );
+    }
+  };
+  // adding the total amount of all the fine including pending
+  var TotalAmount = 0;
+  for (let index = 0; index < data?.length; index++) {
+    const element = data[index]?.fineAmount.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
+    if (!Number.isNaN(element)) {
+      // add a check for NaN values
+      TotalAmount += parseFloat(element);
+      console.log("total", (TotalAmount += parseFloat(element)));
+    }
+  }
+
+  const HandleYer = (event) => {
+    setYear(event.target.value);
+    if (year > todayMonth.getFullYear()) {
+      // checking if the usere click on the a particulare month that is yet to come
+      setOPenDialog(true);
+      setErrorIcon(true);
+      return setDialogMessage(
+        // if thats the case then the user will be notefied that, that particuler month is not valid for data processing to be perform
+        `OOps this year ${year}  selected is yet to come. No data processing will be performed`
+      );
+    }
   };
 
+  // funtion for toggling the visibility of of ther add component in the client side
   const ToggleAddFunction = (event) => {
     setToggleAdd((previouseState) => !previouseState);
   };
 
-  //length of the total fine
+  // filtering the find data returned by the server to get all the pending from the list and none pending from the list
+  const PendingLength = data?.filter(
+    (element) => element?.status === "Pending"
+  );
 
-  const PendingLength = data?.filter((element) => element.status === "Pending");
-  const Compleate = data?.filter((element) => element.status === "Compleated");
+  const Compleate = data?.filter((element) => element?.status === "Completed");
 
-  const loginstatus = "Administrator";
+  let CompleFineTotal = 0;
+  for (let index = 0; index < Compleate?.length; index++) {
+    const element = Compleate[index].fineAmount?.replace(/[^\d.-]/g, "");
+    if (!isNaN(element)) {
+      CompleFineTotal += parseFloat(element);
+    }
+  }
+
   return (
     <React.Fragment>
       {/* dashboard content */}
@@ -108,7 +172,8 @@ const Dashboard = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
         </Box>
-        {user?.Officers?.role === "Administrator" ? (
+        {user?.Officers?.role === "Administrator" ||
+        user?.Officers?.role === "Sub Admin" ? (
           <Box>
             <Box
               className="transition"
@@ -125,15 +190,15 @@ const Dashboard = () => {
                 justifyContent="center"
               >
                 <StatBox
-                  title={data.length}
+                  title={data?.length}
                   subtitle={
-                    loginstatus === "Administrator"
+                    user?.Officers?.role === "Administrator"
                       ? "Total Fines"
                       : "Number of Fines I Made"
                   }
-                  progress="0.7"
-                  increase={`+ ${PendingLength.length}`}
-                  complete={`+ ${Compleate.length}`}
+                  progress={`0.${PendingLength?.length}`}
+                  increase={`+ ${PendingLength?.length}`}
+                  complete={`+ ${Compleate?.length}`}
                   icon={
                     <TrafficIcon
                       sx={{ color: color.greenAccent[600], fontSize: "26px" }}
@@ -148,9 +213,9 @@ const Dashboard = () => {
                 justifyContent="center"
               >
                 <StatBox
-                  title="431,225"
-                  subtitle="Revenue Generated"
-                  progress="0.50"
+                  title={GMD_CURRENC_FORMAT.format(CompleFineTotal)}
+                  subtitle="Revenue Generated from Completered "
+                  progress={`0.${PendingLength.length}`}
                   increase={`+ ${PendingLength.length}`}
                   complete={`+ ${Compleate.length}`}
                   icon={
@@ -167,10 +232,12 @@ const Dashboard = () => {
                 justifyContent="center"
               >
                 <StatBox
-                  title="431,225"
-                  subtitle="Sales Obtained"
-                  progress="0.50"
-                  increase="+21%"
+                  title={`${GMD_CURRENC_FORMAT.format(TotalAmount)}`} // formating the total amount to the gmd currency format
+                  subtitle="Total Revenue from All"
+                  // progress="0.50"
+                  // increase="+21%"
+                  increase={`+ ${PendingLength.length}`}
+                  complete={`+ ${Compleate.length}`}
                   icon={
                     <PointOfSaleIcon
                       sx={{ color: color.greenAccent[600], fontSize: "26px" }}
@@ -199,9 +266,74 @@ const Dashboard = () => {
               <Box
                 sx={{ mt: 2, background: color.primary[400], overflow: "auto" }}
               >
-                <Typography sx={{ p: 1.5, fontSize: 20 }}>
-                  This Month Data Analysis
-                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  {" "}
+                  <Typography sx={{ p: 1.5, fontSize: 20 }}>
+                    This Month Data Analysis
+                  </Typography>
+                  <FormControl sx={{ m: 1, minWidth: 80 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">
+                      Monthly
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-autowidth-label"
+                      id="demo-simple-select-autowidth"
+                      value={month}
+                      onChange={(event) => HandleMonthFilter(event)}
+                      autoWidth
+                      label="Age"
+                    >
+                      <MenuItem value={month} defaultValue={month}>
+                        {month}
+                      </MenuItem>
+                      <MenuItem value={`01`}>Jan</MenuItem>
+                      <MenuItem value={`02`}>Feb</MenuItem>
+                      <MenuItem value={`03`}> Mar</MenuItem>
+                      <MenuItem value={`04`}>Apr</MenuItem>
+                      <MenuItem value={`05`}>MAy</MenuItem>
+                      <MenuItem value={`06`}> Jun </MenuItem>
+                      <MenuItem value={`07`}>Jul</MenuItem>
+                      <MenuItem value={`08`}>Augt</MenuItem>
+                      <MenuItem value={`09`}> Sept </MenuItem>
+                      <MenuItem value={`10`}>Oct</MenuItem>
+                      <MenuItem value={`11`}>Nov</MenuItem>
+                      <MenuItem value={`12`}> Dec</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl sx={{ m: 1, minWidth: 80 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">
+                      Year
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-autowidth-label"
+                      id="demo-simple-select-autowidth"
+                      value={year}
+                      onChange={(event) => HandleYer(event)}
+                      autoWidth
+                      label="Year"
+                    >
+                      <MenuItem value={year} defaultValue={year}>
+                        {year}
+                      </MenuItem>
+                      <MenuItem value={2023}>2023</MenuItem>
+                      <MenuItem value={2024}>2024</MenuItem>
+                      <MenuItem value={2025}>2025</MenuItem>
+                      <MenuItem value={2026}>2026</MenuItem>
+                      <MenuItem value={2027}>2027</MenuItem>
+                      <MenuItem value={2028}>2028</MenuItem>
+                      <MenuItem value={2029}>2029</MenuItem>
+                      <MenuItem value={2030}>2030</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+
                 <Box>
                   <WeekilyDataAnalysys />
                 </Box>
@@ -294,23 +426,62 @@ const Dashboard = () => {
                   <Typography sx={{ color: color.blueAccent[200], mb: 1 }}>
                     Filter By year or Month
                   </Typography>
-                  <DateTimePicker
-                    elabel="Filter Base on date"
+                  {/*  date filter  */}
 
-                    // value={value}
-                    // onChange={(newValue) => setValue(newValue)}
-                  />
-                  <LoadingButton
-                    size="larger"
-                    color="primary"
-                    // onClick={handleClick}
-                    // loading={loading}
-                    loadingPosition="end"
-                    variant="contained"
-                    style={{ backgroundColor: color.greenAccent[600] }}
-                  >
-                    <span style={{ padding: "10px" }}>Fetch</span>
-                  </LoadingButton>
+                  <FormControl sx={{ m: 1, minWidth: 80 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">
+                      Monthly
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-autowidth-label"
+                      id="demo-simple-select-autowidth"
+                      value={month}
+                      onChange={(event) => HandleMonthFilter(event)}
+                      autoWidth
+                      label="Age"
+                    >
+                      <MenuItem value={month} defaultValue={month}>
+                        {month}
+                      </MenuItem>
+                      <MenuItem value={`01`}>Jan</MenuItem>
+                      <MenuItem value={`02`}>Feb</MenuItem>
+                      <MenuItem value={`03`}> Mar</MenuItem>
+                      <MenuItem value={`04`}>Apr</MenuItem>
+                      <MenuItem value={`05`}>MAy</MenuItem>
+                      <MenuItem value={`06`}> Jun </MenuItem>
+                      <MenuItem value={`07`}>Jul</MenuItem>
+                      <MenuItem value={`08`}>Augt</MenuItem>
+                      <MenuItem value={`09`}> Sept </MenuItem>
+                      <MenuItem value={`10`}>Oct</MenuItem>
+                      <MenuItem value={`11`}>Nov</MenuItem>
+                      <MenuItem value={`12`}> Dec</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl sx={{ m: 1, minWidth: 80 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">
+                      Year
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-autowidth-label"
+                      id="demo-simple-select-autowidth"
+                      value={year}
+                      onChange={(event) => HandleYer(event)}
+                      autoWidth
+                      label="Year"
+                    >
+                      <MenuItem value={year} defaultValue={year}>
+                        {year}
+                      </MenuItem>
+                      <MenuItem value={2023}>2023</MenuItem>
+                      <MenuItem value={2024}>2024</MenuItem>
+                      <MenuItem value={2025}>2025</MenuItem>
+                      <MenuItem value={2026}>2026</MenuItem>
+                      <MenuItem value={2027}>2027</MenuItem>
+                      <MenuItem value={2028}>2028</MenuItem>
+                      <MenuItem value={2029}>2029</MenuItem>
+                      <MenuItem value={2030}>2030</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
               </Box>
               <Box>
@@ -397,17 +568,9 @@ const Dashboard = () => {
       </Box>
 
       <Box>
-        {/* add botten */}
         {user?.Officers?.role === "Administrator"
           ? null
           : toggleAdd && <MakeFine setToggleAdd={setToggleAdd} />}
-        {user?.Officers?.role === "Administrator" ? null : (
-          <Box sx={addButtonContainer} onClick={ToggleAddFunction}>
-            <IconButton sx={{ p: 3 }}>
-              <AddCircleRoundedIcon sx={{ fontSize: 44 }} />
-            </IconButton>
-          </Box>
-        )}
       </Box>
     </React.Fragment>
   );

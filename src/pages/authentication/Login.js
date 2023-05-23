@@ -27,6 +27,7 @@ const Login = ({}) => {
     setIsSidebar(false);
     setTopbar(false);
     setError(null);
+    setUser(null);
   }, []);
 
   // states
@@ -94,9 +95,7 @@ const Login = ({}) => {
         borderRadius=".7rem "
         backgroundColor={color.primary}
         boxShadow="rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
-        border={`1px solid ${
-          theme.palette.mode === "dark" ? color.greenAccent[400] : null
-        }`}
+        border={`1px solid ${color.greenAccent[400]}`}
       >
         <h1 style={{ textAlign: "center", fontSize: 40, fontWeight: "bolder" }}>
           Login
@@ -147,6 +146,7 @@ const Login = ({}) => {
                   mt: 1,
                   color: color.redAccent[400],
                   textAlign: "left",
+                  border: "none",
                 }}
                 variant="outlined"
                 onClick={() => Navigate("/forgetpassword")}

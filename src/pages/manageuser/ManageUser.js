@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
-import { Avatar, LinearProgress, Typography } from "@mui/material";
+import { Avatar, Button, LinearProgress, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "../../components";
 import { tokens } from "../../theme";
 import { DataGrid } from "@mui/x-data-grid";
@@ -12,13 +12,13 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import TimeAgo from "javascript-time-ago";
-
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import en from "javascript-time-ago/locale/en.json";
 import ru from "javascript-time-ago/locale/ru.json";
 import ReactTimeAgo from "react-time-ago";
-
-TimeAgo.addDefaultLocale(en);
-TimeAgo.addLocale(ru);
+import Adduser from "./Adduser";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useStateContext } from "../../context/Contex";
 
 // const mockDataContacts = [
 //   {
@@ -156,23 +156,15 @@ TimeAgo.addLocale(ru);
 // ];
 
 const ManageUser = () => {
+  const [addUsers, setAddeUsers] = useState();
   const Navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
+  const [loading, setLoading] = useState(false);
 
   // hooks
   const AxiousPrivate = useAxiousPrivate();
-
-  // fet the user data
-  // const { isLoading, data, error, refetch } = useQuery("user", async () => {
-  //   try {
-  //     const res = await AxiousPrivate.get("/officers/officers");
-  //     res.data;
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // });
-
   const { isLoading, data, error, refetch } = useQuery("users", async () => {
     try {
       return await AxiousPrivate.get("/officers/officers")
@@ -183,6 +175,17 @@ const ManageUser = () => {
     }
   });
 
+  const HandleDelete = ({ _id, fines }) => {
+    console.log("identy", fines);
+    console.log("identy", _id);
+    if (fines.length > 0) {
+      setErrorIcon(true);
+      setOPenDialog(true);
+      setDialogMessage(
+        `This Account has ${fines.length} made fines . Deleting this Account will result in deleting all transaction related to this account `
+      );
+    }
+  };
   const columns = [
     { field: "_id", headerName: "NO" },
     {
@@ -311,6 +314,7 @@ const ManageUser = () => {
         );
       },
     },
+
     {
       field: "createdAt",
       headerName: "Join At",
@@ -330,9 +334,30 @@ const ManageUser = () => {
       field: "fines",
       headerName: "No of Fines",
       flex: 1,
+      marginl: 30,
       align: "center",
       renderCell: ({ row: { fines } }) => {
         return <Typography>{fines.length}</Typography>; // number of fine mad by the user
+      },
+    },
+
+    {
+      field: "Delete", // this field is talking about the data
+      headerName: "Delete",
+      headerAlign: "center",
+      flex: 1,
+      align: "center",
+      renderCell: ({ row: { _id, fines } }) => {
+        return (
+          <Button
+            sx={{
+              color: colors.redAccent[400],
+            }}
+            variant="outlined"
+            startIcon={<DeleteForeverIcon />}
+            onClick={() => HandleDelete({ _id, fines })}
+          ></Button>
+        );
       },
     },
   ];
@@ -345,6 +370,21 @@ const ManageUser = () => {
           subtitle="Here are the list of all the avelable users, To see more information about a paticuler user click on them. "
         />
       </Box>
+      <Button
+        sx={{
+          mt: 1,
+          ml: 3,
+          position: "fixed",
+          right: 100,
+          color: colors.greenAccent[400],
+        }}
+        variant="outlined"
+        startIcon={<GroupAddIcon />}
+        onClick={() => setAddeUsers((prev) => !prev)}
+      >
+        Add Users
+      </Button>
+      {addUsers && <Adduser setAddeUsers={setAddeUsers} />}
       <Box>
         <Box
           m="40px 0 0 0"

@@ -31,7 +31,7 @@ const CrimePrcingUpdate = ({ updateitem, setUpdateOpen }) => {
   //     Navigate("/login");
   //   }
   // }, []);
-  console.log(updateitem, setUpdateOpen);
+
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,6 @@ const CrimePrcingUpdate = ({ updateitem, setUpdateOpen }) => {
   const { setDialogMessage, setToggleAdd, setOPenDialog } = useStateContext();
 
   const AxiousPrivate = useAxiousPrivate();
-
   const queryclient = useQueryClient();
 
   const mutation = useMutation(

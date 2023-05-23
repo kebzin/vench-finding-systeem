@@ -20,7 +20,7 @@ const StatBox = ({
         <Box>
           {icon}
           <Typography
-            variant="h4"
+            variant="h5"
             fontWeight="bold"
             sx={{ color: colors.grey[100] }}
           >

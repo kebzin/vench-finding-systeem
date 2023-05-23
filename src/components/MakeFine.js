@@ -5,6 +5,7 @@ import {
   Box,
   Chip,
   FormControl,
+  InputLabel,
   MenuItem,
   Select,
   Stack,
@@ -44,7 +45,7 @@ const MakeFine = ({ setToggleAdd }) => {
   // states
   const [loading, setLoading] = useState(false);
   const [NumberPlat, setNumberPlat] = useState("");
-  const [LicenNumber, setLicenNumber] = useState(null);
+  const [LicenNumber, setLicenNumber] = useState("");
   const [DriverName, setDriverName] = useState("");
   const [OffenceCommited, setOffenceCommited] = useState();
   const [fineAmount, setfineAmount] = useState("");
@@ -53,7 +54,7 @@ const MakeFine = ({ setToggleAdd }) => {
   const [wanted, setwanted] = useState(false);
   const [category, setcategory] = useState();
 
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
 
   const [latituid, setLatituid] = useState(null);
   const [longitituid, setLongitituid] = useState(null);
@@ -109,6 +110,7 @@ const MakeFine = ({ setToggleAdd }) => {
       },
       onError: (error) => {
         setOPenDialog(true);
+        setErrorIcon(true);
         console.log(error);
         setDialogMessage(error.message);
 
@@ -117,7 +119,23 @@ const MakeFine = ({ setToggleAdd }) => {
     }
   );
 
-  const HandleFineSubmit = async () => {
+  const HandleFineSubmit = async (event) => {
+    event.preventDefault();
+    if (
+      // LicenNumber.length < 3 &&
+      // fineAmount.length === 0 &&
+      // fineAmount === "" &&
+      NumberPlat.length < 3
+      // DriverName.length === 0
+    ) {
+      return (
+        setOPenDialog(true),
+        setErrorIcon(true),
+        setDialogMessage("All file are Required"),
+        setLoading(false)
+      );
+    }
+
     try {
       setLoading(true);
       mutation.mutate({
@@ -181,7 +199,7 @@ const MakeFine = ({ setToggleAdd }) => {
         ? COLORS.primary[400]
         : "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
     border: `1px solid 
-        ${theme.palette.mode === "dark" ? COLORS.greenAccent[400] : null}`,
+        ${COLORS.greenAccent[400]}`,
   };
 
   return (
@@ -196,14 +214,14 @@ const MakeFine = ({ setToggleAdd }) => {
               sx={{ width: "100%" }}
               variant="outlined"
               onChange={(event) => setNumberPlat(event.target.value)}
+              value={NumberPlat}
             >
               <TextField
                 id="outlined-basic"
-                label="Enter Number Plate"
                 variant="outlined"
                 size="full"
-                type="email"
-                value={NumberPlat}
+                type="text"
+                label="Enter Number Plate"
               />
             </FormControl>
 
@@ -219,6 +237,7 @@ const MakeFine = ({ setToggleAdd }) => {
                 variant="outlined"
                 size="full"
                 type="text"
+                label=" Enter Dreiver Licen Number"
               />
             </FormControl>
 
@@ -326,6 +345,7 @@ const MakeFine = ({ setToggleAdd }) => {
                   borderRadius: "5px",
                   placeContent: "center",
                 }}
+                label="Enter Some Descriptions..."
                 minRows={2}
                 placeholder={"Enter some Describtion"}
                 onChange={(event) => setfineDescription(event.target.value)}

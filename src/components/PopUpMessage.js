@@ -5,16 +5,25 @@ import { tokens } from "../theme";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { LoadingButton } from "@mui/lab";
 import { useStateContext } from "../context/Contex";
+import ErrorIcon from "@mui/icons-material/Error";
 
 const PopUpMessage = ({ message }) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
 
-  const { OpenDialog, setOPenDialog, dialogMessage } = useStateContext();
-  console.log("dialog", OpenDialog);
+  const { setOPenDialog, dialogMessage, errorIcon, setErrorIcon } =
+    useStateContext();
+
   const HandleClick = () => {
     setOPenDialog(false);
+    setErrorIcon(false);
   };
+  function insertLineBreaks(text, maxLength) {
+    const regex = new RegExp(`(.{1,${maxLength}})(\\s|$)`, "g");
+    return text.replace(regex, "$1\n");
+  }
+
+  const BreakText = insertLineBreaks(dialogMessage, 50);
   return (
     <React.Fragment>
       <Box
@@ -50,14 +59,31 @@ const PopUpMessage = ({ message }) => {
             textAlign: "center",
           }}
         >
-          <CheckCircleIcon
-            sx={{
-              color: color.greenAccent[500],
-              textAlign: "center",
-              fontSize: 70,
-            }}
-          />
-          <Typography>{dialogMessage}</Typography>
+          {errorIcon === true ? (
+            <Typography sx={{ color: color.redAccent[500] }}>Error</Typography>
+          ) : (
+            <Typography sx={{ color: color.greenAccent[500] }}>
+              Successed
+            </Typography>
+          )}
+          {errorIcon === true ? (
+            <ErrorIcon
+              sx={{
+                color: color.redAccent[500],
+                textAlign: "center",
+                fontSize: 70,
+              }}
+            />
+          ) : (
+            <CheckCircleIcon
+              sx={{
+                color: color.greenAccent[500],
+                textAlign: "center",
+                fontSize: 70,
+              }}
+            />
+          )}
+          <Typography>{BreakText}</Typography>
           <LoadingButton
             size="larger"
             color="primary"

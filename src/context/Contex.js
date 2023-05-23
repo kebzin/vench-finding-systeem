@@ -19,6 +19,7 @@ const ContextProvider = ({ children }) => {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [toggleDeleteMessage, setToggleDeleteMessage] = useState("");
   const [callfunctions, setCallFunctions] = useState(false);
+  const [errorIcon, setErrorIcon] = useState(false);
 
   // click function
   const HandleClick = (clicked) => {
@@ -53,6 +54,8 @@ const ContextProvider = ({ children }) => {
         setToggleDeleteMessage,
         callfunctions,
         setCallFunctions,
+        errorIcon,
+        setErrorIcon,
       }}
     >
       {children}

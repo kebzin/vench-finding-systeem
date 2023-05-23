@@ -4,13 +4,13 @@ import { Box, FormControl, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useStateContext } from "../../../context/Contex";
 import BarcodeReader from "react-barcode-reader";
 
 import { tokens } from "../../../theme";
 import { useReactToPrint } from "react-to-print";
 import PaymentDetails from "./paymentDetails";
+import { useNavigate } from "react-router-dom";
 
 const Payment = () => {
   // states
@@ -33,7 +33,7 @@ const Payment = () => {
   const [showButton, setShowButton] = useState(false);
   const [loading, setLoading] = useState(false);
   const [Erro, SetError] = useState("");
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -72,15 +72,15 @@ const Payment = () => {
       );
     },
     {
-      onSuccess: (response) => {
+      onSuccess: async (response) => {
         setOPenDialog(true);
         setDialogMessage(" Payment Successful Made ");
         setLoading(false);
         setHideAmmount(false);
         setShowButton(false);
         setHideButton(true);
-        refetch();
-        handlePrint();
+        await refetch();
+        setTicketNumber(null);
         queryclient.invalidateQueries("transaction");
       },
       onError: (error) => {
@@ -112,16 +112,37 @@ const Payment = () => {
       setLoading(false);
     }
   };
-  const amountpa = parseInt(data?.fineAmount?.slice(3));
-  const total = amountpa - data?.amountPaid;
+  const amountpa = parseInt(data?.fineAmount?.replace(/[^\d.-]/g, "")); // extract the numerical value from the string
 
+  console.log(amountpa);
   const HandlePaymentUpdate = (event) => {
     event.preventDefault();
     setLoading(true);
+    //  const amountpaided = data?.amountPaid?.replace(/[^\d.-]/g, "")
+
+    if (typeof parseInt(Price) === "string") {
+      return (
+        setErrorIcon(true), //
+        setOPenDialog(true),
+        setDialogMessage("Price most be a Number "),
+        setLoading(false)
+      );
+    }
+    const CheckAmount = data?.amountPaid + parseInt(Price);
+    if (CheckAmount > parseInt(amountpa)) {
+      return (
+        setErrorIcon(true), //
+        setOPenDialog(true),
+        setDialogMessage(
+          "The amount you are trying to paid is more than the amount Charged to Pay"
+        ),
+        setLoading(false)
+      );
+    }
     try {
       mutation.mutate({
         amountPaid: data?.amountPaid + parseInt(Price),
-        status: data?.amountPaid === amountpa ? "Compleated" : "Pending",
+        status: CheckAmount === amountpa ? "Completed" : "Pending",
       });
     } catch (error) {
       setLoading(false);
@@ -210,6 +231,7 @@ const Payment = () => {
                     sx={{ m: 1, width: "100%" }}
                     variant="outlined"
                     className="imageAinimation"
+                    type="number"
                   >
                     <TextField
                       id="outlined-basic"
@@ -240,18 +262,31 @@ const Payment = () => {
                   </LoadingButton>
                 )}
                 {showButton && (
-                  <LoadingButton
-                    sx={{ m: 1 }}
-                    size="larger"
-                    color="primary"
-                    onClick={HandlePaymentUpdate}
-                    loading={loading}
-                    loadingPosition="end"
-                    variant="contained"
-                    style={{ backgroundColor: color.greenAccent[600] }}
-                  >
-                    <span style={{ padding: "10px" }}>Make Payment</span>
-                  </LoadingButton>
+                  <Box>
+                    <LoadingButton
+                      sx={{ m: 1 }}
+                      size="larger"
+                      color="primary"
+                      onClick={HandlePaymentUpdate}
+                      loading={loading}
+                      loadingPosition="end"
+                      variant="contained"
+                      style={{ backgroundColor: color.greenAccent[600] }}
+                    >
+                      <span style={{ padding: "10px" }}>Make Payment</span>
+                    </LoadingButton>
+                    <LoadingButton
+                      sx={{ m: 1 }}
+                      size="larger"
+                      color="primary"
+                      onClick={handlePrint}
+                      loadingPosition="end"
+                      variant="contained"
+                      style={{ backgroundColor: color.greenAccent[600] }}
+                    >
+                      <span style={{ padding: "10px" }}>Print Recit</span>
+                    </LoadingButton>
+                  </Box>
                 )}
               </form>
             </Box>
@@ -274,7 +309,7 @@ const Payment = () => {
           ) : error ? (
             <Box>error</Box>
           ) : (
-            <PaymentDetails data={data} ref={componentRef} />
+            <PaymentDetails data={data} ref={componentRef} Price={Price} />
           )}
         </Box>
       </Box>

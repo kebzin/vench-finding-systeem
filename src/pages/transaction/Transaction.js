@@ -14,10 +14,7 @@ import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useStateContext } from "../../context/Contex";
 import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
-import en from "javascript-time-ago/locale/en.json";
-import ru from "javascript-time-ago/locale/ru.json";
 import ReactTimeAgo from "react-time-ago";
-import TimeAgo from "javascript-time-ago";
 
 // TimeAgo.addDefaultLocale(en);
 // TimeAgo.addLocale(ru);
@@ -48,8 +45,10 @@ const Transaction = () => {
   );
 
   const mutation = useMutation(
-    (newPost) => {
-      return AxiousPrivate.delete(`/fine/fine/${newPost.id}`, newPost);
+    ({ id, fineAmount, officerId }) => {
+      return AxiousPrivate.delete(`/fine/fine/${id}`, {
+        data: { fineAmount, officerId },
+      });
     },
     {
       onSuccess: (res) => {
@@ -64,11 +63,17 @@ const Transaction = () => {
       },
     }
   );
-  const HandleDelete = (id) => {
-    mutation.mutate({
-      id: id,
-      officerId: user?.Officers?.id,
-    });
+  const HandleDelete = (id, event) => {
+    event.preventDefault();
+    try {
+      mutation.mutate({
+        id: id,
+        officerId: user?.Officers?.id,
+        fineAmount: "string",
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const columns = [
@@ -175,7 +180,7 @@ const Transaction = () => {
             sx={{
               fontSize: "12px",
               color:
-                status === "pending"
+                status === "Pending"
                   ? colors.redAccent[400]
                   : status === "Completed"
                   ? colors.greenAccent[400]
@@ -236,7 +241,7 @@ const Transaction = () => {
               }}
               variant="outlined"
               startIcon={<DeleteIcon />}
-              onClick={() => HandleDelete(id)}
+              onClick={(event) => HandleDelete(id, event)}
             >
               Delete
             </Button>
@@ -304,7 +309,12 @@ const Transaction = () => {
             ) : error ? (
               "error"
             ) : (
-              <DataGrid pagination rows={data} columns={columns} />
+              <DataGrid
+                pagination
+                rows={data}
+                columns={columns}
+                editMode={"row"}
+              />
             )}
           </Box>
         </Box>

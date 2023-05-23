@@ -352,6 +352,9 @@ const UserProfile = () => {
                     sx={{ px: 2, py: 1 }}
                   >
                     <Typography>Account Status</Typography>
+                    <Typography style={{ color: color.greenAccent[500] }}>
+                      {data?.status}
+                    </Typography>
                     <Switch
                       color="secondary"
                       checked={accountStatus}
@@ -368,6 +371,9 @@ const UserProfile = () => {
                     sx={{ px: 2, py: 1 }}
                   >
                     <Typography>Verify Email</Typography>
+                    <Typography style={{ color: color.greenAccent[500] }}>
+                      {data?.status}
+                    </Typography>
                     <Switch
                       color="secondary"
                       onChange={HandleEmailVerify}
@@ -383,6 +389,9 @@ const UserProfile = () => {
                     sx={{ px: 2, py: 1 }}
                   >
                     <Typography>Suspend Account</Typography>
+                    <Typography style={{ color: color.greenAccent[500] }}>
+                      {data?.status}
+                    </Typography>
                     <Switch
                       color="secondary"
                       onChange={HandleSuspendAccount}
@@ -397,6 +406,9 @@ const UserProfile = () => {
                     sx={{ px: 2, py: 1 }}
                   >
                     <Typography>Adminstrator Role</Typography>
+                    <Typography style={{ color: color.greenAccent[500] }}>
+                      {data?.role}
+                    </Typography>
                     <Switch
                       color="secondary"
                       onChange={HanleAccountChange}
@@ -571,13 +583,13 @@ const UserProfile = () => {
               right: 0,
             }}
           >
-            <IconButton
+            {/* <IconButton
               sx={{ borderRadius: 3, p: 2, backgroundColor: color.grey[700] }}
               title="Send Message"
               onClick={() => HandleMessageOPen()}
             >
               <ModeCommentIcon sx={{ fontSize: 40 }} />
-            </IconButton>
+            </IconButton> */}
           </Box>
         </Box>
       )}

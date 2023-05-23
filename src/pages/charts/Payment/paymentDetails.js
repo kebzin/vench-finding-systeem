@@ -97,7 +97,7 @@ const PaymentDetails = React.forwardRef((props, ref) => {
           justifyContent="space-between"
         >
           <Typography variant="h6">Amount Paid : </Typography>
-          <Typography>GMD {props.data?.amountPaid} </Typography>
+          <Typography>GMD {props.Price} </Typography>
         </Stack>
         <Stack
           sx={{ mt: 3 }}
