@@ -49,7 +49,8 @@ const Login = ({}) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://venchfindsystemapi.onrender.com/login",
+        "https://venchfindsystemapi.onrender.com/api/auth/login",
+
         {
           email: email,
           password: password,
