@@ -47,7 +47,9 @@ body,
 .TopBar {
   margin-left: 180px;
 }
-
+.hidden {
+  display: none;
+}
 /* header */
 .Header {
   margin-left: 215px;

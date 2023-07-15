@@ -15,10 +15,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useStateContext } from "../../context/Contex";
 import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
 import ReactTimeAgo from "react-time-ago";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en.json";
+import ru from "javascript-time-ago/locale/ru.json";
 
-// TimeAgo.addDefaultLocale(en);
-// TimeAgo.addLocale(ru);
-// hooks
+TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(ru);
 
 //
 const Transaction = () => {

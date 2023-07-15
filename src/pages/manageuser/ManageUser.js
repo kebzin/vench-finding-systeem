@@ -1,24 +1,29 @@
 import { useTheme } from "@emotion/react";
-import { Avatar, Button, LinearProgress, Typography } from "@mui/material";
+import { Avatar, Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header } from "../../components";
 import { tokens } from "../../theme";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, enUS } from "@mui/x-data-grid";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import GppMaybeIcon from "@mui/icons-material/GppMaybe";
 import GppBadIcon from "@mui/icons-material/GppBad";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
-import TimeAgo from "javascript-time-ago";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import en from "javascript-time-ago/locale/en.json";
-import ru from "javascript-time-ago/locale/ru.json";
 import ReactTimeAgo from "react-time-ago";
 import Adduser from "./Adduser";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useStateContext } from "../../context/Contex";
+
+import en from "javascript-time-ago/locale/en.json";
+import ru from "javascript-time-ago/locale/ru.json";
+
+import { useAuthContext } from "../../context/AuthContex";
+
+// TimeAgo.addLocale("en");
+// TimeAgo.addDefaultLocale("en-US");
 
 // const mockDataContacts = [
 //   {
@@ -161,10 +166,12 @@ const ManageUser = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuthContext();
 
   // hooks
   const AxiousPrivate = useAxiousPrivate();
+  const queryclient = useQueryClient();
+
   const { isLoading, data, error, refetch } = useQuery("users", async () => {
     try {
       return await AxiousPrivate.get("/officers/officers")
@@ -175,15 +182,56 @@ const ManageUser = () => {
     }
   });
 
-  const HandleDelete = ({ _id, fines }) => {
-    console.log("identy", fines);
-    console.log("identy", _id);
-    if (fines.length > 0) {
-      setErrorIcon(true);
-      setOPenDialog(true);
-      setDialogMessage(
-        `This Account has ${fines.length} made fines . Deleting this Account will result in deleting all transaction related to this account `
+  const filteredRows = data?.filter((row) => {
+    if (user?.Officers?.role === "Administrator") {
+      return true; // Show all records for administrators
+    } else if (user?.Officers?.role === "Sub Admin") {
+      return row.role !== "Administrator"; // Hide records with administrator role for sub-administrators
+    }
+    return false; // Default: Hide all other records
+  });
+
+  // delete user mutation
+  const mutation = useMutation(
+    (newPost) => {
+      console.log(newPost);
+      return AxiousPrivate.delete(
+        `/deleteOfficers/${user?.Officers?.id}`,
+        newPost
       );
+    },
+    {
+      onSuccess: (respond) => {
+        setOPenDialog(true);
+        setDialogMessage(respond.data.message);
+        // setLoading(false);
+        queryclient.invalidateQueries("users");
+      },
+      onError: (error) => {
+        // setLoading(false);
+        setOPenDialog(true);
+        setErrorIcon(true);
+        console.log("error", error.response);
+        setDialogMessage(error.response.error);
+      },
+    }
+  );
+  const HandleDelete = ({ _id, fines }) => {
+    try {
+      if (fines.length > 0) {
+        return (
+          setErrorIcon(true),
+          setOPenDialog(true),
+          setDialogMessage(
+            `This Account has ${fines.length} made fines . Deleting this Account will result in deleting all transaction related to this account `
+          )
+        );
+      }
+      mutation.mutate({
+        id: _id,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
   const columns = [
@@ -347,16 +395,20 @@ const ManageUser = () => {
       headerAlign: "center",
       flex: 1,
       align: "center",
-      renderCell: ({ row: { _id, fines } }) => {
+      renderCell: ({ row: { _id, fines, role } }) => {
         return (
-          <Button
-            sx={{
-              color: colors.redAccent[400],
-            }}
-            variant="outlined"
-            startIcon={<DeleteForeverIcon />}
-            onClick={() => HandleDelete({ _id, fines })}
-          ></Button>
+          <Box>
+            {
+              <Button
+                sx={{
+                  color: colors.redAccent[400],
+                }}
+                variant="outlined"
+                startIcon={<DeleteForeverIcon />}
+                onClick={() => HandleDelete({ _id, fines })}
+              ></Button>
+            }
+          </Box>
         );
       },
     },
@@ -420,7 +472,7 @@ const ManageUser = () => {
               pagination
               pageSize={50}
               rowsPerPageOptions={[5]}
-              rows={data}
+              rows={filteredRows}
               columns={columns}
               getRowId={(row) => row._id}
             />

@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { Header, EditProfile } from "../../components";
-import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import { tokens } from "../../theme";
 import { LoadingButton } from "@mui/lab";
 import { useNavigate, useParams } from "react-router-dom";
@@ -65,7 +64,7 @@ const UserProfile = () => {
   const [editProfile, setEditProfile] = useState(false);
 
   const [AdminstratorStatus, setAdminstratorStatus] = useState(
-    data?.role === "Administrator" ? true : false
+    data?.role === "Administrator" || "Sub Admin" ? true : false
   );
   const [suspemdAccount, setSupemdAccount] = useState(
     data?.status === "Suspended" ? true : false
@@ -121,7 +120,10 @@ const UserProfile = () => {
     }
   };
 
-  const DisableSwitch = user?.Officers?.id === id ? true : false;
+  const DisableSwitch =
+    user?.Officers?.id === id || user?.Officers?.role === "Sub Admin"
+      ? true
+      : false;
 
   const HandleSendingMessage = () => {
     user?.Officers?.id === id
