@@ -50,7 +50,7 @@ const Login = ({}) => {
     setLoading(true);
     try {
       const response = await makeRequest(
-        "https://venchfindsystem-1l9s.onrender.com/api/auth/login",
+        "https://venchfindsystemapi.onrender.com/api/auth/login",
 
         {
           email: email,
