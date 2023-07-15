@@ -50,16 +50,16 @@ const Login = ({}) => {
     setLoading(true);
     try {
       const response = await makeRequest(
-        "https://venchfindsystemapi.onrender.com/api/auth/login",
+        "/auth/login",
 
         {
           email: email,
           password: password,
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
         }
+        // {
+        //   withCredentials: true,
+        //   headers: { "Content-Type": "application/json" },
+        // }
       );
       const accessToken = response?.data?.accessToken;
       await setUser(response.data, accessToken);
