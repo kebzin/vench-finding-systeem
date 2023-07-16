@@ -49,7 +49,7 @@ const Login = ({}) => {
     event.preventDefault();
     setLoading(true);
     try {
-      const response = await axios(
+      const response = await axios.post(
         "https://venchfindsystemapi.onrender.com/api/auth/login",
 
         {
@@ -57,7 +57,7 @@ const Login = ({}) => {
           password: password,
         },
         {
-          // withCredentials: true,
+           withCredentials: true,
           headers: { "Content-Type": "application/json" },
         }
       );
