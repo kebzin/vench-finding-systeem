@@ -49,17 +49,17 @@ const Login = ({}) => {
     event.preventDefault();
     setLoading(true);
     try {
-      const response = await makeRequest(
-        "/auth/login",
+      const response = await axios(
+        "https://venchfindsystemapi.onrender.com/api/auth/login",
 
         {
           email: email,
           password: password,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         }
-        // {
-        //   withCredentials: true,
-        //   headers: { "Content-Type": "application/json" },
-        // }
       );
       const accessToken = response?.data?.accessToken;
       await setUser(response.data, accessToken);
