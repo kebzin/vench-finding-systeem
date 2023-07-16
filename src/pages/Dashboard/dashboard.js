@@ -2,6 +2,7 @@ import { useTheme } from "@emotion/react";
 import {
   Avatar,
   Box,
+  Button,
   Divider,
   FormControl,
   IconButton,
@@ -20,11 +21,12 @@ import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import { useStateContext } from "../../context/Contex";
 import { useAuthContext } from "../../context/AuthContex";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { WeekilyDataAnalysys } from "../../pages/index";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useQuery, useQueryClient } from "react-query";
 import { GMD_CURRENC_FORMAT } from "../../global/GlobalVeriableFormat";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 
 const addButtonContainer = {
   position: "fixed",
@@ -56,7 +58,12 @@ const Dashboard = () => {
 
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
-  const [toggleAdd, setToggleAdd] = useState(true);
+  const [toggleAdd, setToggleAdd] = useState(
+    user?.Officers?.role === "Sub Admin" ||
+      user?.Officers?.role === "Administrator"
+      ? false
+      : true
+  );
 
   // veribles
   const date = Date.now(); // getting the date
@@ -145,9 +152,6 @@ const Dashboard = () => {
   };
 
   // funtion for toggling the visibility of of ther add component in the client side
-  const ToggleAddFunction = (event) => {
-    setToggleAdd((previouseState) => !previouseState);
-  };
 
   // filtering the find data returned by the server to get all the pending from the list and none pending from the list
   const PendingLength = data?.filter(
@@ -172,6 +176,22 @@ const Dashboard = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
         </Box>
+        <Button
+          sx={{
+            mt: 1,
+            ml: 3,
+            top: 70,
+            position: "fixed",
+            right: 100,
+            color: color.greenAccent[400],
+            padding: 1,
+          }}
+          variant="outlined"
+          startIcon={<AddBoxIcon />}
+          onClick={() => setToggleAdd((prev) => !prev)}
+        >
+          make fine
+        </Button>
         {user?.Officers?.role === "Administrator" ||
         user?.Officers?.role === "Sub Admin" ? (
           <Box>

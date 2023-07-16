@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react";
-import { CheckBox, Preview } from "@mui/icons-material";
+import { CheckBox, Preview, SignalCellularNull } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -385,23 +385,25 @@ const MakeFine = ({ setToggleAdd }) => {
               <span style={{ padding: "10px" }}>Post</span>
             </LoadingButton>
 
-            {/* <LoadingButton
-              sx={{
-                width: "100%",
-                mt: 2,
-                background:
-                  theme.palette.mode === "dark"
-                    ? COLORS.greenAccent[700]
-                    : COLORS.greenAccent[500],
-                "&:hover": { background: COLORS.greenAccent[500] },
-              }}
-              onClick={() => setToggleAdd(false)}
-              loading={loading}
-              loadingPosition="end"
-              variant="contained"
-            >
-              <span style={{ padding: "10px" }}>Cancel</span>
-            </LoadingButton> */}
+            {user?.Officers.role === "Sub Admin" ? (
+              <LoadingButton
+                sx={{
+                  width: "100%",
+                  mt: 2,
+                  background:
+                    theme.palette.mode === "dark"
+                      ? COLORS.greenAccent[700]
+                      : COLORS.greenAccent[500],
+                  "&:hover": { background: COLORS.greenAccent[500] },
+                }}
+                onClick={() => setToggleAdd(false)}
+                loading={loading}
+                loadingPosition="end"
+                variant="contained"
+              >
+                <span style={{ padding: "10px" }}>Cancel</span>
+              </LoadingButton>
+            ) : null}
           </Box>
         </form>
       </Box>

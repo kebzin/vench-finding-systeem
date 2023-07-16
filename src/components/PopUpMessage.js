@@ -18,12 +18,7 @@ const PopUpMessage = ({ message }) => {
     setOPenDialog(false);
     setErrorIcon(false);
   };
-  function insertLineBreaks(text, maxLength) {
-    const regex = new RegExp(`(.{1,${maxLength}})(\\s|$)`, "g");
-    return text.replace(regex, "$1\n");
-  }
 
-  const BreakText = insertLineBreaks(dialogMessage, 50);
   return (
     <React.Fragment>
       <Box
@@ -83,7 +78,7 @@ const PopUpMessage = ({ message }) => {
               }}
             />
           )}
-          <Typography>{BreakText}</Typography>
+          <Typography>{dialogMessage}</Typography>
           <LoadingButton
             size="larger"
             color="primary"

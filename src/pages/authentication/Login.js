@@ -19,6 +19,7 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContex";
 import { useStateContext } from "../../context/Contex";
 import { tokens } from "../../theme";
+import { makeRequest } from "../../hooks/axious";
 
 const Login = ({}) => {
   const { setUser } = useAuthContext();
@@ -50,12 +51,16 @@ const Login = ({}) => {
     try {
       const response = await axios.post(
         "https://venchfindsystemapi.onrender.com/api/auth/login",
+<<<<<<< HEAD
+=======
+
+>>>>>>> 30f2392ae4d30a2a2c85736b2843e753b6d10ba2
         {
           email: email,
           password: password,
         },
         {
-          withCredentials: true,
+           withCredentials: true,
           headers: { "Content-Type": "application/json" },
         }
       );

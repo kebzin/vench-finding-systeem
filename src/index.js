@@ -9,7 +9,10 @@ import { AuthConteProvider } from "./context/AuthContex";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 const queryClient = new QueryClient();
+
+if (process.env.NODE_ENV === "production") disableReactDevTools();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
