@@ -81,7 +81,6 @@ const Dashboard = () => {
   const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
-  console.log("mmmmms", month);
 
   const { data, error, isLoading, refetch } = useQuery(
     "transaction",

@@ -4,39 +4,6 @@ import { tokens } from "../../theme";
 import { useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 
-export const mockPieData = [
-  {
-    id: "Vench",
-    label: "Vehch",
-    value: 485,
-    color: "hsl(244, 70%, 50%)",
-  },
-  {
-    id: "Truck",
-    label: "Truck",
-    value: 446,
-    color: "hsl(164, 70%, 50%)",
-  },
-  {
-    id: "Bus  ",
-    label: "Bus ",
-    value: 333,
-    color: "hsl(327, 70%, 50%)",
-  },
-  {
-    id: "",
-    label: "Motocycle",
-    value: 570,
-    color: "hsl(271, 70%, 50%)",
-  },
-  {
-    id: "Others",
-    label: "others",
-    value: 190,
-    color: "hsl(241, 70%, 50%)",
-  },
-];
-
 const WeekilyDataAnalysys = ({ month, year }) => {
   const AxiousPrivate = useAxiousPrivate();
   const theme = useTheme();
@@ -83,8 +50,8 @@ const WeekilyDataAnalysys = ({ month, year }) => {
 
       // Check if the createdAtDate matches the provided year and month
       return (
-        createdAtDate.getFullYear() === year &&
-        createdAtDate.getMonth() === month
+        createdAtDate.getFullYear() === parseInt(year) &&
+        createdAtDate.getMonth() === parseInt(month)
       );
     });
 
@@ -93,7 +60,49 @@ const WeekilyDataAnalysys = ({ month, year }) => {
 
   // console.log(data);
   const filteredData = filterDataForYearAndMonth(data, year, month);
-  console.log("ff", filteredData);
+
+  const TruckLength = filteredData?.filter(
+    (element) => element?.category === "truck"
+  );
+  const BushLength = filteredData?.filter(
+    (element) => element?.category === "bus"
+  );
+  const CarLength = filteredData?.filter(
+    (element) => element?.category === "car"
+  );
+
+  const mockPieData = [
+    {
+      id: "Vench",
+      label: "Vehch",
+      value: CarLength?.length,
+      color: "hsl(244, 70%, 50%)",
+    },
+    {
+      id: "Truck",
+      label: "Truck",
+      value: TruckLength?.length,
+      color: "hsl(164, 70%, 50%)",
+    },
+    {
+      id: "Bus  ",
+      label: "Bus ",
+      value: BushLength?.length,
+      color: "hsl(327, 70%, 50%)",
+    },
+    {
+      id: "",
+      label: "Motocycle",
+      value: TruckLength?.length,
+      color: "hsl(271, 70%, 50%)",
+    },
+    {
+      id: "Others",
+      label: "others",
+      value: TruckLength?.length,
+      color: "hsl(241, 70%, 50%)",
+    },
+  ];
   return (
     <Box
       sx={{
