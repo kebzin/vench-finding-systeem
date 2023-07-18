@@ -81,6 +81,7 @@ const Dashboard = () => {
   const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
+  console.log("mmmmms", month);
 
   const { data, error, isLoading, refetch } = useQuery(
     "transaction",
@@ -381,15 +382,15 @@ const Dashboard = () => {
                       <MenuItem value={month} defaultValue={month}>
                         {month}
                       </MenuItem>
-                      <MenuItem value={`01`}>Jan</MenuItem>
-                      <MenuItem value={`02`}>Feb</MenuItem>
-                      <MenuItem value={`03`}> Mar</MenuItem>
-                      <MenuItem value={`04`}>Apr</MenuItem>
-                      <MenuItem value={`05`}>MAy</MenuItem>
-                      <MenuItem value={`06`}> Jun </MenuItem>
-                      <MenuItem value={`07`}>Jul</MenuItem>
-                      <MenuItem value={`08`}>Augt</MenuItem>
-                      <MenuItem value={`09`}> Sept </MenuItem>
+                      <MenuItem value={`1`}>Jan</MenuItem>
+                      <MenuItem value={`2`}>Feb</MenuItem>
+                      <MenuItem value={`3`}> Mar</MenuItem>
+                      <MenuItem value={`4`}>Apr</MenuItem>
+                      <MenuItem value={`5`}>MAy</MenuItem>
+                      <MenuItem value={`6`}> Jun </MenuItem>
+                      <MenuItem value={`7`}>Jul</MenuItem>
+                      <MenuItem value={`8`}>Augt</MenuItem>
+                      <MenuItem value={`9`}> Sept </MenuItem>
                       <MenuItem value={`10`}>Oct</MenuItem>
                       <MenuItem value={`11`}>Nov</MenuItem>
                       <MenuItem value={`12`}> Dec</MenuItem>

@@ -69,7 +69,6 @@ const WeekilyDataAnalysys = ({ month, year }) => {
       console.log("no data avelable");
       return []; // Return an empty array if data is not available yet or is null.
     }
-
     // Convert data to an array if it's not already
     // console.log("dddd", data);
 
@@ -82,11 +81,11 @@ const WeekilyDataAnalysys = ({ month, year }) => {
 
       const createdAtDate = new Date(entry.createdAt);
 
-      const entryYear = createdAtDate.getFullYear();
-      const entryMonth = createdAtDate.getMonth() + 1; // Months are zero-based, so we add 1 to get the entry month.
-      // console.log("hhhh", entryMonth, entryYear);
-      // Check if the entry's year and month match the provided year and month.
-      return entryYear === year && entryMonth === month;
+      // Check if the createdAtDate matches the provided year and month
+      return (
+        createdAtDate.getFullYear() === year &&
+        createdAtDate.getMonth() === month
+      );
     });
 
     return filteredData;
@@ -94,7 +93,7 @@ const WeekilyDataAnalysys = ({ month, year }) => {
 
   // console.log(data);
   const filteredData = filterDataForYearAndMonth(data, year, month);
-  // console.log("ff", filteredData);
+  console.log("ff", filteredData);
   return (
     <Box
       sx={{
