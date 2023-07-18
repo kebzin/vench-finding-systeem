@@ -1,26 +1,66 @@
 import { Box, useTheme, Typography, IconButton, Avatar } from "@mui/material";
-import { Menu, MenuItem } from "react-pro-sidebar";
 import React, { useEffect, useState } from "react";
-import { Dashboard } from "@mui/icons-material";
 import { tokens } from "../theme";
-import { color } from "@mui/system";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import Person3Icon from "@mui/icons-material/Person3";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import { hover } from "@testing-library/user-event/dist/hover";
-import { Link, useFetcher, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import { useStateContext } from "../context/Contex";
+import { decryptData } from "./EncriptData";
 
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const Navigate = useNavigate();
-  const { user } = useAuthContext();
+  const { user, setUser } = useAuthContext();
   const { sidebarWidth, setSidebarWidth, screenSize } = useStateContext();
+
+  const navigate = useNavigate();
+  const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
+
+  useEffect(() => {
+    if (!checkedLocalStorage) {
+      setCheckedLocalStorage(true);
+      const encryptedUserData = localStorage.getItem("user");
+
+      if (encryptedUserData) {
+        // Decrypt the user data from local storage
+        try {
+          // Parse the encrypted data as JSON before decrypting
+          const decryptedUserData = decryptData(
+            encryptedUserData,
+            "secret_key"
+          );
+          // const currentTime = new Date().getTime() / 1000; // Get current time in seconds
+          // const accessTokenExpiration =
+          //   decryptedUserData?.accessTokenExpiration;
+
+          const parsedEncryptedData = JSON.parse(decryptedUserData);
+
+          const accessToken = parsedEncryptedData?.accessToken;
+
+          // if (!accessTokenExpiration || accessTokenExpiration < currentTime) {
+          //   // Access token is expired, redirect to login
+          //   navigate("/login");
+          // } else {
+          //   // Set the decrypted user data in the application state
+          //   setUser(decryptedUserData, accessToken);
+          // }
+          setUser(parsedEncryptedData, accessToken);
+        } catch (error) {
+          // Error decrypting data, redirect to login
+          navigate("/login");
+        }
+      } else {
+        // No user data found in local storage, redirect to login
+        navigate("/login");
+      }
+    }
+  }, [checkedLocalStorage, navigate, setUser]);
 
   const userProfile = "";
 

@@ -4,8 +4,6 @@ import React from "react";
 
 import GppBadIcon from "@mui/icons-material/GppBad";
 import { useNavigate } from "react-router-dom";
-import GppMaybeIcon from "@mui/icons-material/GppMaybe";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { tokens } from "../../theme";
 import { useAuthContext } from "../../context/AuthContex";
 import { Header } from "../../components";

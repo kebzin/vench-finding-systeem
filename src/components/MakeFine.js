@@ -101,8 +101,16 @@ const MakeFine = ({ setToggleAdd }) => {
     {
       onSuccess: (response) => {
         setOPenDialog(true);
+        setfineAmount("");
+        setfineDescription("");
+        setFineCategory("");
+        setDriverAddress("");
+        setNumberPlat("");
+        setcategory("");
+        setLicenNumber("");
         setDialogMessage(" successfully Fined ");
         setLoading(false);
+
         console.log(response);
       },
       onError: (error) => {
@@ -119,11 +127,14 @@ const MakeFine = ({ setToggleAdd }) => {
   const HandleFineSubmit = async (event) => {
     event.preventDefault();
     if (
-      // LicenNumber.length < 3 &&
-      // fineAmount.length === 0 &&
-      // fineAmount === "" &&
-      NumberPlat.length < 3
-      // DriverName.length === 0
+      (Boolean(NumberPlat),
+      Boolean(LicenNumber),
+      Boolean(OffenceCommited),
+      Boolean(DriverName),
+      Boolean(category),
+      Boolean(fineCategory),
+      Boolean(fineAmount),
+      Boolean(fineDescription))
     ) {
       return (
         setOPenDialog(true),

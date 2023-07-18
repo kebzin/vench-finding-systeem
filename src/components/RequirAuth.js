@@ -29,9 +29,6 @@ const RequirAuth = () => {
           const parsedEncryptedData = JSON.parse(decryptedUserData);
 
           const accessToken = parsedEncryptedData?.accessToken;
-          console.log("accc", accessToken);
-          console.log("uuuu", parsedEncryptedData?.Officers);
-          console.log("dddd", parsedEncryptedData);
 
           // if (!accessTokenExpiration || accessTokenExpiration < currentTime) {
           //   // Access token is expired, redirect to login

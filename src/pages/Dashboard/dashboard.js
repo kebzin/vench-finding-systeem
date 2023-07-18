@@ -43,18 +43,17 @@ const Dashboard = () => {
     setOPenDialog,
     setDialogMessage,
     setErrorIcon,
-    screenSize,
     sidebarWidth,
   } = useStateContext();
+  // hooks
+
+  const AxiousPrivate = useAxiousPrivate(); // hooks that take the user accesstoken  to validate befor sending the request
 
   const { user } = useAuthContext();
   // const Navigate = useNavigate();
   useEffect(() => {
     setTopbar(true);
     setIsSidebar(true);
-    // const LoginUser = localStorage.getItem("user");
-    // if (LoginUser === null || LoginUser === undefined)
-    //   return Navigate("/login");
   }, []);
 
   const theme = useTheme();
@@ -78,10 +77,6 @@ const Dashboard = () => {
   // const [TopOfficersYear, setTopOfficersYear] = useState(
   //   todayMonth.getFullYear() // the current year
   // );
-
-  // hooks
-
-  const AxiousPrivate = useAxiousPrivate(); // hooks that take the user accesstoken  to validate befor sending the request
 
   // functions
 
@@ -177,7 +172,7 @@ const Dashboard = () => {
         sx={{
           marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
           transition: " all 1s",
-          marginRight: "15p;",
+          marginRight: "15px;",
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -595,9 +590,10 @@ const Dashboard = () => {
       </Box>
 
       <Box>
-        {user?.Officers?.role === "Administrator"
+        {toggleAdd && <MakeFine setToggleAdd={setToggleAdd} />}
+        {/* {user?.Officers?.role === "Administrator"
           ? null
-          : toggleAdd && <MakeFine setToggleAdd={setToggleAdd} />}
+          : */}
       </Box>
     </React.Fragment>
   );

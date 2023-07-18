@@ -29,7 +29,7 @@ const Login = ({}) => {
     setIsSidebar(false);
     setTopbar(false);
     setError(null);
-    setUser(null);
+    // setUser(null);
   }, []);
 
   // states

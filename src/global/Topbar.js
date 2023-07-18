@@ -16,11 +16,13 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Person4Icon from "@mui/icons-material/Person4";
-import SearchSharpIcon from "@mui/icons-material/SearchSharp";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useStateContext } from "../context/Contex";
 import { MyProfile, Notification } from "../components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useNavigation } from "react-router-dom";
+import { decryptData } from "./EncriptData";
+import { useAuthContext } from "../context/AuthContex";
+import { useState } from "react";
 
 const Topbar = ({}) => {
   const theme = useTheme();
@@ -33,8 +35,50 @@ const Topbar = ({}) => {
     sidebarWidth,
     setSidebarWidth,
   } = useStateContext();
-
+  const { setUser } = useAuthContext();
   const Navigation = useNavigate();
+
+  const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
+
+  useEffect(() => {
+    if (!checkedLocalStorage) {
+      setCheckedLocalStorage(true);
+      const encryptedUserData = localStorage.getItem("user");
+
+      if (encryptedUserData) {
+        // Decrypt the user data from local storage
+        try {
+          // Parse the encrypted data as JSON before decrypting
+          const decryptedUserData = decryptData(
+            encryptedUserData,
+            "secret_key"
+          );
+          // const currentTime = new Date().getTime() / 1000; // Get current time in seconds
+          // const accessTokenExpiration =
+          //   decryptedUserData?.accessTokenExpiration;
+
+          const parsedEncryptedData = JSON.parse(decryptedUserData);
+
+          const accessToken = parsedEncryptedData?.accessToken;
+
+          // if (!accessTokenExpiration || accessTokenExpiration < currentTime) {
+          //   // Access token is expired, redirect to login
+          //   Navigation("/login");
+          // } else {
+          //   // Set the decrypted user data in the application state
+          //   setUser(decryptedUserData, accessToken);
+          // }
+          setUser(parsedEncryptedData, accessToken);
+        } catch (error) {
+          // Error decrypting data, redirect to login
+          Navigation("/login");
+        }
+      } else {
+        // No user data found in local storage, redirect to login
+        Navigation("/login");
+      }
+    }
+  }, [checkedLocalStorage, Navigation, setUser]);
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
