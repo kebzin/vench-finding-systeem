@@ -78,6 +78,7 @@ const Sidebar = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              overflow: "auto",
             }}
           >
             {userProfile === "" ? (
