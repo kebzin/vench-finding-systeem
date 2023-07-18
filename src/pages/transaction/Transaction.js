@@ -28,7 +28,7 @@ const Transaction = () => {
   const colors = tokens(theme.palette.mode);
 
   // states
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, sidebarWidth } = useStateContext();
 
   // hooks
   const queryclient = useQueryClient();
@@ -255,7 +255,13 @@ const Transaction = () => {
 
   return (
     <React.Fragment>
-      <Box className="Header">
+      <Box
+        sx={{
+          marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+          transition: " all 1s",
+          marginRight: "15p;",
+        }}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header
             title="Transaction"

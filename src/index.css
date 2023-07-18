@@ -44,9 +44,7 @@ body,
   transition: all 1s;
   overflow: auto;
 } */
-.TopBar {
-  margin-left: 180px;
-}
+
 .hidden {
   display: none;
 }
@@ -105,41 +103,15 @@ body,
     transition: all 3s;
   } */
 
-  .TopBar {
-    margin-left: 100px;
-    transition: all 1s;
-  }
-  .Header {
-    margin-left: 115px;
-  }
-  .DetailText {
-    display: none;
-  }
   .FineImade {
     width: 100%;
   }
   .ProfileDetails {
     width: 100%;
   }
-  .Colum {
-    flex-direction: column;
-    width: 100%;
-    display: block;
-  }
 }
 
 @media screen and (max-width: 556px) {
-  .Sidebar {
-    width: -0px;
-    transition: all 1s;
-  }
-  .TopBar {
-    margin-left: 0px;
-    transition: all 1s;
-  }
-  .Header {
-    margin-left: 15px;
-  }
 }
 
 .Transition {

@@ -18,11 +18,13 @@ import PritTickets from "../../components/PritTickets";
 import { useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useReactToPrint } from "react-to-print";
+import { useStateContext } from "../../context/Contex";
 
 const TransactionView = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const [showprint, setShowPrint] = useState(false);
+  const { sidebarWidth } = useStateContext();
 
   //veriable
 
@@ -52,7 +54,13 @@ const TransactionView = () => {
   const total = amountpa - data?.amountPaid;
 
   return (
-    <Box className="Header">
+    <Box
+      sx={{
+        marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+        transition: " all 1s",
+        marginRight: "15p;",
+      }}
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header
           title="Viewing the transaction "

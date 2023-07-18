@@ -41,7 +41,7 @@ const UserProfile = () => {
 
   // hooks
   const AxiousPrivate = useAxiousPrivate();
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, sidebarWidth } = useStateContext();
   const Navigate = useNavigate();
 
   //data fetching
@@ -132,7 +132,13 @@ const UserProfile = () => {
   };
 
   return (
-    <Box className="Header">
+    <Box
+      sx={{
+        marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+        transition: " all 1s",
+        marginRight: "15p;",
+      }}
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title={"Profile"} />
       </Box>

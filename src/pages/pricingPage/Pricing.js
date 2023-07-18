@@ -30,8 +30,13 @@ const Pricing = () => {
   const { user, setUser } = useAuthContext();
   const [updateitem, setupdateitem] = useState(null);
   const [updateOpen, setUpdateOpen] = useState(false);
-  const { setToggleAdd, toggleAdd, setDialogMessage, setOPenDialog } =
-    useStateContext();
+  const {
+    setToggleAdd,
+    toggleAdd,
+    setDialogMessage,
+    setOPenDialog,
+    sidebarWidth,
+  } = useStateContext();
 
   // effect on component mount
   useEffect(() => {
@@ -93,7 +98,13 @@ const Pricing = () => {
   };
   return (
     <React.Fragment>
-      <Box className="Header">
+      <Box
+        sx={{
+          marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+          transition: " all 1s",
+          marginRight: "15p;",
+        }}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header
             title="Pricing Page"

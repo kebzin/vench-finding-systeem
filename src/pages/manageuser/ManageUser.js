@@ -165,7 +165,8 @@ const ManageUser = () => {
   const Navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
+  const { setDialogMessage, setOPenDialog, setErrorIcon, sidebarWidth } =
+    useStateContext();
   const { user } = useAuthContext();
 
   // hooks
@@ -422,7 +423,13 @@ const ManageUser = () => {
   ];
 
   return (
-    <Box className="Header">
+    <Box
+      sx={{
+        marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+        transition: " all 1s",
+        marginRight: "15p;",
+      }}
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header
           title="Manage Users"

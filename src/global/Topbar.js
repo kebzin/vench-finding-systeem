@@ -27,14 +27,11 @@ const Topbar = ({}) => {
   const {
     isClicked,
     HandleClick,
-    activeMenu,
-    setActiveMenu,
+
     screenSize,
     setScreenSize,
     sidebarWidth,
     setSidebarWidth,
-    contentWidth,
-    setContentWidth,
   } = useStateContext();
 
   const Navigation = useNavigate();
@@ -50,22 +47,12 @@ const Topbar = ({}) => {
   }, []);
 
   useEffect(() => {
-    if (screenSize <= 900) {
-      setActiveMenu(false);
+    if (screenSize <= 694) {
+      setSidebarWidth("0px");
     } else {
-      setActiveMenu(true);
+      setSidebarWidth("180px");
     }
   }, [screenSize]);
-
-  useEffect(() => {
-    if (screenSize <= 900) {
-      setActiveMenu(false);
-    } else {
-      setActiveMenu(true);
-    }
-  }, [screenSize]);
-
-  const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
   const color = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);

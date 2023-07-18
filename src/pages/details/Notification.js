@@ -26,8 +26,13 @@ const Notification = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const Navigate = useNavigate();
-  const { setToggleAdd, toggleAdd, setDialogMessage, setOPenDialog } =
-    useStateContext();
+  const {
+    setToggleAdd,
+    toggleAdd,
+    setDialogMessage,
+    setOPenDialog,
+    sidebarWidth,
+  } = useStateContext();
   // get all my messages
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
@@ -57,7 +62,13 @@ const Notification = () => {
 
   return (
     <Box>
-      <Box className="Header">
+      <Box
+        sx={{
+          marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+          transition: " all 1s",
+          marginRight: "15p;",
+        }}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header
             title="Notifications"

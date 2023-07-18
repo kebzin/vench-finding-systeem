@@ -4,13 +4,22 @@ import { Header, LineChartAdmin } from "../../components";
 import { tokens } from "../../theme";
 import BarChart from "./BarChart";
 import PieChart from "./PieChart";
+import { useStateContext } from "../../context/Contex";
 
 const Charts = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
+  const { sidebarWidth } = useStateContext();
+
   return (
     <Box>
-      <Box className="Header">
+      <Box
+        sx={{
+          marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+          transition: " all 1s",
+          marginRight: "15p;",
+        }}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title={"Charts"} />
         </Box>

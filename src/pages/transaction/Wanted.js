@@ -13,6 +13,7 @@ import { Header, WantedAdd } from "../../components";
 import { tokens } from "../../theme";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ViewWanted from "../../components/ViewWanted";
+import { useStateContext } from "../../context/Contex";
 const mockDataTeam = [
   {
     id: 1,
@@ -97,6 +98,7 @@ const Wanted = () => {
 
   const [preview, setPreview] = useState();
   const [showDetails, setShowDetails] = useState(false);
+  const { sidebarWidth } = useStateContext();
   const columns = [
     { field: "id", headerName: "NO" },
 
@@ -304,7 +306,13 @@ const Wanted = () => {
   const [addWanted, setAddWanted] = useState(false);
 
   return (
-    <Box className="Header">
+    <Box
+      sx={{
+        marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+        transition: " all 1s",
+        marginRight: "15p;",
+      }}
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="Wanted" subtitle="" />
       </Box>

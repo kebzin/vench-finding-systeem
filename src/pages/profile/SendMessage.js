@@ -25,7 +25,7 @@ const SendMEssage = ({ setMessage, data }) => {
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
   const { user } = useAuthContext();
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, sidebarWidth } = useStateContext();
 
   const mutation = useMutation(
     (newPost) => {

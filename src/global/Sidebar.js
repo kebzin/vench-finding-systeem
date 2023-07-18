@@ -20,7 +20,7 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const Navigate = useNavigate();
   const { user } = useAuthContext();
-  const { sidebarWidth } = useStateContext();
+  const { sidebarWidth, setSidebarWidth, screenSize } = useStateContext();
 
   const userProfile = "";
 
@@ -123,9 +123,12 @@ const Sidebar = () => {
                     mt: 3,
                     "&:hover": { background: colors.greenAccent[700] },
                   }}
-                  onClick={() =>
-                    Navigate(item.admin === "Employee" ? null : item.link)
-                  }
+                  onClick={() => {
+                    Navigate(item.admin === "Employee" ? null : item.link);
+                    if (screenSize <= 694) {
+                      setSidebarWidth("0px");
+                    }
+                  }}
                 >
                   <IconButton
                     sx={{ cursor: "pointer", color: colors.greenAccent[500] }}

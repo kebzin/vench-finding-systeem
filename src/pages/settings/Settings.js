@@ -13,9 +13,16 @@ import { NavLink, Outlet } from "react-router-dom";
 const Settings = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
+  const { sidebarWidth } = useStateContext();
 
   return (
-    <Box className="Header">
+    <Box
+      sx={{
+        marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+        transition: " all 1s",
+        marginRight: "15p;",
+      }}
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header
           title="Settings"
