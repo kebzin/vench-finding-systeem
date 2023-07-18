@@ -1,23 +1,19 @@
 import { useTheme } from "@emotion/react";
-import { CheckBox, Preview, SignalCellularNull } from "@mui/icons-material";
+import {} from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
-  Chip,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useAuthContext } from "../context/AuthContex";
 import { useStateContext } from "../context/Contex";
-import { axiousePrive } from "../hooks/axious";
 import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
 
@@ -27,7 +23,7 @@ const addButtonContainer = {
   justifyContent: "center",
   margin: "auto",
   height: "100%",
-  miniWidth: "50%",
+  // miniWidth: "50%",
 };
 
 const ITEM_HEIGHT = 48;
@@ -53,6 +49,7 @@ const MakeFine = ({ setToggleAdd }) => {
   const [DriverAddress, setDriverAddress] = useState(null);
   const [wanted, setwanted] = useState(false);
   const [category, setcategory] = useState();
+  const [fineCategory, setFineCategory] = useState("");
 
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
 
@@ -148,6 +145,7 @@ const MakeFine = ({ setToggleAdd }) => {
         LicenNumber: LicenNumber,
         wanted: wanted,
         category: category,
+        fineCategory: fineCategory,
       });
       console.log(fineDescription);
     } catch (error) {
@@ -186,14 +184,9 @@ const MakeFine = ({ setToggleAdd }) => {
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const AddButtonContainerContent = {
-    position: "fixed",
-    top: "17%",
     borderRadius: ".7rem",
-    height: "auto",
     background: theme.palette.mode === "dark" ? COLORS.primary[400] : "white",
-    padding: 3,
-    margin: "auto",
-    miniWidth: "70%",
+    padding: 5,
     boxShadow:
       theme.palette.mode === "dark"
         ? COLORS.primary[400]
@@ -327,6 +320,26 @@ const MakeFine = ({ setToggleAdd }) => {
                 value={fineAmount}
                 disabled
               />
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: "100%" }}>
+              <InputLabel id="demo-simple-select-autowidth-label">
+                Category
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={fineCategory}
+                onChange={(event) => setFineCategory(event.target.value)}
+                autoWidth
+                label="Category"
+              >
+                <MenuItem value={fineCategory} defaultValue={fineCategory}>
+                  {fineCategory}
+                </MenuItem>
+                <MenuItem value={`truck`}>Truck</MenuItem>
+                <MenuItem value={`car`}>Car</MenuItem>
+                <MenuItem value={`motocar`}>Motocar</MenuItem>
+              </Select>
             </FormControl>
 
             <FormControl

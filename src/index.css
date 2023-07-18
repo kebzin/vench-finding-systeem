@@ -68,7 +68,16 @@ body,
 
   position: absolute;
 }
-
+.active {
+  background: #6a4d4d89 !important ;
+  padding: 10px;
+  border-radius: 7px;
+}
+.inactive {
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid #6a4d4d89;
+}
 /* my profile box  */
 .MyProfileBox {
   top: 90px;

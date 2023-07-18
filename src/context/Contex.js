@@ -8,6 +8,7 @@ const ContextProvider = ({ children }) => {
   const initialState = {
     notification: false,
     profile: false,
+    setting: false,
   };
   const [currentUser, setCurrentUser] = useState();
   const [isClicked, setIsClicked] = useState(initialState);
@@ -20,6 +21,8 @@ const ContextProvider = ({ children }) => {
   const [toggleDeleteMessage, setToggleDeleteMessage] = useState("");
   const [callfunctions, setCallFunctions] = useState(false);
   const [errorIcon, setErrorIcon] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(true);
+  const [screenSize, setScreenSize] = useState();
 
   // click function
   const HandleClick = (clicked) => {
@@ -56,6 +59,10 @@ const ContextProvider = ({ children }) => {
         setCallFunctions,
         errorIcon,
         setErrorIcon,
+        activeMenu,
+        setActiveMenu,
+        screenSize,
+        setScreenSize,
       }}
     >
       {children}

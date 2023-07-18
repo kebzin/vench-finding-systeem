@@ -20,6 +20,7 @@ import { useAuthContext } from "../../context/AuthContex";
 import { useStateContext } from "../../context/Contex";
 import { tokens } from "../../theme";
 import { makeRequest } from "../../hooks/axious";
+import { encryptData } from "../../global/EncriptData";
 
 const Login = ({}) => {
   const { setUser } = useAuthContext();
@@ -42,7 +43,6 @@ const Login = ({}) => {
   // hooks
   const Navigate = useNavigate();
   const Location = useLocation();
-  const from = Location.state?.from?.pathname || "/";
 
   // functions
   const handleClick = async (event) => {
@@ -61,22 +61,47 @@ const Login = ({}) => {
         }
       );
       const accessToken = response?.data?.accessToken;
-      await setUser(response.data, accessToken);
+      await setUser(response?.data, accessToken);
 
-      // store the user to the local storage
-      // localStorage.setItem("user", JSON.stringify(response.data));
+      // Encrypt and store the user data in the local storage
+      const encryptedUserData = encryptData(
+        JSON.stringify(response.data),
+        "secret_key"
+      );
+      localStorage.setItem("user", encryptedUserData);
 
       return await setUser(response.data), setLoading(false), Navigate("/");
     } catch (error) {
       setLoading(false);
-      if (!error.response) {
-        setError("No Server Response");
+      if (error.response) {
+        // Server responded with an error message
+        const statusCode = error.response?.status;
+        if (statusCode === 400) {
+          setError("Bad Request: Invalid email or password.");
+        } else if (statusCode === 401) {
+          setError(
+            "Unauthorized: You are not authorized to access this resource."
+          );
+        } else if (statusCode === 403) {
+          setError(
+            "Forbidden: You don't have permission to access this resource."
+          );
+        } else if (statusCode === 404) {
+          setError("Not Found: The requested resource was not found.");
+        } else if (statusCode === 500) {
+          setError(
+            "Internal Server Error: Something went wrong on the server."
+          );
+        } else {
+          setError("Unknown Error: An unknown error occurred.");
+        }
+      } else if (error.request) {
+        // Network error or no server response
+        setError("Network Error: Unable to connect to the server.");
+      } else {
+        // Other errors (e.g., code error)
+        setError("Error: Something went wrong.");
       }
-      console.log(error);
-      await setError(error.response.data.message);
-      setLoading(false);
-
-      console.log(error.message);
     }
   };
 

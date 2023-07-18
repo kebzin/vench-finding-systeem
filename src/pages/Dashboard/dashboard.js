@@ -5,7 +5,6 @@ import {
   Button,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -15,7 +14,6 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { tokens } from "../../theme";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import { Header, MakeFine, StatBox, LineChartAdmin } from "../../components";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import TrafficIcon from "@mui/icons-material/Traffic";
@@ -24,7 +22,7 @@ import { useAuthContext } from "../../context/AuthContex";
 import { useNavigate } from "react-router-dom";
 import { WeekilyDataAnalysys } from "../../pages/index";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { GMD_CURRENC_FORMAT } from "../../global/GlobalVeriableFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 
@@ -47,7 +45,7 @@ const Dashboard = () => {
     setErrorIcon,
   } = useStateContext();
   const { user } = useAuthContext();
-  const Navigate = useNavigate();
+  // const Navigate = useNavigate();
   useEffect(() => {
     setTopbar(true);
     setIsSidebar(true);
@@ -73,10 +71,10 @@ const Dashboard = () => {
   const [dateValue, setDateValue] = useState();
   const [month, setMonth] = useState(todayMonth.getMonth()); // the current month
   const [year, setYear] = useState(todayMonth.getFullYear()); // the current year
-  const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
-  const [TopOfficersYear, setTopOfficersYear] = useState(
-    todayMonth.getFullYear() // the current year
-  );
+  // const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
+  // const [TopOfficersYear, setTopOfficersYear] = useState(
+  //   todayMonth.getFullYear() // the current year
+  // );
 
   // hooks
 
@@ -134,7 +132,7 @@ const Dashboard = () => {
     if (!Number.isNaN(element)) {
       // add a check for NaN values
       TotalAmount += parseFloat(element);
-      console.log("total", (TotalAmount += parseFloat(element)));
+      TotalAmount += parseFloat(element);
     }
   }
 

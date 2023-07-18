@@ -1,12 +1,11 @@
 import { useTheme } from "@emotion/react";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { CrimePrcing, Header, PopUpMessage } from "../../components";
+import { CrimePrcing, Header } from "../../components";
 import { tokens } from "../../theme";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import FireTruckIcon from "@mui/icons-material/FireTruck";
-import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -15,12 +14,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContex";
 import { useStateContext } from "../../context/Contex";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { makeRequest } from "../../hooks/axious";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import CrimePrcingUpdate from "../../components/CrimePrcingUpdate";
 import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
 import fixing from "../../assets/illustration/fixing.svg";
-import { MarginTwoTone } from "@mui/icons-material";
 
 const addButtonContainer = {
   position: "fixed",
@@ -28,36 +25,6 @@ const addButtonContainer = {
   right: "40px",
   zindex: "10",
 };
-
-// const pricingDummData = [
-//   {
-//     name: "Wrong Paking",
-//     price: 200,
-//     icon: <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />,
-//   },
-//   {
-//     name: "Wrong Paking",
-//     price: 250,
-//     icon: <FireTruckIcon sx={{ fontSize: 100 }} />,
-//   },
-//   {
-//     name: "Wrong Paking",
-//     price: 50,
-//     icon: <DirectionsBikeIcon sx={{ fontSize: 100 }} />,
-//   },
-//   {
-//     name: "Wrong Paking",
-//     price: 100,
-//     icon: <TwoWheelerIcon sx={{ fontSize: 100 }} />,
-//   },
-//   {
-//     name: "Wrong Paking",
-//     price: 300,
-//     icon: <DirectionsBusIcon sx={{ fontSize: 100 }} />,
-//   },
-// ];
-
-//
 
 const Pricing = () => {
   const { user, setUser } = useAuthContext();

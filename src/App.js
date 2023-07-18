@@ -24,6 +24,9 @@ import RequirAuth from "./components/RequirAuth";
 import PersistLogin from "./components/PersistLogin";
 import DialogBox from "./components/DialogBox";
 import NotFound from "./components/NotFound";
+import Settings from "./pages/settings/Settings";
+import Category from "./pages/settings/Category";
+import Bonus from "./pages/settings/Bonus";
 
 function App() {
   const { isSidebar, istopbar } = useStateContext();
@@ -60,6 +63,11 @@ function App() {
                   <Route path="/userprofile" element={<UserProfile />} />
                   <Route path="/userprofile/:id" element={<UserProfile />} />
                   <Route path="/transaction" element={<Transaction />} />
+                  <Route path="/setting" element={<Settings />}>
+                    <Route path="bonus" element={<Bonus />} />
+                    <Route path="category" element={<Category />} />
+                  </Route>
+
                   <Route
                     path="/transaction/:id"
                     element={<TransactionView />}

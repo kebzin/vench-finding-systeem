@@ -172,15 +172,22 @@ const ManageUser = () => {
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
-  const { isLoading, data, error, refetch } = useQuery("users", async () => {
-    try {
-      return await AxiousPrivate.get("/officers/officers")
-        .then((res) => res.data)
-        .catch((err) => console.log(err));
-    } catch (err) {
-      console.log(error);
+  const { isLoading, data, error, refetch } = useQuery(
+    "users",
+    async () => {
+      try {
+        return await AxiousPrivate.get("/officers/officers")
+          .then((res) => res.data)
+          .catch((err) => console.log(err));
+      } catch (err) {
+        console.log(error);
+      }
+    },
+    {
+      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: true,
     }
-  });
+  );
 
   const filteredRows = data?.filter((row) => {
     if (user?.Officers?.role === "Administrator") {
