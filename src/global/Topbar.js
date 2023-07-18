@@ -31,6 +31,10 @@ const Topbar = ({}) => {
     setActiveMenu,
     screenSize,
     setScreenSize,
+    sidebarWidth,
+    setSidebarWidth,
+    contentWidth,
+    setContentWidth,
   } = useStateContext();
 
   const Navigation = useNavigate();
@@ -73,7 +77,7 @@ const Topbar = ({}) => {
           justifyContent: "space-between",
           flexWrap: "wrap",
           p: 2,
-          marginLeft: screenSize <= 754 ? "100px" : "180px",
+          marginLeft: sidebarWidth === "180px" ? "180px" : "0px",
           transition: "all 1s",
         }}
         // display={"flex"}
@@ -86,7 +90,13 @@ const Topbar = ({}) => {
           <IconButton type="button" sx={{ p: 1 }}>
             <MenuIcon
               style={{ width: 40, height: 40 }}
-              onClick={() => setActiveMenu((prev) => !prev)}
+              onClick={() =>
+                setSidebarWidth(() => {
+                  if (sidebarWidth === "180px") {
+                    return "0px";
+                  } else return "180px";
+                })
+              }
             />
           </IconButton>
 

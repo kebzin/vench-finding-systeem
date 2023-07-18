@@ -13,12 +13,14 @@ import { hover } from "@testing-library/user-event/dist/hover";
 import { Link, useFetcher, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
+import { useStateContext } from "../context/Contex";
 
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const Navigate = useNavigate();
   const { user } = useAuthContext();
+  const { sidebarWidth } = useStateContext();
 
   const userProfile = "";
 
@@ -62,6 +64,15 @@ const Sidebar = () => {
       className="Sidebar"
       sx={{
         background: colors.primary[400],
+        background: colors.primary[400],
+        minHeight: "100vh",
+        height: "auto",
+        width: sidebarWidth,
+        position: "fixed",
+
+        objectFit: "contain",
+        transition: "all 1s",
+        overflow: "auto",
       }}
     >
       <Box

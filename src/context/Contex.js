@@ -23,6 +23,8 @@ const ContextProvider = ({ children }) => {
   const [errorIcon, setErrorIcon] = useState(false);
   const [activeMenu, setActiveMenu] = useState(true);
   const [screenSize, setScreenSize] = useState();
+  const [sidebarWidth, setSidebarWidth] = useState();
+  const [contentWidth, setContentWidth] = useState();
 
   // click function
   const HandleClick = (clicked) => {
@@ -37,6 +39,10 @@ const ContextProvider = ({ children }) => {
   return (
     <StateContex.Provider
       value={{
+        sidebarWidth,
+        setSidebarWidth,
+        contentWidth,
+        setContentWidth,
         isSidebar,
         setIsSidebar,
         isClicked,

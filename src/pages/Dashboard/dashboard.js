@@ -43,7 +43,10 @@ const Dashboard = () => {
     setOPenDialog,
     setDialogMessage,
     setErrorIcon,
+    screenSize,
+    sidebarWidth,
   } = useStateContext();
+
   const { user } = useAuthContext();
   // const Navigate = useNavigate();
   useEffect(() => {
@@ -170,7 +173,13 @@ const Dashboard = () => {
     <React.Fragment>
       {/* dashboard content */}
 
-      <Box className="Header">
+      <Box
+        sx={{
+          marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
+          transition: " all 1s",
+          marginRight: "15p;",
+        }}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
         </Box>
