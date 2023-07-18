@@ -31,12 +31,6 @@ import Bonus from "./pages/settings/Bonus";
 function App() {
   const { isSidebar, istopbar } = useStateContext();
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("token")) {
-  //     setLogin(true);
-  //   }
-  // }, []);
-
   const [theme, colorMode] = useMode();
 
   const { OpenDialog, toggleDelete } = useStateContext();
@@ -47,34 +41,30 @@ function App() {
         <CssBaseline />
         <div className="app">
           <main className="content">
-            {OpenDialog && <PopUpMessage />}
             {isSidebar && <Sidebar />}
             {istopbar && <Topbar />}
             {toggleDelete && <DialogBox />}
+            {OpenDialog && <PopUpMessage />}
 
             <Routes>
               {/* protected routh */}
-              <Route element={<PersistLogin />}>
-                <Route element={<RequirAuth />}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="pricing" element={<Pricing />} />
-                  <Route path="/users" element={<ManageUser />} />
-                  <Route path="/notification/:id" element={<Notification />} />
-                  <Route path="/userprofile" element={<UserProfile />} />
-                  <Route path="/userprofile/:id" element={<UserProfile />} />
-                  <Route path="/transaction" element={<Transaction />} />
-                  <Route path="/setting" element={<Settings />}>
-                    <Route path="bonus" element={<Bonus />} />
-                    <Route path="category" element={<Category />} />
-                  </Route>
 
-                  <Route
-                    path="/transaction/:id"
-                    element={<TransactionView />}
-                  />
-                  <Route path="/wanted" element={<Wanted />} />
-                  <Route path="/Charts" element={<Charts />} />
+              <Route element={<RequirAuth />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="pricing" element={<Pricing />} />
+                <Route path="/users" element={<ManageUser />} />
+                <Route path="/notification/:id" element={<Notification />} />
+                <Route path="/userprofile" element={<UserProfile />} />
+                <Route path="/userprofile/:id" element={<UserProfile />} />
+                <Route path="/transaction" element={<Transaction />} />
+                <Route path="/setting" element={<Settings />}>
+                  <Route path="bonus" element={<Bonus />} />
+                  <Route path="category" element={<Category />} />
                 </Route>
+
+                <Route path="/transaction/:id" element={<TransactionView />} />
+                <Route path="/wanted" element={<Wanted />} />
+                <Route path="/Charts" element={<Charts />} />
               </Route>
 
               <Route path="/welcom" element={<Welcome />} />
