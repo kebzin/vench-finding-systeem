@@ -1,6 +1,8 @@
 import { ResponsivePie } from "@nivo/pie";
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import { useQuery } from "react-query";
+import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 
 export const mockPieData = [
   {
@@ -35,9 +37,64 @@ export const mockPieData = [
   },
 ];
 
-const WeekilyDataAnalysys = () => {
+const WeekilyDataAnalysys = ({ month, year }) => {
+  const AxiousPrivate = useAxiousPrivate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { isLoading, error, data, refetch, isError } = useQuery(
+    "transaction",
+    () =>
+      AxiousPrivate.get(`/fine/fine/`)
+        .then((result) => result.data)
+        .catch((err) => console.log(err))
+  );
+
+  if (isLoading) {
+    return (
+      <Box>
+        <Typography>Loading......</Typography>
+      </Box>
+    );
+  } else if (isError) {
+    return (
+      <Box>
+        <Typography>oops something wnt wrong</Typography>
+        <Typography>{error.message}</Typography>
+      </Box>
+    );
+  }
+  function filterDataForYearAndMonth(data, year, month) {
+    // Check if data is not available or is null
+    if (!data) {
+      console.log("no data avelable");
+      return []; // Return an empty array if data is not available yet or is null.
+    }
+
+    // Convert data to an array if it's not already
+    // console.log("dddd", data);
+
+    const dataArray = Array.isArray(data) ? data : [data];
+    // Check if dataArray contains valid objects with the 'createdAt' property
+    const filteredData = dataArray.filter((entry) => {
+      if (!entry || typeof entry !== "object" || !entry.createdAt) {
+        return false; // Skip invalid entries without the 'createdAt' property
+      }
+
+      const createdAtDate = new Date(entry.createdAt);
+
+      const entryYear = createdAtDate.getFullYear();
+      const entryMonth = createdAtDate.getMonth() + 1; // Months are zero-based, so we add 1 to get the entry month.
+      // console.log("hhhh", entryMonth, entryYear);
+      // Check if the entry's year and month match the provided year and month.
+      return entryYear === year && entryMonth === month;
+    });
+
+    return filteredData;
+  }
+
+  // console.log(data);
+  const filteredData = filterDataForYearAndMonth(data, year, month);
+  // console.log("ff", filteredData);
   return (
     <Box
       sx={{

@@ -22,9 +22,10 @@ import { useAuthContext } from "../../context/AuthContex";
 import { useNavigate } from "react-router-dom";
 import { WeekilyDataAnalysys } from "../../pages/index";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
-import { useQuery } from "react-query";
+import { isError, useQuery } from "react-query";
 import { GMD_CURRENC_FORMAT } from "../../global/GlobalVeriableFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
 
 const addButtonContainer = {
   position: "fixed",
@@ -77,31 +78,79 @@ const Dashboard = () => {
   // const [TopOfficersYear, setTopOfficersYear] = useState(
   //   todayMonth.getFullYear() // the current year
   // );
+  const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
 
-  const { isLoading, error, data, refetch } = useQuery(
+  const { data, error, isLoading, refetch } = useQuery(
     "transaction",
-    async () =>
-      await AxiousPrivate.get(
-        user?.Officers?.role === "Employee"
-          ? `/fine/fine/${user?.Officers?.id}`
-          : `/fine/fine/`
-      )
-        .then((result) => result.data)
-        .catch((err) => console.log(err))
+    async () => {
+      try {
+        const response = await AxiousPrivate.get(
+          user?.Officers?.role === "Employee"
+            ? `/fine/fine/${user?.Officers?.id}`
+            : `/fine/fine/`
+        );
+        return response.data;
+      } catch (error) {
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: false, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: false,
+    }
   );
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      setIsLoadingData(true); // Show loading message while fetching data
+      try {
+        await refetch(); // Fetch data using useQuery's refetch function
+      } catch (error) {
+        console.error(error);
+      }
+      setIsLoadingData(false); // Hide loading message after data fetching is done
+    };
+
+    // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+    fetchData();
+  }, [AxiousPrivate, user?.Officers?.role, refetch]);
+
   if (isLoading) {
     return (
       <Box>
-        <Typography>loading</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            ml: 5,
+          }}
+        >
+          <img width={"60%"} src={undraw_exams_re_4ios} />
+          <Typography variant="h3">Loading data .......</Typography>
+        </Box>
       </Box>
     );
   }
   if (error) {
     return (
-      <Box>
-        <Typography>{refetch()}</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Typography variant="h1">Oops something wrong </Typography>
+        <Typography>pleas try refetch the data manually </Typography>
+        <Typography>Check your internet and try refreshing </Typography>
+        <Typography>Error message {isError && error.message}</Typography>
+        <Button onClick={() => refetch()}></Button>
       </Box>
     );
   }
@@ -124,16 +173,35 @@ const Dashboard = () => {
     }
   };
   // adding the total amount of all the fine including pending
-  var TotalAmount = 0;
-  for (let index = 0; index < data?.length; index++) {
-    const element = data[index]?.fineAmount.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
-    if (!Number.isNaN(element)) {
-      // add a check for NaN values
-      TotalAmount += parseFloat(element);
-      TotalAmount += parseFloat(element);
-    }
-  }
+  // var TotalAmount = 0;
+  // for (let index = 0; index < data?.length; index++) {
+  //   const element = data[index]?.fineAmount.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
+  //   if (!Number.isNaN(element)) {
+  //     // add a check for NaN values
+  //     TotalAmount += parseFloat(element);
+  //     TotalAmount += parseFloat(element);
+  //   }
+  // }
 
+  function calculateTotalAmount(data) {
+    let TotalAmount = 0;
+
+    // Check if data is not available or is null
+    if (!data?.length) {
+      return TotalAmount; // Return 0 if data is not available yet or is not an array.
+    }
+
+    data.forEach((entry) => {
+      const element = entry?.fineAmount?.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
+      if (!Number.isNaN(element)) {
+        // add a check for NaN values
+        TotalAmount += parseFloat(element);
+      }
+    });
+
+    return TotalAmount;
+  }
+  const totalAmount = calculateTotalAmount(data);
   const HandleYer = (event) => {
     setYear(event.target.value);
     if (year > todayMonth.getFullYear()) {
@@ -148,14 +216,12 @@ const Dashboard = () => {
   };
 
   // funtion for toggling the visibility of of ther add component in the client side
-
   // filtering the find data returned by the server to get all the pending from the list and none pending from the list
   const PendingLength = data?.filter(
     (element) => element?.status === "Pending"
   );
 
   const Compleate = data?.filter((element) => element?.status === "Completed");
-
   let CompleFineTotal = 0;
   for (let index = 0; index < Compleate?.length; index++) {
     const element = Compleate[index].fineAmount?.replace(/[^\d.-]/g, "");
@@ -254,7 +320,7 @@ const Dashboard = () => {
                 justifyContent="center"
               >
                 <StatBox
-                  title={`${GMD_CURRENC_FORMAT.format(TotalAmount)}`} // formating the total amount to the gmd currency format
+                  title={`${GMD_CURRENC_FORMAT.format(totalAmount)}`} // formating the total amount to the gmd currency format
                   subtitle="Total Revenue from All"
                   // progress="0.50"
                   // increase="+21%"
@@ -357,7 +423,7 @@ const Dashboard = () => {
                 </Box>
 
                 <Box>
-                  <WeekilyDataAnalysys />
+                  <WeekilyDataAnalysys month={month} year={year} />
                 </Box>
                 <Box sx={{ pl: 2, pr: 2 }}>
                   <Stack

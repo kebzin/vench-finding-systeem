@@ -49,10 +49,10 @@ const RequirAuth = () => {
     }
   }, [checkedLocalStorage, navigate, setUser]);
 
-  return user?.Officers ? ( // If the state doesn't have a user redirect them to the login page
-    <Outlet />
-  ) : (
+  return user?.Officers === null || undefined ? ( // If the state doesn't have a user redirect them to the login page
     <Navigate to="/login" state={{ from: location }} replace />
+  ) : (
+    <Outlet />
   );
 };
 
