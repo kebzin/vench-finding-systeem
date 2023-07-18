@@ -30,7 +30,7 @@ const NotFound = () => {
           flexDirection: "column",
         }}
       >
-        <img style={{ widht: "100%" }} src={notfound} alt="not fount" />
+        <img style={{ widht: "60%" }} src={notfound} alt="not fount" />
         <Typography
           sx={{
             mt: 5,

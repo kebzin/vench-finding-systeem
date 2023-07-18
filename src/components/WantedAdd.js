@@ -105,7 +105,6 @@ const WantedAdd = ({ setAddWanted }) => {
 
   return (
     <Box
-      position="fixed"
       display="flex"
       alignItems="center"
       justifyContent="center"
