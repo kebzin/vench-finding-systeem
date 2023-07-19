@@ -15,10 +15,12 @@ import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios
 import ReactTimeAgo from "react-time-ago";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
-import ru from "javascript-time-ago/locale/ru.json";
+// import ru from "javascript-time-ago/locale/ru.json";
+import { useEffect } from "react";
+import { useState } from "react";
 
 TimeAgo.addDefaultLocale(en);
-TimeAgo.addLocale(ru);
+// TimeAgo.addLocale(ru);
 
 //
 const Transaction = () => {
@@ -34,15 +36,56 @@ const Transaction = () => {
   const AxiousPrivate = useAxiousPrivate();
   const { user } = useAuthContext();
 
-  const { isLoading, error, data, refetch } = useQuery("transaction", () =>
-    AxiousPrivate.get(
-      user?.Officers?.role === "Employee"
-        ? `/fine/fine/${user?.Officers?.id}`
-        : `/fine/fine/`
-    )
-      .then((result) => result.data)
-      .catch((err) => console.log(err))
+  // const { isLoading, error, data, refetch } = useQuery("transaction", () =>
+  //   AxiousPrivate.get(
+  //     user?.Officers?.role === "Employee"
+  //       ? `/fine/fine/${user?.Officers?.id}`
+  //       : `/fine/fine/`
+  //   )
+  //     .then((result) => result.data)
+  //     .catch((err) => console.log(err))
+  // );
+
+  const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
+
+  // functions
+
+  const { data, error, isLoading, isError, refetch } = useQuery(
+    "transaction",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get(
+          user?.Officers?.role === "Employee"
+            ? `/fine/fine/${user?.Officers?.id}`
+            : `/fine/fine/`
+        );
+
+        return response.data;
+      } catch (error) {
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: false, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: false,
+    }
   );
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      setIsLoadingData(true); // Show loading message while fetching data
+      try {
+        await refetch(); // Fetch data using useQuery's refetch function
+      } catch (error) {
+        console.error(error);
+      }
+      setIsLoadingData(false); // Hide loading message after data fetching is done
+    };
+
+    // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+    fetchData();
+  }, [AxiousPrivate, user?.Officers?.role, refetch]);
 
   const mutation = useMutation(
     ({ id, fineAmount, officerId }) => {
@@ -63,6 +106,47 @@ const Transaction = () => {
       },
     }
   );
+
+  if (isLoading) {
+    return (
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            ml: 5,
+          }}
+        >
+          <img width={"60%"} src={undraw_exams_re_4ios} />
+          <Typography variant="h3">Loading data .......</Typography>
+        </Box>
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Typography variant="h1">Oops something wrong </Typography>
+        <Typography>pleas try refetch the data manually </Typography>
+        <Typography>Check your internet and try refreshing </Typography>
+        <Typography>Error message {isError && error.message}</Typography>
+        <Button onClick={() => refetch()}></Button>
+      </Box>
+    );
+  }
+
+  // const sortedData = data?.sort(
+  //   (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  // );
   const HandleDelete = (id, event) => {
     event.preventDefault();
     try {
@@ -161,7 +245,7 @@ const Transaction = () => {
       renderCell: ({ row: { createdAt } }) => {
         return (
           <Typography>
-            <ReactTimeAgo date={createdAt} />
+            <ReactTimeAgo date={Date.parse(createdAt)} />
             {/* {createdAt} */}
           </Typography>
         ); // number of fine mad by the user
@@ -298,30 +382,14 @@ const Transaction = () => {
               "& .MuiCheckbox-root": {},
             }}
           >
-            {" "}
-            {isLoading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignContent: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  mt: 40,
-                }}
-              >
-                <img width={"60%"} src={undraw_exams_re_4ios} />
-                <Typography variant="h3">Loading......</Typography>
-              </Box>
-            ) : error ? (
-              "error"
-            ) : (
-              <DataGrid
-                pagination
-                rows={data}
-                columns={columns}
-                editMode={"row"}
-              />
-            )}
+            {/* {data?.length > 0 && ( */}
+            <DataGrid
+              pagination
+              rows={data}
+              columns={columns}
+              editMode={"row"}
+            />
+            {/* )} */}
           </Box>
         </Box>
       </Box>

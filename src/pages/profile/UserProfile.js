@@ -452,7 +452,7 @@ const UserProfile = () => {
                   }}
                 >
                   <Box>
-                    <ProfileChart />
+                    <ProfileChart id={id} />
                   </Box>
                 </Box>
 
@@ -559,23 +559,6 @@ const UserProfile = () => {
                       >
                         Total Earning from Bonuses
                       </Typography>
-
-                      <LoadingButton
-                        sx={{
-                          // width: "100%",
-                          mb: 1,
-                          mt: 2,
-                          float: "right",
-                          background:
-                            theme.palette.mode === "dark"
-                              ? color.greenAccent[600]
-                              : color.greenAccent[500],
-                          "&:hover": { background: color.greenAccent[500] },
-                        }}
-                        onClick={{}}
-                      >
-                        <span style={{}}>Print Recit</span>
-                      </LoadingButton>
                     </Box>
                   </Box>
                 </Box>

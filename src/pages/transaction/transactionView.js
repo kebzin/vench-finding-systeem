@@ -38,7 +38,9 @@ const TransactionView = () => {
   // handle print
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
+    onBeforeGetContent: () => setShowPrint(true),
     content: () => componentRef.current,
+    onAfterPrint: () => setShowPrint(false),
   });
 
   // fetch data
@@ -47,7 +49,7 @@ const TransactionView = () => {
       .then((result) => result.data)
       .catch((err) => console.log(err))
   );
-
+  console.log(data);
   const amountpa = parseInt(data?.fineAmount?.slice(3));
   const total = amountpa - data?.amountPaid;
 

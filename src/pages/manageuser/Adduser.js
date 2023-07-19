@@ -155,7 +155,7 @@ const Adduser = ({ setAddeUsers }) => {
                 </FormControl>
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
-                    id="outlined-basic"
+                    id="outlined-basic1"
                     label="Enter Last Name"
                     variant="outlined"
                     size="full"
@@ -168,7 +168,7 @@ const Adduser = ({ setAddeUsers }) => {
                 </FormControl>
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
-                    id="outlined-basic"
+                    id="outlined-basic2"
                     label="Enter Your post Station"
                     variant="outlined"
                     size="full"
@@ -180,7 +180,7 @@ const Adduser = ({ setAddeUsers }) => {
 
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
-                    id="outlined-basic"
+                    id="outlined-basic3"
                     label="Enter Your Rank"
                     variant="outlined"
                     size="full"
@@ -206,7 +206,7 @@ const Adduser = ({ setAddeUsers }) => {
 
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
-                    id="outlined-basic"
+                    id="outlined-basic4"
                     label="Enter Email Address"
                     variant="outlined"
                     size="full"
@@ -217,7 +217,7 @@ const Adduser = ({ setAddeUsers }) => {
                 </FormControl>
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
-                    id="outlined-basic"
+                    id="outlined-basic5"
                     label="Enter Phone Number"
                     variant="outlined"
                     size="full"

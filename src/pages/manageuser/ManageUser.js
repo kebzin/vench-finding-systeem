@@ -430,6 +430,8 @@ const ManageUser = () => {
       },
     },
   ];
+  // Define the rowsPerPageOptions array with the desired page size options
+  const rowsPerPageOptions = [10, 25, 50, 100]; // Add 50 to the array
 
   return (
     <Box
@@ -494,7 +496,7 @@ const ManageUser = () => {
             <DataGrid
               pagination
               pageSize={50}
-              rowsPerPageOptions={[5]}
+              rowsPerPageOptions={rowsPerPageOptions}
               rows={sortedData}
               columns={columns}
               getRowId={(row) => row._id}
