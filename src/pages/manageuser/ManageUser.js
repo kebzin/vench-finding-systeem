@@ -17,9 +17,6 @@ import Adduser from "./Adduser";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useStateContext } from "../../context/Contex";
 
-import en from "javascript-time-ago/locale/en.json";
-import ru from "javascript-time-ago/locale/ru.json";
-
 import { useAuthContext } from "../../context/AuthContex";
 
 // TimeAgo.addLocale("en");
@@ -173,7 +170,7 @@ const ManageUser = () => {
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
-  const { isLoading, data, error, refetch } = useQuery(
+  const { isLoading, data, isError, error, refetch } = useQuery(
     "users",
     async () => {
       try {
@@ -190,16 +187,6 @@ const ManageUser = () => {
     }
   );
 
-  const filteredRows = data?.filter((row) => {
-    if (user?.Officers?.role === "Administrator") {
-      return true; // Show all records for administrators
-    } else if (user?.Officers?.role === "Sub Admin") {
-      return row.role !== "Administrator"; // Hide records with administrator role for sub-administrators
-    }
-    return false; // Default: Hide all other records
-  });
-
-  // delete user mutation
   const mutation = useMutation(
     (newPost) => {
       console.log(newPost);
@@ -224,6 +211,28 @@ const ManageUser = () => {
       },
     }
   );
+
+  if (isLoading) {
+    return <Typography>Loading</Typography>;
+  } else if (isError) {
+    <Typography>error someting weny wrong </Typography>;
+  }
+
+  const filteredRows = data?.filter((row) => {
+    if (user?.Officers?.role === "Administrator") {
+      return true; // Show all records for administrators
+    } else if (user?.Officers?.role === "Sub Admin") {
+      return row.role !== "Administrator"; // Hide records with administrator role for sub-administrators
+    }
+    return false; // Default: Hide all other records
+  });
+
+  const sortedData = filteredRows?.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
+  // delete user mutation
+
   const HandleDelete = ({ _id, fines }) => {
     try {
       if (fines.length > 0) {
@@ -486,7 +495,7 @@ const ManageUser = () => {
               pagination
               pageSize={50}
               rowsPerPageOptions={[5]}
-              rows={filteredRows}
+              rows={sortedData}
               columns={columns}
               getRowId={(row) => row._id}
             />

@@ -1,8 +1,9 @@
 import { ResponsivePie } from "@nivo/pie";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Stack, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import { GMD_CURRENC_FORMAT } from "../../global/GlobalVeriableFormat";
 
 const WeekilyDataAnalysys = ({ month, year }) => {
   const AxiousPrivate = useAxiousPrivate();
@@ -61,16 +62,51 @@ const WeekilyDataAnalysys = ({ month, year }) => {
   // console.log(data);
   const filteredData = filterDataForYearAndMonth(data, year, month);
 
+  // function to calculate the total numbe of money generated from fine per month
+  function calculateTotalAmount(data) {
+    let TotalAmount = 0;
+
+    // Check if data is not available or is null
+    if (!data?.length) {
+      return TotalAmount; // Return 0 if data is not available yet or is not an array.
+    }
+
+    data.forEach((entry) => {
+      const element = entry?.fineAmount?.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
+      if (!Number.isNaN(element)) {
+        // add a check for NaN values
+        TotalAmount += parseFloat(element);
+      }
+    });
+
+    return TotalAmount;
+  }
+
   const TruckLength = filteredData?.filter(
     (element) => element?.category === "truck"
   );
+
+  // passinf the data to the function which should be calculated (array)
+  const TruckPrice = calculateTotalAmount(TruckLength);
+
   const BushLength = filteredData?.filter(
     (element) => element?.category === "bus"
   );
+  // passinf the data to the function which should be calculated (array)
+  const BusPrice = calculateTotalAmount(BushLength);
+
+  // passinf the data to the function which should be calculated (array)
   const CarLength = filteredData?.filter(
     (element) => element?.category === "car"
   );
+  // passinf the data to the function which should be calculated (array)
+  const CarPricePerMonth = calculateTotalAmount(CarLength);
 
+  const others = filteredData?.filter(
+    (element) => element?.category !== "car" && "bus" && "truck"
+  );
+  // passinf the data to the function which should be calculated (array)
+  const OthersPrices = calculateTotalAmount(others);
   const mockPieData = [
     {
       id: "Vench",
@@ -91,7 +127,7 @@ const WeekilyDataAnalysys = ({ month, year }) => {
       color: "hsl(327, 70%, 50%)",
     },
     {
-      id: "",
+      id: "Motocycle",
       label: "Motocycle",
       value: TruckLength?.length,
       color: "hsl(271, 70%, 50%)",
@@ -99,7 +135,7 @@ const WeekilyDataAnalysys = ({ month, year }) => {
     {
       id: "Others",
       label: "others",
-      value: TruckLength?.length,
+      value: others?.length,
       color: "hsl(241, 70%, 50%)",
     },
   ];
@@ -257,6 +293,67 @@ const WeekilyDataAnalysys = ({ month, year }) => {
           },
         ]}
       />
+      <Box sx={{ pl: 2, pr: 2 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 1 }}
+        >
+          <Typography>Source</Typography>
+          <Typography>Total Price</Typography>
+        </Stack>
+        <Divider />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 1 }}
+        >
+          <Typography>Vench</Typography>
+          <Typography>{GMD_CURRENC_FORMAT.format(CarPricePerMonth)}</Typography>
+        </Stack>
+        <Divider />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 1 }}
+        >
+          <Typography>Truck</Typography>
+          <Typography>{GMD_CURRENC_FORMAT.format(TruckPrice)}</Typography>
+        </Stack>
+        <Divider />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 1 }}
+        >
+          <Typography>BUs</Typography>
+          <Typography>{GMD_CURRENC_FORMAT.format(BusPrice)}</Typography>
+        </Stack>
+        <Divider />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 1 }}
+        >
+          <Typography>Motocycle</Typography>
+          <Typography>GMd 1,000</Typography>
+        </Stack>
+        <Divider />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ px: 2, py: 1 }}
+        >
+          <Typography>Others</Typography>
+          <Typography>{GMD_CURRENC_FORMAT.format(OthersPrices)}</Typography>
+        </Stack>
+      </Box>
     </Box>
   );
 };

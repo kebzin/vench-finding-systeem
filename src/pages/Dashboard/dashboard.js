@@ -425,67 +425,6 @@ const Dashboard = () => {
                 <Box>
                   <WeekilyDataAnalysys month={month} year={year} />
                 </Box>
-                <Box sx={{ pl: 2, pr: 2 }}>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Source</Typography>
-                    <Typography>Total Price</Typography>
-                  </Stack>
-                  <Divider />
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Vench</Typography>
-                    <Typography>GMD 500</Typography>
-                  </Stack>
-                  <Divider />
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Truck</Typography>
-                    <Typography>GMD 700</Typography>
-                  </Stack>
-                  <Divider />
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>BUs</Typography>
-                    <Typography>GMd 800</Typography>
-                  </Stack>
-                  <Divider />
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Motocycle</Typography>
-                    <Typography>GMd 1,000</Typography>
-                  </Stack>
-                  <Divider />
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Others</Typography>
-                    <Typography>GMd 1,000</Typography>
-                  </Stack>
-                </Box>
               </Box>
 
               {/* // top five people beetween date range */}
