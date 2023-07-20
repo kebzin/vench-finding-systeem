@@ -41,10 +41,12 @@ const WantedAdd = ({ setAddWanted }) => {
   const { setDialogMessage, setOPenDialog } = useStateContext();
 
   // upload inage function
-  const upload = async (req, res) => {
+  const formData = new FormData();
+  formData.append("selectedFile", file);
+
+  const upload = async () => {
+    console.log(formData);
     try {
-      const formData = new FormData();
-      formData.append("selectedFile", file);
       console.log(formData);
       const respond = await AxiousPrivate.post("/officers/upload", formData);
       return respond.data;
@@ -52,6 +54,7 @@ const WantedAdd = ({ setAddWanted }) => {
       console.log(error);
     }
   };
+
   const mutation = useMutation(
     (newPost) => {
       console.log(newPost);
@@ -137,7 +140,6 @@ const WantedAdd = ({ setAddWanted }) => {
                 accept="image/*"
                 type="file"
                 name="selectedFile"
-                key={"file"}
                 onChange={(event) => setfile(event.target.files[0])}
               />
             </form>

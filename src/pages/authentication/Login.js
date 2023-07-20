@@ -29,7 +29,7 @@ const Login = ({}) => {
     setIsSidebar(false);
     setTopbar(false);
     setError(null);
-    // setUser(null);
+    setUser(null);
   }, []);
 
   // states
@@ -49,8 +49,8 @@ const Login = ({}) => {
     event.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(
-        "https://venchfindsystemapi.onrender.com/api/auth/login",
+      const response = await makeRequest.post(
+        "/auth/login",
         {
           email: email,
           password: password,

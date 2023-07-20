@@ -139,7 +139,12 @@ const Transaction = () => {
         <Typography>pleas try refetch the data manually </Typography>
         <Typography>Check your internet and try refreshing </Typography>
         <Typography>Error:: message {isError && error.message}</Typography>
-        <Button onClick={() => refetch()}>Refetch data</Button>
+        <Button
+          sx={{ border: `1px solid ${colors.greenAccent[500]}`, p: 2 }}
+          onClick={() => refetch()}
+        >
+          Refetch data
+        </Button>
       </Box>
     );
   }
