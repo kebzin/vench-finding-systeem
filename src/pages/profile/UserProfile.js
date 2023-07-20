@@ -136,7 +136,7 @@ const UserProfile = () => {
       sx={{
         marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
         transition: " all 1s",
-        marginRight: "15p;",
+        marginRight: "15px;",
       }}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center">

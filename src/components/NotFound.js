@@ -22,15 +22,13 @@ const NotFound = () => {
     <Box className="Header">
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
         }}
       >
-        <img style={{ widht: "60%" }} src={notfound} alt="not fount" />
+        <img style={{ widht: "100%" }} src={notfound} alt="not fount" />
         <Typography
           sx={{
             mt: 5,

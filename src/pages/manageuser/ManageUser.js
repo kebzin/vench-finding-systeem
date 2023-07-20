@@ -15,6 +15,8 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ReactTimeAgo from "react-time-ago";
 import Adduser from "./Adduser";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
+
 import { useStateContext } from "../../context/Contex";
 
 import { useAuthContext } from "../../context/AuthContex";
@@ -213,9 +215,43 @@ const ManageUser = () => {
   );
 
   if (isLoading) {
-    return <Typography>Loading</Typography>;
+    return (
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            ml: 5,
+          }}
+        >
+          <img width={"60%"} src={undraw_exams_re_4ios} />
+          <Typography variant="h3">Loading data .......</Typography>
+        </Box>
+      </Box>
+    );
   } else if (isError) {
-    <Typography>error someting weny wrong </Typography>;
+    return (
+      <Box>
+        <Typography variant="h1" sx={{ textAlign: "center" }}>
+          Oops something wrong{" "}
+        </Typography>
+        <Typography>pleas try refetch the data manually </Typography>
+        <Typography>Check your internet and try refreshing </Typography>
+        <Typography>Error:: message {isError && error.message}</Typography>
+        <Button
+          sx={{
+            background: colors.greenAccent[500],
+            color: colors.redAccent[500],
+            p: 2,
+          }}
+          onClick={() => refetch()}
+        >
+          Refetch data
+        </Button>
+      </Box>
+    );
   }
 
   const filteredRows = data?.filter((row) => {
@@ -451,8 +487,7 @@ const ManageUser = () => {
         sx={{
           mt: 1,
           ml: 3,
-          position: "fixed",
-          right: 100,
+
           color: colors.greenAccent[400],
         }}
         variant="outlined"

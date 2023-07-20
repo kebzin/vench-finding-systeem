@@ -337,6 +337,7 @@ const TransactionView = () => {
           }}
         >
           <Button
+            onClick={() => Navigate("/transaction")}
             sx={{
               backgroundColor:
                 theme.palette.mode === "light"
