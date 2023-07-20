@@ -142,7 +142,7 @@ const Transaction = () => {
         <Button
           sx={{
             background: colors.greenAccent[500],
-            color: colors.grey[300],
+            color: colors.redAccent[500],
             p: 2,
           }}
           onClick={() => refetch()}
