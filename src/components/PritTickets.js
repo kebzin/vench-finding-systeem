@@ -20,9 +20,7 @@ const PritTickets = React.forwardRef((props, ref) => {
           position: "fixed",
           height: "auto",
           top: "1%",
-          margin: "auto",
           justifyItems: "center",
-          right: "auto",
           zIndex: 1000,
           borderRadius: 2,
           background:
