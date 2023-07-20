@@ -159,6 +159,7 @@ const Sidebar = () => {
                   display="flex"
                   alignItems="center"
                   cursor="pointer"
+                  key={item.name}
                   sx={{
                     mt: 3,
                     "&:hover": { background: colors.greenAccent[700] },

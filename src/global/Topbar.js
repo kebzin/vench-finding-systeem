@@ -118,17 +118,18 @@ const Topbar = ({}) => {
       >
         {/* search bar */}
         <Box borderRadius="3px" display="flex" className="inputBass">
-          <IconButton type="button" sx={{ p: 1 }}>
-            <MenuIcon
-              style={{ width: 40, height: 40 }}
-              onClick={() =>
-                setSidebarWidth(() => {
-                  if (sidebarWidth === "180px") {
-                    return "0px";
-                  } else return "180px";
-                })
-              }
-            />
+          <IconButton
+            type="button"
+            sx={{ p: 1 }}
+            onClick={() =>
+              setSidebarWidth(() => {
+                if (sidebarWidth === "180px") {
+                  return "0px";
+                } else return "180px";
+              })
+            }
+          >
+            <MenuIcon style={{ width: 40, height: 40 }} />
           </IconButton>
 
           <InputBase
@@ -168,8 +169,12 @@ const Topbar = ({}) => {
             )}
           </IconButton>
 
-          <IconButton type="button" sx={{ p: 1 }}>
-            <SettingsIcon onClick={() => Navigation("/setting")} />
+          <IconButton
+            onClick={() => Navigation("/setting")}
+            type="button"
+            sx={{ p: 1 }}
+          >
+            <SettingsIcon />
           </IconButton>
           <IconButton
             type="button"
