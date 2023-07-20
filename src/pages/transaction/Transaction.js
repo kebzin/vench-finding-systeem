@@ -135,7 +135,9 @@ const Transaction = () => {
           flexDirection: "column",
         }}
       >
-        <Typography variant="h1">Oops something wrong </Typography>
+        <Typography variant="h1" sx={{ textAlign: "center" }}>
+          Oops something wrong{" "}
+        </Typography>
         <Typography>pleas try refetch the data manually </Typography>
         <Typography>Check your internet and try refreshing </Typography>
         <Typography>Error:: message {isError && error.message}</Typography>
@@ -153,8 +155,8 @@ const Transaction = () => {
     );
   }
 
-  const sortedData =
-    data?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+  // const sortedData =
+  //   data?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
   const HandleDelete = (id, event) => {
     event.preventDefault();
     try {

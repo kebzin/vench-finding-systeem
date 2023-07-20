@@ -146,11 +146,22 @@ const Dashboard = () => {
           flexDirection: "column",
         }}
       >
-        <Typography variant="h1">Oops something wrong </Typography>
+        <Typography variant="h1" sx={{ textAlign: "center" }}>
+          Oops something wrong{" "}
+        </Typography>
         <Typography>pleas try refetch the data manually </Typography>
         <Typography>Check your internet and try refreshing </Typography>
-        <Typography>Error message {isError && error.message}</Typography>
-        <Button onClick={() => refetch()}></Button>
+        <Typography>Error:: message {isError && error.message}</Typography>
+        <Button
+          sx={{
+            background: color.greenAccent[500],
+            color: color.redAccent[500],
+            p: 2,
+          }}
+          onClick={() => refetch()}
+        >
+          Refetch data
+        </Button>
       </Box>
     );
   }

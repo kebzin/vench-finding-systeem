@@ -38,12 +38,6 @@ const Pricing = () => {
     sidebarWidth,
   } = useStateContext();
 
-  // effect on component mount
-  useEffect(() => {
-    const isMounted = true;
-    const controllers = new AbortController();
-  }, []);
-
   // states
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
@@ -56,14 +50,49 @@ const Pricing = () => {
   const queryclient = useQueryClient();
 
   // functions
-  const { error, isLoading, data, refetch } = useQuery("Price", () =>
-    AxiousPrivate.get("/price/prices")
-      .then((res) => res.data)
-      .catch((err) => {
-        console.log(err);
-        navigator("/login", { status: { from: Location }, replace: true });
-      })
+  // const { error, isLoading, data, refetch } = useQuery("Price", () =>
+  //   AxiousPrivate.get("/price/prices")
+  //     .then((res) => res.data)
+  //     .catch((err) => {
+  //       console.log(err);
+  //       navigator("/login", { status: { from: Location }, replace: true });
+  //     })
+  // );
+  const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
+
+  // functions
+
+  const { data, error, isLoading, isError, refetch } = useQuery(
+    "Price",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get("/price/prices");
+        return response.data;
+      } catch (error) {
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: false, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: false,
+    }
   );
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      setIsLoadingData(true); // Show loading message while fetching data
+      try {
+        await refetch(); // Fetch data using useQuery's refetch function
+      } catch (error) {
+        console.error(error);
+      }
+      setIsLoadingData(false); // Hide loading message after data fetching is done
+    };
+
+    // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+    fetchData();
+  }, [AxiousPrivate, user?.Officers?.role, refetch]);
 
   const mutation = useMutation(
     (newPost) => {
@@ -91,6 +120,54 @@ const Pricing = () => {
       // setError(error.message);
     }
   };
+
+  if (isLoading) {
+    return (
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            ml: 5,
+          }}
+        >
+          <img width={"60%"} src={undraw_exams_re_4ios} />
+          <Typography variant="h3">Loading data .......</Typography>
+        </Box>
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Typography variant="h1" sx={{ textAlign: "center" }}>
+          Oops something wrong{" "}
+        </Typography>
+        <Typography>pleas try refetch the data manually </Typography>
+        <Typography>Check your internet and try refreshing </Typography>
+        <Typography>Error:: message {isError && error.message}</Typography>
+        <Button
+          sx={{
+            background: color.greenAccent[500],
+            color: color.redAccent[500],
+            p: 2,
+          }}
+          onClick={() => refetch()}
+        >
+          Refetch data
+        </Button>
+      </Box>
+    );
+  }
 
   const HandleUpdate = (item) => {
     setUpdateOpen(true);
