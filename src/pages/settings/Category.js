@@ -7,11 +7,11 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { tokens } from "../../theme";
 import BackupIcon from "@mui/icons-material/Backup";
 import { LoadingButton } from "@mui/lab";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useStateContext } from "../../context/Contex";
 import AddIcon from "@mui/icons-material/Add";
@@ -22,6 +22,7 @@ import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import FireTruckIcon from "@mui/icons-material/FireTruck";
+import { useAuthContext } from "../../context/AuthContex";
 
 const Category = () => {
   const theme = useTheme();
@@ -30,51 +31,116 @@ const Category = () => {
   const [bonusShore, setBonusShore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bonus, setBonus] = useState();
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
   const [categoryName, setCategoryName] = useState("");
   const [categoryAddShoe, seetCategoryAddShoe] = useState(false);
   const [addcatLoading, setAddCatLoading] = useState(false);
 
+  const { user } = useAuthContext();
   const HandleBonushShow = () => {
     setBonusShore((prev) => !prev);
   };
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
-  const mutation = useMutation(
-    (newPost) => {
-      //   return AxiousPrivate.patch(`/price/prices/${updateitem.id}`, newPost);
+  const { data, error, isLoading, isError, refetch } = useQuery(
+    "category",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get("/category/category");
+        console.log(response);
+        return response.data;
+      } catch (error) {
+        throw new Error("Failed to fetch data.");
+        console.log(error);
+      }
     },
     {
-      onSuccess: () => {
+      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: false, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: false,
+    }
+  );
+
+  console.log(data);
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      try {
+        await refetch(); // Fetch data using useQuery's refetch function
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+    fetchData();
+  }, [AxiousPrivate, user?.Officers?.role, refetch]);
+
+  const mutation = useMutation(
+    (newPost) => {
+      return AxiousPrivate.post(`/category/category/`, newPost);
+    },
+    {
+      onSuccess: (response) => {
         // Invalidate and refetch
+        console.log(response);
         setLoading(false);
         setOPenDialog(true);
         setBonusShore(false);
-        setDialogMessage("Bonus successfully Updated");
-        queryclient.invalidateQueries("fine");
+        setCategoryName("");
+        setDialogMessage("Category successfully Add");
+        queryclient.invalidateQueries("category");
       },
 
-      onError: () => {
+      onError: (error) => {
         setLoading(false);
+        setOPenDialog(true);
+        setErrorIcon(true);
+        setDialogMessage(error?.response.data.mesage);
       },
     }
   );
 
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignContent: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          mt: 40,
+        }}
+      >
+        <img width={"60%"} src={undraw_exams_re_4ios} />
+        <Typography variant="h3">Loading......</Typography>
+      </Box>
+    );
+  }
+  if (isError) {
+    return (
+      <Box>
+        <Typography>{error.message}</Typography>
+      </Box>
+    );
+  }
+
   //   const handle bonus update
-  const HandleBonusUpdate = async (event) => {
+  const HandleCategoryAdd = async (event) => {
     event.preventDefault();
     try {
       setLoading(true);
       await mutation.mutate({
         bonus: bonus,
+        officerId: user?.Officers?.id,
       });
     } catch (error) {
       setLoading(false);
     }
   };
 
-  const data = [{}, {}, {}, {}, {}];
+  const da = [{}, {}, {}];
   return (
     <Box sx={{ mt: 6 }}>
       <Typography
@@ -101,7 +167,7 @@ const Category = () => {
       >
         Add Category
       </Button>
-      {/* <Box sx={{ mt: 5 }}>
+      <Box sx={{ mt: 5 }}>
         <Typography sx={{ fontSize: 25, fontWeight: 400 }}>
           Bonus Amount per fine
         </Typography>
@@ -120,7 +186,7 @@ const Category = () => {
         >
           update
         </Button>
-      </Box> */}
+      </Box>
 
       <Box
         className="transition"
@@ -131,7 +197,7 @@ const Category = () => {
       >
         {/* ROW 1 */}
 
-        {loading ? (
+        {/* {loading ? (
           <Box
             sx={{
               display: "flex",
@@ -152,53 +218,39 @@ const Category = () => {
             >
               Refresh
             </Button>
-          </Box>
-        ) : loading ? (
+          </Box> */}
+        {da.map((item, index) => (
           <Box
-            sx={{
-              display: "flex",
-              alignContent: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              mt: 40,
-            }}
+            backgroundColor={color.primary[400]}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height="auto"
+            key={index}
           >
-            <img width={"60%"} src={undraw_exams_re_4ios} />
-            <Typography variant="h3">Loading......</Typography>
-          </Box>
-        ) : (
-          data.map((item, index) => (
             <Box
-              backgroundColor={color.primary[400]}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              height="auto"
-              key={index}
+              sx={{
+                display: "flex",
+                width: "100%",
+                m: "0 20px",
+              }}
             >
               <Box
                 sx={{
-                  display: "flex",
-                  width: "100%",
-                  m: "0 20px",
+                  objectFit: "contain",
                 }}
               >
-                <Box
-                  sx={{
-                    objectFit: "contain",
-                  }}
+                <Typography>category</Typography>
+                <Typography
+                  variant="h5"
+                  sx={{ fontWeight: 600, color: color.blueAccent[200] }}
                 >
-                  <Typography>category</Typography>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontWeight: 600, color: color.blueAccent[200] }}
-                  >
-                    {"Car"}
-                  </Typography>
-                  <IconButton
-                    sx={{ fontSize: 100, color: color.greenAccent[400] }}
-                  >
-                    {/* {item?.OffenceCategory === "car" ? (
+                  {"Car"}
+                </Typography>
+                <IconButton
+                  sx={{ fontSize: 100, color: color.greenAccent[400] }}
+                >
+                  {/* {item?.OffenceCategory === "car" ? (
                       <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />
                     ) : item?.OffenceCategory === "truck" ? (
                       <FireTruckIcon sx={{ fontSize: 100 }} />
@@ -209,39 +261,38 @@ const Category = () => {
                     ) : (
                       <TwoWheelerIcon sx={{ fontSize: 100 }} />
                     )} */}
-                    <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />
-                  </IconButton>
-                </Box>
-                <Box>
-                  <Button
-                    sx={{
-                      mt: 2,
-                      color: color.redAccent[400],
-                    }}
-                    variant="outlined"
-                    startIcon={<DeleteIcon />}
-                    //   onClick={() => HandleDelet(item.id)}
-                  >
-                    Delete
-                  </Button>
-
-                  <Button
-                    sx={{
-                      mt: 1,
-                      color: color.greenAccent[400],
-                    }}
-                    variant="outlined"
-                    startIcon={<BackupIcon />}
-                    //   onClick={() => HandleUpdate(item)}
-                  >
-                    update
-                  </Button>
-                </Box>
+                  <DirectionsCarFilledIcon sx={{ fontSize: 100 }} />
+                </IconButton>
               </Box>
-              {/* <CrimePrcingUpdate /> */}
+              <Box>
+                <Button
+                  sx={{
+                    mt: 2,
+                    color: color.redAccent[400],
+                  }}
+                  variant="outlined"
+                  startIcon={<DeleteIcon />}
+                  //   onClick={() => HandleDelet(item.id)}
+                >
+                  Delete
+                </Button>
+
+                <Button
+                  sx={{
+                    mt: 1,
+                    color: color.greenAccent[400],
+                  }}
+                  variant="outlined"
+                  startIcon={<BackupIcon />}
+                  //   onClick={() => HandleUpdate(item)}
+                >
+                  update
+                </Button>
+              </Box>
             </Box>
-          ))
-        )}
+            {/* <CrimePrcingUpdate /> */}
+          </Box>
+        ))}
       </Box>
       {bonusShore && (
         <Box
@@ -296,7 +347,7 @@ const Category = () => {
               <LoadingButton
                 size="larger"
                 color="primary"
-                onClick={HandleBonusUpdate}
+                // onClick={HandleBonusUpdate}
                 loading={loading}
                 //   loadingPosition="end"
                 variant="contained"
@@ -331,6 +382,7 @@ const Category = () => {
       )}
       {categoryAddShoe && (
         <FunctionToAddCategory
+          onHandleClick={HandleCategoryAdd}
           seetCategoryAddShoe={seetCategoryAddShoe}
           loading={addcatLoading}
           categoryName={categoryName}
