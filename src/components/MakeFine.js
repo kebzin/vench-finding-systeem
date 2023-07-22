@@ -175,11 +175,31 @@ const MakeFine = ({ setToggleAdd }) => {
   }
 
   const HandleFilter = (event) => {
-    setLicenNumber(event.target.value);
-    const driver = filterItems(data, LicenNumber);
+    const licenseNumber = event.target.value;
+    setLicenNumber(licenseNumber);
 
-    setDriverName(driver?.driversFirstName + " " + driver?.driversLastName);
-    setDriverAddress(driver?.driversAddress);
+    const driver = filterItems(data, licenseNumber);
+
+    if (driver) {
+      setDriverName(
+        `${driver.driversFirstName || ""} ${driver.driversLastName || ""}`
+      );
+      setDriverAddress(driver.driversAddress || "");
+    }
+    if (licenseNumber.length >= 5) {
+      return (
+        setOPenDialog(true),
+        setErrorIcon(true),
+        setDialogMessage(
+          "The driver licen number you enter is incorrect pleas retry again "
+        ),
+        // Handle the case when no driver is found with the given license number
+        setDriverName(""),
+        setDriverAddress("")
+      );
+
+      // You could show an error message or take other actions as needed.
+    }
   };
 
   const HandleOffenceCommited = (event) => {

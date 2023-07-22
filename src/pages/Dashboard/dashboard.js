@@ -71,7 +71,7 @@ const Dashboard = () => {
   const todayMonth = new Date(date); // getting the full date of the current year
 
   // states
-  const [dateValue, setDateValue] = useState();
+
   const [month, setMonth] = useState(todayMonth.getMonth()); // the current month
   const [year, setYear] = useState(todayMonth.getFullYear()); // the current year
   // const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
@@ -255,7 +255,7 @@ const Dashboard = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
         </Box>
-        <Button
+        {/* <Button
           sx={{
             mt: 1,
             ml: 3,
@@ -270,7 +270,7 @@ const Dashboard = () => {
           onClick={() => setToggleAdd((prev) => !prev)}
         >
           make fine
-        </Button>
+        </Button> */}
         {user?.Officers?.role === "Administrator" ||
         user?.Officers?.role === "Sub Admin" ? (
           <Box>
