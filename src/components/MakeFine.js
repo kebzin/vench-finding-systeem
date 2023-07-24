@@ -10,12 +10,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useAuthContext } from "../context/AuthContex";
 import { useStateContext } from "../context/Contex";
 import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
+import { useReactToPrint } from "react-to-print";
+import PritTickets from "./PritTickets";
 
 const addButtonContainer = {
   display: "flex",
@@ -50,6 +52,8 @@ const MakeFine = ({ setToggleAdd }) => {
   const [wanted, setwanted] = useState(false);
   const [category, setcategory] = useState();
   const [fineCategory, setFineCategory] = useState("");
+  const [showprint, setShowPrint] = useState(false);
+  const [fineToPrint, setFineToPrint] = useState(null);
 
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
 
@@ -82,6 +86,13 @@ const MakeFine = ({ setToggleAdd }) => {
       });
   });
 
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    onBeforeGetContentP: () => setShowPrint(true),
+    content: () => componentRef.current,
+    onAfterPrint: () => setShowPrint(false),
+  });
+
   const result = useQuery(
     "Price",
     async () =>
@@ -100,6 +111,8 @@ const MakeFine = ({ setToggleAdd }) => {
     },
     {
       onSuccess: (response) => {
+        console.log(response.data);
+        setFineToPrint(response.data);
         setOPenDialog(true);
         setfineAmount("");
         setfineDescription("");
@@ -109,6 +122,8 @@ const MakeFine = ({ setToggleAdd }) => {
         setcategory("");
         setLicenNumber("");
         setDialogMessage(" successfully Fined ");
+        handlePrint();
+        // <PritTickets ref={componentRef} data={response.data} />;
         setLoading(false);
 
         console.log(response);
@@ -126,23 +141,23 @@ const MakeFine = ({ setToggleAdd }) => {
 
   const HandleFineSubmit = async (event) => {
     event.preventDefault();
-    if (
-      (Boolean(NumberPlat),
-      Boolean(LicenNumber),
-      Boolean(OffenceCommited),
-      Boolean(DriverName),
-      Boolean(category),
-      Boolean(fineCategory),
-      Boolean(fineAmount),
-      Boolean(fineDescription))
-    ) {
-      return (
-        setOPenDialog(true),
-        setErrorIcon(true),
-        setDialogMessage("All file are Required"),
-        setLoading(false)
-      );
-    }
+    // // if (
+    // //   (Boolean(NumberPlat),
+    // //   Boolean(LicenNumber),
+    // //   Boolean(OffenceCommited),
+    // //   Boolean(DriverName),
+    // //   Boolean(category),
+    // //   Boolean(fineCategory),
+    // //   Boolean(fineAmount),
+    // //   Boolean(fineDescription))
+    // // ) {
+    //   return (
+    //     setOPenDialog(true),
+    //     setErrorIcon(true),
+    //     setDialogMessage("All file are Required"),
+    //     setLoading(false)
+    //   );
+    // }
 
     try {
       setLoading(true);
@@ -257,7 +272,7 @@ const MakeFine = ({ setToggleAdd }) => {
             >
               <TextField
                 id="outlined-basic"
-                placeholder=" Enter Dreiver Licen Number"
+                placeholder=" Enter Driver Licen Number"
                 variant="outlined"
                 size="full"
                 type="text"
@@ -450,6 +465,8 @@ const MakeFine = ({ setToggleAdd }) => {
             ) : null}
           </Box>
         </form>
+
+        {showprint && <PritTickets ref={componentRef} data={fineToPrint} />}
       </Box>
     </Box>
   );

@@ -11,6 +11,7 @@ import { useAuthContext } from "../context/AuthContex";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import { useStateContext } from "../context/Contex";
 import { decryptData } from "./EncriptData";
+import Groups2Icon from "@mui/icons-material/Groups2";
 
 const Sidebar = () => {
   const theme = useTheme();
@@ -73,6 +74,12 @@ const Sidebar = () => {
     {
       name: "Manage Users",
       link: "/users",
+      icons: <Groups2Icon />,
+      admin: user?.Officers?.role,
+    },
+    {
+      name: "Manage Tellers",
+      link: "/tellers",
       icons: <Person3Icon />,
       admin: user?.Officers?.role,
     },
@@ -104,12 +111,12 @@ const Sidebar = () => {
       className="Sidebar"
       sx={{
         background: colors.primary[400],
-        background: colors.primary[400],
+
         minHeight: "100vh",
         height: "auto",
         width: sidebarWidth,
         position: "fixed",
-
+        zIndex: 100,
         objectFit: "contain",
         transition: "all 1s",
         overflow: "auto",
@@ -153,7 +160,7 @@ const Sidebar = () => {
 
         <Box sx={{ mt: 15 }}>
           <Box>
-            {Menues.map((item, iindex) =>
+            {Menues.map((item, index) =>
               item.admin === "Employee" ? null : (
                 <Box
                   display="flex"

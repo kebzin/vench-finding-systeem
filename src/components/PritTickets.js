@@ -16,11 +16,9 @@ const PritTickets = React.forwardRef((props, ref) => {
         ref={ref}
         sx={{
           objectFit: "contain",
-
           position: "fixed",
           height: "auto",
-          top: "1%",
-          justifyItems: "center",
+          top: 20,
           zIndex: 1000,
           borderRadius: 2,
           background:
@@ -47,8 +45,8 @@ const PritTickets = React.forwardRef((props, ref) => {
           <Typography variant="h5"> ID: {props.data?.id}</Typography>
           <Box sx={{ textAlign: "right" }}>
             <Typography>info</Typography>
-            <Typography> {props.data?.officerId?.email}</Typography>
-            <Typography>+220 {props.data?.officerId?.PhoneNumber}</Typography>
+            {/* <Typography> {props.data?.officerId?.email}</Typography>
+            <Typography>+220 {props.data?.officerId?.PhoneNumber}</Typography> */}
             <Typography>{today.toUTCString()}</Typography>
           </Box>
           <Box
