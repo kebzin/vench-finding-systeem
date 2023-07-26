@@ -30,7 +30,6 @@ const ViewWanted = ({ preview, setShowDetails }) => {
   const queryclient = useQueryClient();
   return (
     <Box
-      position="fixed"
       display="flex"
       alignItems="center"
       justifyContent="center"

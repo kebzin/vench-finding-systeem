@@ -360,7 +360,11 @@ const MakeFine = ({ setToggleAdd }) => {
                 {result?.data?.map((name, index) => (
                   <MenuItem key={index} value={name}>
                     <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: 1,
+                      }}
                     >
                       <Typography sx={{}}>{name?.OffenceName} </Typography>
                       <Typography>{" " + name?.OffenceCategory}</Typography>
@@ -429,21 +433,6 @@ const MakeFine = ({ setToggleAdd }) => {
                 onChange={(event) => setfineDescription(event.target.value)}
               />
             </FormControl>
-
-            {/* <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ px: 2, py: 1, gap: 6 }}
-            >
-              <Typography>Wanted</Typography>
-              <Switch
-                color="secondary"
-                checked={wanted}
-                onClick={(event) => HandleWanted(event)}
-                sx={{}}
-              />
-            </Stack> */}
 
             <LoadingButton
               sx={{
