@@ -2,6 +2,9 @@ import {
   Box,
   Button,
   FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
   useTheme,
@@ -30,6 +33,7 @@ const Banka = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryAddShoe, seetCategoryAddShoe] = useState(false);
   const [addcatLoading, setAddCatLoading] = useState(false);
+  const [region, setRegion] = useState("");
 
   const { user } = useAuthContext();
 
@@ -37,10 +41,10 @@ const Banka = () => {
   const queryclient = useQueryClient();
 
   const { data, error, isLoading, isFetching, isError, refetch } = useQuery(
-    "category",
+    "bank",
     async () => {
       try {
-        const response = await AxiousPrivate.get("/category/category");
+        const response = await AxiousPrivate.get("/bank/bank");
 
         return response.data;
       } catch (error) {
@@ -71,10 +75,10 @@ const Banka = () => {
 
   const mutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.post(`/category/category/`, newPost);
+      return AxiousPrivate.post(`/bank/bank/`, newPost);
     },
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
         // Invalidate and refetch
 
         setLoading(false);
@@ -82,36 +86,35 @@ const Banka = () => {
         setOPenDialog(true);
         setBonusShore(false);
         setCategoryName("");
-        setDialogMessage("Category successfully Add");
-        queryclient.invalidateQueries("category");
+        setDialogMessage(response?.data?.message);
+        queryclient.invalidateQueries("bank");
       },
 
       onError: (error) => {
         setLoading(false);
         setOPenDialog(true);
         setErrorIcon(true);
-        setDialogMessage(error?.response.data.mesage);
+        setDialogMessage(error?.response.data.message);
       },
     }
   );
 
   const DeleteMutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.delete(`/category/category/${newPost.id}`);
+      return AxiousPrivate.delete(`/bank/bank/${newPost.id}`);
     },
     {
       onSuccess: (response) => {
-        // Invalidate and refetch
         setOPenDialog(true);
         seetCategoryAddShoe(false);
-        setDialogMessage(" successfully Add");
-        queryclient.invalidateQueries("category");
+        setDialogMessage(response?.data?.message);
+        queryclient.invalidateQueries("bank");
       },
 
       onError: (error) => {
         setOPenDialog(true);
         setErrorIcon(true);
-        setDialogMessage(error?.response.data.mesage);
+        setDialogMessage(error?.response.data.message);
       },
     }
   );
@@ -146,7 +149,8 @@ const Banka = () => {
     try {
       setLoading(true);
       await mutation.mutate({
-        category: categoryName,
+        Bank: categoryName,
+        Region: region,
         officerId: user?.Officers?.id,
       });
     } catch (error) {
@@ -166,8 +170,13 @@ const Banka = () => {
     { field: "id", headerName: "ID", flex: 1 },
 
     {
-      field: "category",
-      headerName: "Categoryies",
+      field: "Bank",
+      headerName: "Bank Name",
+      flex: 1,
+    },
+    {
+      field: "Region",
+      headerName: "Region Name",
       flex: 1,
     },
 
@@ -213,10 +222,7 @@ const Banka = () => {
         variant="h1"
         sx={{ color: color.blueAccent[200], fontSize: 13, fontWeight: 700 }}
       >
-        Adde Category
-      </Typography>
-      <Typography sx={{ color: color.grey[500] }}>
-        Example of category truck, car, bus etc
+        Adde Bank
       </Typography>
 
       {/* add category button */}
@@ -231,7 +237,7 @@ const Banka = () => {
         startIcon={<AddIcon />}
         onClick={() => seetCategoryAddShoe((prev) => !prev)}
       >
-        Add Category
+        Add Banks
       </Button>
       <Box>
         <Box
@@ -275,6 +281,8 @@ const Banka = () => {
 
       {categoryAddShoe && (
         <FunctionToAddCategory
+          region={region}
+          setRegion={setRegion}
           onHandleClick={HandleCategoryAdd}
           seetCategoryAddShoe={seetCategoryAddShoe}
           loading={addcatLoading}
@@ -292,6 +300,8 @@ const FunctionToAddCategory = ({
   seetCategoryAddShoe,
   onHandleClick,
   loading,
+  region,
+  setRegion,
 }) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
@@ -331,12 +341,12 @@ const FunctionToAddCategory = ({
           }}
         >
           <Typography variant="h3" sx={{ mb: 2 }}>
-            Add Category
+            Add Banks
           </Typography>
           <FormControl sx={{ width: "100%" }} variant="outlined">
             <TextField
               id="outlined-basic"
-              label="Enter Category Name"
+              label="Enter Bank  Name"
               variant="outlined"
               size="full"
               type="text"
@@ -344,6 +354,34 @@ const FunctionToAddCategory = ({
               onChange={(event) => setCategoryName(event.target.value)}
               value={categoryName}
             />
+          </FormControl>
+          <FormControl sx={{ m: 1, minWidth: "100%" }}>
+            <InputLabel id="demo-simple-select-autowidth-label">
+              Bank Region
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-autowidth-label"
+              id="demo-simple-select-autowidth"
+              value={region}
+              onChange={(event) => setRegion(event.target.value)}
+              autoWidth
+              label="Station Region"
+            >
+              <MenuItem value={"Banjul City Council"}>
+                Banjul City Council{" "}
+              </MenuItem>
+              <MenuItem value={"Upper River Region"}>
+                Upper River Region
+              </MenuItem>
+              <MenuItem value={"Lower River Region"}>
+                Lower River Region
+              </MenuItem>
+              <MenuItem value={"Nort Bank Region"}> Nort Bank Region</MenuItem>
+              <MenuItem value={"West Coast Region"}>West Coast Region</MenuItem>
+              <MenuItem value={"Central River Region"}>
+                Central River Region
+              </MenuItem>
+            </Select>
           </FormControl>
           <LoadingButton
             size="larger"
