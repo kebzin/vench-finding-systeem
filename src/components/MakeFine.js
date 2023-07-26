@@ -45,12 +45,12 @@ const MakeFine = ({ setToggleAdd }) => {
   const [NumberPlat, setNumberPlat] = useState("");
   const [LicenNumber, setLicenNumber] = useState("");
   const [DriverName, setDriverName] = useState("");
-  const [OffenceCommited, setOffenceCommited] = useState();
+  const [OffenceCommited, setOffenceCommited] = useState("");
   const [fineAmount, setfineAmount] = useState("");
   const [fineDescription, setfineDescription] = useState("");
-  const [DriverAddress, setDriverAddress] = useState(null);
+  const [DriverAddress, setDriverAddress] = useState("");
   const [wanted, setwanted] = useState(false);
-  const [category, setcategory] = useState();
+  const [category, setcategory] = useState("");
   const [fineCategory, setFineCategory] = useState("");
   const [showprint, setShowPrint] = useState(false);
   const [fineToPrint, setFineToPrint] = useState(null);
@@ -135,19 +135,17 @@ const MakeFine = ({ setToggleAdd }) => {
     },
     {
       onSuccess: (response) => {
-        console.log(response.data);
-        setFineToPrint(response.data);
         setOPenDialog(true);
+        setNumberPlat("");
+        DriverName("");
+        setOffenceCommited("");
         setfineAmount("");
         setfineDescription("");
+        setcategory("");
         setFineCategory("");
         setDriverAddress("");
-        setNumberPlat("");
-        setcategory("");
-        setLicenNumber("");
         setDialogMessage(" successfully Fined ");
-        handlePrint();
-        // <PritTickets ref={componentRef} data={response.data} />;
+
         setLoading(false);
 
         console.log(response);
@@ -197,7 +195,6 @@ const MakeFine = ({ setToggleAdd }) => {
         category: category,
         fineCategory: fineCategory,
       });
-      console.log(fineDescription);
     } catch (error) {
       setLoading(false);
     }
