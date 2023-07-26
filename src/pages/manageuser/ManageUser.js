@@ -161,6 +161,7 @@ import { useAuthContext } from "../../context/AuthContex";
 
 const ManageUser = () => {
   const [addUsers, setAddeUsers] = useState();
+  const [isLoadingData, setIsLoadingData] = useState(false);
   const Navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -172,7 +173,7 @@ const ManageUser = () => {
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
-  const { isLoading, data, isError, error, refetch } = useQuery(
+  const { data, error, isLoading, isError, isFetching, refetch } = useQuery(
     "users",
     async () => {
       try {
@@ -183,9 +184,11 @@ const ManageUser = () => {
         console.log(error);
       }
     },
+
     {
       refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
-      enabled: true,
+      enabled: false, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
     }
   );
 
@@ -213,6 +216,22 @@ const ManageUser = () => {
       },
     }
   );
+
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      setIsLoadingData(true); // Show loading message while fetching data
+      try {
+        await refetch(); // Fetch data using useQuery's refetch function
+      } catch (error) {
+        console.error(error);
+      }
+      setIsLoadingData(false); // Hide loading message after data fetching is done
+    };
+
+    // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+    fetchData();
+  }, [AxiousPrivate, user?.Officers?.role, refetch]);
 
   if (isLoading) {
     return (
@@ -254,24 +273,30 @@ const ManageUser = () => {
     );
   }
 
-  const filteredRows = data?.filter((row) => {
-    if (user?.Officers?.role === "Administrator") {
-      return true; // Show all records for administrators
-    } else if (user?.Officers?.role === "Sub Admin") {
-      return row.role !== "Administrator"; // Hide records with administrator role for sub-administrators
-    }
-    return false; // Default: Hide all other records
-  });
+  const filteredRows =
+    data?.length < 0 || data === undefined
+      ? []
+      : data?.filter((row) => {
+          if (user?.Officers?.role === "Administrator") {
+            return true; // Show all records for administrators
+          } else if (user?.Officers?.role === "Sub Admin") {
+            return row.role !== "Administrator"; // Hide records with administrator role for sub-administrators
+          }
+          return false; // Default: Hide all other records
+        });
 
-  const sortedData = filteredRows?.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
+  const sortedData =
+    filteredRows?.length < 0 || filteredRows === undefined
+      ? []
+      : filteredRows?.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
 
   // delete user mutation
 
   const HandleDelete = ({ _id, fines }) => {
     try {
-      if (fines.length > 0) {
+      if (fines?.length > 0) {
         return (
           setErrorIcon(true),
           setOPenDialog(true),
@@ -525,7 +550,7 @@ const ManageUser = () => {
             "& .MuiCheckbox-root": {},
           }}
         >
-          {isLoading === true ? (
+          {isLoading === true || isFetching === true ? (
             "loading"
           ) : (
             <DataGrid

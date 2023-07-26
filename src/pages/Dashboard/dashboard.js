@@ -71,7 +71,7 @@ const Dashboard = () => {
   const todayMonth = new Date(date); // getting the full date of the current year
 
   // states
-
+  const [dateValue, setDateValue] = useState();
   const [month, setMonth] = useState(todayMonth.getMonth()); // the current month
   const [year, setYear] = useState(todayMonth.getFullYear()); // the current year
   // const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
@@ -82,7 +82,7 @@ const Dashboard = () => {
 
   // functions
 
-  const { data, error, isLoading, refetch } = useQuery(
+  const { data, error, isLoading, refetch, isFetching } = useQuery(
     "transaction",
     async () => {
       try {
@@ -98,16 +98,19 @@ const Dashboard = () => {
     },
     {
       refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
-      enabled: false, // We don't want to fetch data immediately when the component mounts
-      refetchOnMount: false,
+      enabled: true, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
     }
   );
+
+  const abortController = new AbortController(); // Create an AbortController instance
+
   useEffect(() => {
     // Function to fetch data
     const fetchData = async () => {
       setIsLoadingData(true); // Show loading message while fetching data
       try {
-        await refetch(); // Fetch data using useQuery's refetch function
+        await refetch({ signal: abortController.signal }); // Use the abort signal to fetch data
       } catch (error) {
         console.error(error);
       }
@@ -116,9 +119,13 @@ const Dashboard = () => {
 
     // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
     fetchData();
+    return () => {
+      // Clean up the abort controller when the component unmounts
+      abortController.abort();
+    };
   }, [AxiousPrivate, user?.Officers?.role, refetch]);
 
-  if (isLoading) {
+  if (isLoading === true) {
     return (
       <Box>
         <Box
@@ -255,7 +262,7 @@ const Dashboard = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
         </Box>
-        {/* <Button
+        <Button
           sx={{
             mt: 1,
             ml: 3,
@@ -270,7 +277,7 @@ const Dashboard = () => {
           onClick={() => setToggleAdd((prev) => !prev)}
         >
           make fine
-        </Button> */}
+        </Button>
         {user?.Officers?.role === "Administrator" ||
         user?.Officers?.role === "Sub Admin" ? (
           <Box>

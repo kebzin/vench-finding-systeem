@@ -2,6 +2,7 @@ import { useLocation, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
 import { useEffect, useState } from "react";
 import { decryptData } from "../global/EncriptData";
+import { isTokenExpired } from "../hooks/jwtExpired";
 
 const RequirAuth = () => {
   const { user, setUser } = useAuthContext();
@@ -22,22 +23,17 @@ const RequirAuth = () => {
             encryptedUserData,
             "secret_key"
           );
-          // const currentTime = new Date().getTime() / 1000; // Get current time in seconds
-          // const accessTokenExpiration =
-          //   decryptedUserData?.accessTokenExpiration;
-
           const parsedEncryptedData = JSON.parse(decryptedUserData);
 
           const accessToken = parsedEncryptedData?.accessToken;
 
-          // if (!accessTokenExpiration || accessTokenExpiration < currentTime) {
-          //   // Access token is expired, redirect to login
-          //   navigate("/login");
-          // } else {
-          //   // Set the decrypted user data in the application state
-          //   setUser(decryptedUserData, accessToken);
-          // }
-          setUser(parsedEncryptedData, accessToken);
+          if (!isTokenExpired(accessToken)) {
+            // Access token is not expired, set the decrypted user data in the application state
+            setUser(parsedEncryptedData, accessToken);
+          } else {
+            // Access token is expired, redirect to login
+            navigate("/login");
+          }
         } catch (error) {
           // Error decrypting data, redirect to login
           navigate("/login");
@@ -48,7 +44,6 @@ const RequirAuth = () => {
       }
     }
   }, [checkedLocalStorage, navigate, setUser]);
-
   return user?.Officers === null || undefined ? ( // If the state doesn't have a user redirect them to the login page
     <Navigate to="/login" state={{ from: location }} replace />
   ) : (

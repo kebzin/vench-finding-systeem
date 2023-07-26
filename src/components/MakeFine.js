@@ -55,10 +55,14 @@ const MakeFine = ({ setToggleAdd }) => {
   const [showprint, setShowPrint] = useState(false);
   const [fineToPrint, setFineToPrint] = useState(null);
 
+  const [categoryData, setCategoryData] = useState();
+  // const [categoryError, setCategoryError] = useState();
+
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
 
-  const [latituid, setLatituid] = useState(null);
-  const [longitituid, setLongitituid] = useState(null);
+  // const [latituid, setLatituid] = useState(null);
+  // const [longitituid, setLongitituid] = useState(null);
+
   // useEffect(() => {
   //   const getLocation = () => {
   //     if (!navigator.geolocation) {
@@ -73,18 +77,38 @@ const MakeFine = ({ setToggleAdd }) => {
   // });
 
   // hooks
+
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
   // fetch officers
-  const { data, error } = useQuery("driver", async () => {
+  const { data } = useQuery("driver", async () => {
     return await AxiousPrivate.get("/driver/driver")
       .then((res) => res.data)
       .catch((err) => {
         console.log(err);
       });
   });
+
+  const { isLoading, isFetching } = useQuery(
+    "category",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get("/category/category");
+
+        return setCategoryData(response?.data);
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      // refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: true, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
+    }
+  );
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -224,9 +248,6 @@ const MakeFine = ({ setToggleAdd }) => {
     setcategory(OffenceCommited?.OffenceCategory);
   };
 
-  const HandleWanted = (event) => {
-    setwanted((previouseState) => !previouseState);
-  };
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const AddButtonContainerContent = {
@@ -322,14 +343,6 @@ const MakeFine = ({ setToggleAdd }) => {
             </FormControl>
 
             <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
-              {/* <TextField
-                id="outlined-basic"
-                label="Offence  Commited"
-                variant="outlined"
-                size="full"
-                type="text"
-                onChange={() => {}}
-              /> */}
               <Select
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
@@ -382,9 +395,15 @@ const MakeFine = ({ setToggleAdd }) => {
                 <MenuItem value={fineCategory} defaultValue={fineCategory}>
                   {fineCategory}
                 </MenuItem>
-                <MenuItem value={`truck`}>Truck</MenuItem>
-                <MenuItem value={`car`}>Car</MenuItem>
-                <MenuItem value={`motocar`}>Motocar</MenuItem>
+                {isLoading === true || isFetching === true ? (
+                  <Typography>Loading....</Typography>
+                ) : (
+                  categoryData?.map((value, index) => (
+                    <MenuItem key={index} value={value?.category}>
+                      {value?.category}
+                    </MenuItem>
+                  ))
+                )}
               </Select>
             </FormControl>
 

@@ -30,6 +30,10 @@ import Bonus from "./pages/settings/Bonus";
 import { useAuthContext } from "./context/AuthContex";
 import { decryptData } from "./global/EncriptData";
 import { isTokenExpired } from "./hooks/jwtExpired";
+import ManageTellers from "./pages/tellers/Tellers";
+import SingleTeller from "./pages/tellers/SingleTeller";
+import Banks from "./pages/settings/Banks";
+import PoliceStation from "./pages/settings/PoliceStation";
 
 function App() {
   const { setUser } = useAuthContext();
@@ -62,6 +66,7 @@ function App() {
           } else {
             // Access token is expired, redirect to login
             navigate("/login");
+            console.log("access token espired");
           }
         } catch (error) {
           // Error decrypting data, redirect to login
@@ -90,6 +95,9 @@ function App() {
 
               <Route element={<RequirAuth />}>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/tellers" element={<ManageTellers />} />
+                <Route path="/tellers/:id" element={<SingleTeller />} />
+
                 <Route path="pricing" element={<Pricing />} />
                 <Route path="/users" element={<ManageUser />} />
                 <Route path="/notification/:id" element={<Notification />} />
@@ -99,8 +107,9 @@ function App() {
                 <Route path="/setting" element={<Settings />}>
                   <Route path="bonus" element={<Bonus />} />
                   <Route path="category" element={<Category />} />
+                  <Route path="stations" element={<PoliceStation />} />
+                  <Route path="banks" element={<Banks />} />
                 </Route>
-
                 <Route path="/transaction/:id" element={<TransactionView />} />
                 <Route path="/wanted" element={<Wanted />} />
                 <Route path="/Charts" element={<Charts />} />

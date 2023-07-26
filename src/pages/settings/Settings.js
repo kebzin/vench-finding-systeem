@@ -20,7 +20,7 @@ const Settings = () => {
       sx={{
         marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
         transition: " all 1s",
-        marginRight: "15p;",
+        marginRight: "15px;",
       }}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -51,6 +51,23 @@ const Settings = () => {
           style={{ color: color.primary[500], textDecoration: "none" }}
         >
           <Typography sx={{ color: color.primary[200] }}> Category</Typography>
+        </NavLink>
+
+        <NavLink
+          className={({ isActive }) => (isActive ? "active" : "inactive")}
+          to={"stations"}
+          style={{ color: color.primary[500], textDecoration: "none" }}
+        >
+          <Typography sx={{ color: color.primary[200] }}>
+            Police Stations
+          </Typography>
+        </NavLink>
+        <NavLink
+          className={({ isActive }) => (isActive ? "active" : "inactive")}
+          to={"banks"}
+          style={{ color: color.primary[500], textDecoration: "none" }}
+        >
+          <Typography sx={{ color: color.primary[200] }}> Banks</Typography>
         </NavLink>
       </Box>
       <Outlet />

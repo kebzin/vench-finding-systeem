@@ -21,15 +21,18 @@ import { useStateContext } from "../../context/Contex";
 import { tokens } from "../../theme";
 import { makeRequest } from "../../hooks/axious";
 import { encryptData } from "../../global/EncriptData";
+import { useLogout } from "../../hooks/logout";
 
 const Login = ({}) => {
   const { setUser } = useAuthContext();
   const { setIsSidebar, setTopbar } = useStateContext();
+  const { logout } = useLogout();
   useEffect(() => {
     setIsSidebar(false);
     setTopbar(false);
     setError(null);
     setUser(null);
+    logout();
   }, []);
 
   // states

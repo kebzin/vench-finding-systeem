@@ -10,7 +10,7 @@ import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BackupIcon from "@mui/icons-material/Backup";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContex";
 import { useStateContext } from "../../context/Contex";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -45,19 +45,9 @@ const Pricing = () => {
 
   // hooks
   const Navigate = useNavigate();
-  const Location = useLocation();
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
-  // functions
-  // const { error, isLoading, data, refetch } = useQuery("Price", () =>
-  //   AxiousPrivate.get("/price/prices")
-  //     .then((res) => res.data)
-  //     .catch((err) => {
-  //       console.log(err);
-  //       navigator("/login", { status: { from: Location }, replace: true });
-  //     })
-  // );
   const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
@@ -75,7 +65,7 @@ const Pricing = () => {
     {
       refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
       enabled: false, // We don't want to fetch data immediately when the component mounts
-      refetchOnMount: false,
+      refetchOnMount: true,
     }
   );
   useEffect(() => {
@@ -232,6 +222,8 @@ const Pricing = () => {
               <img width={"60%"} src={undraw_exams_re_4ios} />
               <Typography variant="h3">Loading......</Typography>
             </Box>
+          ) : data?.length < 0 || data === undefined ? (
+            []
           ) : (
             data.map((item, index) => (
               <Box

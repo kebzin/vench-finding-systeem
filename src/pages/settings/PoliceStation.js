@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuthContext } from "../../context/AuthContex";
 import { DataGrid } from "@mui/x-data-grid";
 
-const Category = () => {
+const PoliceStation = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   //   state
@@ -27,8 +27,8 @@ const Category = () => {
   const [loading, setLoading] = useState(false);
   const [bonus, setBonus] = useState();
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryAddShoe, seetCategoryAddShoe] = useState(false);
+  const [Station, setStation] = useState("");
+  const [StationAddShow, seetStationAddShow] = useState(false);
   const [addcatLoading, setAddCatLoading] = useState(false);
 
   const { user } = useAuthContext();
@@ -78,10 +78,10 @@ const Category = () => {
         // Invalidate and refetch
 
         setLoading(false);
-        seetCategoryAddShoe(false);
+        seetStationAddShow(false);
         setOPenDialog(true);
         setBonusShore(false);
-        setCategoryName("");
+        setStation("");
         setDialogMessage("Category successfully Add");
         queryclient.invalidateQueries("category");
       },
@@ -103,7 +103,7 @@ const Category = () => {
       onSuccess: (response) => {
         // Invalidate and refetch
         setOPenDialog(true);
-        seetCategoryAddShoe(false);
+        seetStationAddShow(false);
         setDialogMessage(" successfully Add");
         queryclient.invalidateQueries("category");
       },
@@ -146,7 +146,7 @@ const Category = () => {
     try {
       setLoading(true);
       await mutation.mutate({
-        category: categoryName,
+        category: Station,
         officerId: user?.Officers?.id,
       });
     } catch (error) {
@@ -213,10 +213,10 @@ const Category = () => {
         variant="h1"
         sx={{ color: color.blueAccent[200], fontSize: 13, fontWeight: 700 }}
       >
-        Adde Category
+        Adde Police Station
       </Typography>
       <Typography sx={{ color: color.grey[500] }}>
-        Example of category truck, car, bus etc
+        Example of Station truck, car, bus etc
       </Typography>
 
       {/* add category button */}
@@ -229,9 +229,9 @@ const Category = () => {
         }}
         variant="outlined"
         startIcon={<AddIcon />}
-        onClick={() => seetCategoryAddShoe((prev) => !prev)}
+        onClick={() => seetStationAddShow((prev) => !prev)}
       >
-        Add Category
+        Add Police Station
       </Button>
       <Box>
         <Box
@@ -273,13 +273,13 @@ const Category = () => {
         </Box>
       </Box>
 
-      {categoryAddShoe && (
+      {StationAddShow && (
         <FunctionToAddCategory
           onHandleClick={HandleCategoryAdd}
-          seetCategoryAddShoe={seetCategoryAddShoe}
+          seetStationAddShow={seetStationAddShow}
           loading={addcatLoading}
-          categoryName={categoryName}
-          setCategoryName={setCategoryName}
+          Station={Station}
+          setStation={setStation}
         />
       )}
     </Box>
@@ -287,9 +287,9 @@ const Category = () => {
 };
 
 const FunctionToAddCategory = ({
-  categoryName,
-  setCategoryName,
-  seetCategoryAddShoe,
+  Station,
+  setStation,
+  seetStationAddShow,
   onHandleClick,
   loading,
 }) => {
@@ -331,18 +331,18 @@ const FunctionToAddCategory = ({
           }}
         >
           <Typography variant="h3" sx={{ mb: 2 }}>
-            Add Category
+            Add Police Station
           </Typography>
           <FormControl sx={{ width: "100%" }} variant="outlined">
             <TextField
               id="outlined-basic"
-              label="Enter Category Name"
+              label="Enter Station Name"
               variant="outlined"
               size="full"
               type="text"
               required="true"
-              onChange={(event) => setCategoryName(event.target.value)}
-              value={categoryName}
+              onChange={(event) => setStation(event.target.value)}
+              value={Station}
             />
           </FormControl>
           <LoadingButton
@@ -359,12 +359,12 @@ const FunctionToAddCategory = ({
               mt: 3,
             }}
           >
-            <span style={{ padding: "10px" }}>Add Category</span>
+            <span style={{ padding: "10px" }}>Add Police Station</span>
           </LoadingButton>
           <LoadingButton
             size="larger"
             color="primary"
-            onClick={() => seetCategoryAddShoe(false)}
+            onClick={() => seetStationAddShow(false)}
             loading={false}
             //   loadingPosition="end"
             variant="contained"
@@ -382,4 +382,4 @@ const FunctionToAddCategory = ({
     </Box>
   );
 };
-export default Category;
+export default PoliceStation;

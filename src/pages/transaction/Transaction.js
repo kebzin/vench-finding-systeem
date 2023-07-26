@@ -49,8 +49,8 @@ const Transaction = () => {
   const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
-
-  const { data, error, isLoading, isError, refetch } = useQuery(
+  console.log(user?.Officers);
+  const { data, error, isFetching, isLoading, isError, refetch } = useQuery(
     "transaction",
     async () => {
       try {
@@ -68,7 +68,7 @@ const Transaction = () => {
     {
       refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
       enabled: false, // We don't want to fetch data immediately when the component mounts
-      refetchOnMount: false,
+      refetchOnMount: true,
     }
   );
   useEffect(() => {
@@ -393,12 +393,20 @@ const Transaction = () => {
             }}
           >
             {/* {data?.length > 0 && ( */}
-            <DataGrid
-              pagination
-              rows={data}
-              columns={columns}
-              editMode={"row"}
-            />
+            {isLoading === true || isFetching === true || data.length < 0 ? (
+              <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 15 }}>
+                loading....{" "}
+              </Typography>
+            ) : data?.length < 0 || data === undefined ? (
+              []
+            ) : (
+              <DataGrid
+                pagination
+                rows={data}
+                columns={columns}
+                editMode={"row"}
+              />
+            )}
             {/* )} */}
           </Box>
         </Box>

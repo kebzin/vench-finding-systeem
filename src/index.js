@@ -22,7 +22,6 @@ root.render(
         <ContextProvider>
           <BrowserRouter>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {" "}
               <App />
             </LocalizationProvider>
           </BrowserRouter>

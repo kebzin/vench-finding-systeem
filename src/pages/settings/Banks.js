@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuthContext } from "../../context/AuthContex";
 import { DataGrid } from "@mui/x-data-grid";
 
-const Category = () => {
+const Banka = () => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   //   state
@@ -382,4 +382,4 @@ const FunctionToAddCategory = ({
     </Box>
   );
 };
-export default Category;
+export default Banka;

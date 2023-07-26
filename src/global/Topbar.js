@@ -23,6 +23,7 @@ import { useNavigate, useNavigation } from "react-router-dom";
 import { decryptData } from "./EncriptData";
 import { useAuthContext } from "../context/AuthContex";
 import { useState } from "react";
+import { isTokenExpired } from "../hooks/jwtExpired";
 
 const Topbar = ({}) => {
   const theme = useTheme();
@@ -40,46 +41,42 @@ const Topbar = ({}) => {
 
   const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
 
-  useEffect(() => {
-    if (!checkedLocalStorage) {
-      setCheckedLocalStorage(true);
-      const encryptedUserData = localStorage.getItem("user");
+  const navigate = useNavigate();
 
-      if (encryptedUserData) {
-        // Decrypt the user data from local storage
-        try {
-          // Parse the encrypted data as JSON before decrypting
-          const decryptedUserData = decryptData(
-            encryptedUserData,
-            "secret_key"
-          );
-          // const currentTime = new Date().getTime() / 1000; // Get current time in seconds
-          // const accessTokenExpiration =
-          //   decryptedUserData?.accessTokenExpiration;
+  // useEffect(() => {
+  //   if (!checkedLocalStorage) {
+  //     setCheckedLocalStorage(true);
+  //     const encryptedUserData = localStorage.getItem("user");
 
-          const parsedEncryptedData = JSON.parse(decryptedUserData);
+  //     if (encryptedUserData) {
+  //       // Decrypt the user data from local storage
+  //       try {
+  //         // Parse the encrypted data as JSON before decrypting
+  //         const decryptedUserData = decryptData(
+  //           encryptedUserData,
+  //           "secret_key"
+  //         );
+  //         const parsedEncryptedData = JSON.parse(decryptedUserData);
 
-          const accessToken = parsedEncryptedData?.accessToken;
+  //         const accessToken = parsedEncryptedData?.accessToken;
 
-          // if (!accessTokenExpiration || accessTokenExpiration < currentTime) {
-          //   // Access token is expired, redirect to login
-          //   Navigation("/login");
-          // } else {
-          //   // Set the decrypted user data in the application state
-          //   setUser(decryptedUserData, accessToken);
-          // }
-          setUser(parsedEncryptedData, accessToken);
-        } catch (error) {
-          // Error decrypting data, redirect to login
-          Navigation("/login");
-        }
-      } else {
-        // No user data found in local storage, redirect to login
-        Navigation("/login");
-      }
-    }
-  }, [checkedLocalStorage, Navigation, setUser]);
-
+  //         if (!isTokenExpired(accessToken)) {
+  //           // Access token is not expired, set the decrypted user data in the application state
+  //           setUser(parsedEncryptedData, accessToken);
+  //         } else {
+  //           // Access token is expired, redirect to login
+  //           navigate("/login");
+  //         }
+  //       } catch (error) {
+  //         // Error decrypting data, redirect to login
+  //         navigate("/login");
+  //       }
+  //     } else {
+  //       // No user data found in local storage, redirect to login
+  //       navigate("/login");
+  //     }
+  //   }
+  // }, [checkedLocalStorage, navigate, setUser]);
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
