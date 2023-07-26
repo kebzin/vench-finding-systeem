@@ -2,6 +2,9 @@ import {
   Box,
   Button,
   FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
   useTheme,
@@ -30,6 +33,7 @@ const PoliceStation = () => {
   const [Station, setStation] = useState("");
   const [StationAddShow, seetStationAddShow] = useState(false);
   const [addcatLoading, setAddCatLoading] = useState(false);
+  const [region, setRegion] = useState("");
 
   const { user } = useAuthContext();
 
@@ -37,10 +41,10 @@ const PoliceStation = () => {
   const queryclient = useQueryClient();
 
   const { data, error, isLoading, isFetching, isError, refetch } = useQuery(
-    "category",
+    "station",
     async () => {
       try {
-        const response = await AxiousPrivate.get("/category/category");
+        const response = await AxiousPrivate.get("/station/station");
 
         return response.data;
       } catch (error) {
@@ -71,10 +75,10 @@ const PoliceStation = () => {
 
   const mutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.post(`/category/category/`, newPost);
+      return AxiousPrivate.post(`/station/station/`, newPost);
     },
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
         // Invalidate and refetch
 
         setLoading(false);
@@ -82,36 +86,36 @@ const PoliceStation = () => {
         setOPenDialog(true);
         setBonusShore(false);
         setStation("");
-        setDialogMessage("Category successfully Add");
-        queryclient.invalidateQueries("category");
+        setDialogMessage(response?.data?.message);
+        queryclient.invalidateQueries("station");
       },
 
       onError: (error) => {
         setLoading(false);
         setOPenDialog(true);
         setErrorIcon(true);
-        setDialogMessage(error?.response.data.mesage);
+        setDialogMessage(error?.response.data.message);
       },
     }
   );
 
   const DeleteMutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.delete(`/category/category/${newPost.id}`);
+      return AxiousPrivate.delete(`/station/station/${newPost.id}`);
     },
     {
       onSuccess: (response) => {
         // Invalidate and refetch
         setOPenDialog(true);
         seetStationAddShow(false);
-        setDialogMessage(" successfully Add");
-        queryclient.invalidateQueries("category");
+        setDialogMessage(response?.data?.message);
+        queryclient.invalidateQueries("station");
       },
 
       onError: (error) => {
         setOPenDialog(true);
         setErrorIcon(true);
-        setDialogMessage(error?.response.data.mesage);
+        setDialogMessage(error?.response.data.message);
       },
     }
   );
@@ -141,19 +145,20 @@ const PoliceStation = () => {
   }
 
   //   const handle bonus update
-  const HandleCategoryAdd = async (event) => {
+  const HandlePoliceStationAdd = async (event) => {
     event.preventDefault();
     try {
       setLoading(true);
       await mutation.mutate({
-        category: Station,
+        StationName: Station,
         officerId: user?.Officers?.id,
+        Region: region,
       });
     } catch (error) {
       setLoading(false);
     }
   };
-  const HandleCategoryDelete = async (id) => {
+  const HandleStationDElete = async (id) => {
     try {
       DeleteMutation.mutate({
         id: id,
@@ -166,8 +171,13 @@ const PoliceStation = () => {
     { field: "id", headerName: "ID", flex: 1 },
 
     {
-      field: "category",
-      headerName: "Categoryies",
+      field: "StationName",
+      headerName: "Station Name",
+      flex: 1,
+    },
+    {
+      field: "Region",
+      headerName: "Station Region",
       flex: 1,
     },
 
@@ -198,7 +208,7 @@ const PoliceStation = () => {
               }}
               variant="outlined"
               startIcon={<DeleteIcon />}
-              onClick={(event) => HandleCategoryDelete(id)}
+              onClick={(event) => HandleStationDElete(id)}
             >
               Delete
             </Button>
@@ -275,7 +285,9 @@ const PoliceStation = () => {
 
       {StationAddShow && (
         <FunctionToAddCategory
-          onHandleClick={HandleCategoryAdd}
+          region={region}
+          setRegion={setRegion}
+          onHandleClick={HandlePoliceStationAdd}
           seetStationAddShow={seetStationAddShow}
           loading={addcatLoading}
           Station={Station}
@@ -292,6 +304,8 @@ const FunctionToAddCategory = ({
   seetStationAddShow,
   onHandleClick,
   loading,
+  region,
+  setRegion,
 }) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
@@ -344,6 +358,34 @@ const FunctionToAddCategory = ({
               onChange={(event) => setStation(event.target.value)}
               value={Station}
             />
+          </FormControl>
+          <FormControl sx={{ m: 1, minWidth: "100%" }}>
+            <InputLabel id="demo-simple-select-autowidth-label">
+              Station Region
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-autowidth-label"
+              id="demo-simple-select-autowidth"
+              value={region}
+              onChange={(event) => setRegion(event.target.value)}
+              autoWidth
+              label="Station Region"
+            >
+              <MenuItem value={"Banjul City Council"}>
+                Banjul City Council{" "}
+              </MenuItem>
+              <MenuItem value={"Upper River Region"}>
+                Upper River Region
+              </MenuItem>
+              <MenuItem value={"Lower River Region"}>
+                Lower River Region
+              </MenuItem>
+              <MenuItem value={"Nort Bank Region"}> Nort Bank Region</MenuItem>
+              <MenuItem value={"West Coast Region"}>West Coast Region</MenuItem>
+              <MenuItem value={"Central River Region"}>
+                Central River Region
+              </MenuItem>
+            </Select>
           </FormControl>
           <LoadingButton
             size="larger"
