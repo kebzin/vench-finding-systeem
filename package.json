@@ -29,6 +29,7 @@
     "react-barcode": "^1.4.6",
     "react-barcode-reader": "^0.0.2",
     "react-dom": "^18.2.0",
+    "react-geocode": "^0.2.3",
     "react-pro-sidebar": "^1.0.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.1",
