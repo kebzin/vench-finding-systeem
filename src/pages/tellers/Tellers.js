@@ -113,18 +113,9 @@ const ManageTellers = () => {
     );
   }
 
-  //   const filteredRows = data?.filter((row) => {
-  //     if (user?.Officers?.role === "Administrator") {
-  //       return true; // Show all records for administrators
-  //     } else if (user?.Officers?.role === "Sub Admin") {
-  //       return row.role !== "Administrator"; // Hide records with administrator role for sub-administrators
-  //     }
-  //     return false; // Default: Hide all other records
-  //   });
-
-  //   const sortedData = data?.sort(
-  //     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  //   );
+  // const sortedData = data?.sort(
+  //   (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  // );
 
   // delete user mutation
 
@@ -310,8 +301,8 @@ const ManageTellers = () => {
     >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header
-          title="Manage Users"
-          subtitle="Here are the list of all the avelable users, To see more information about a paticuler user click on them. "
+          title="Manage Tellers"
+          subtitle="Below is the comprehensive list of our proficient tellers who possess the necessary expertise to adeptly handle the payment process at our esteemed bank."
         />
       </Box>
       <Button

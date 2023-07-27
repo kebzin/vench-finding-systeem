@@ -225,9 +225,6 @@ const PoliceStation = () => {
       >
         Adde Police Station
       </Typography>
-      <Typography sx={{ color: color.grey[500] }}>
-        Example of Station truck, car, bus etc
-      </Typography>
 
       {/* add category button */}
       <Button

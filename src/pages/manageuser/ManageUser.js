@@ -505,7 +505,7 @@ const ManageUser = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header
           title="Manage Users"
-          subtitle="Here are the list of all the avelable users, To see more information about a paticuler user click on them. "
+          subtitle="Welcome to the list of all our amazing users! If you'd like to explore more details about a specific user, just click on their profile to discover more."
         />
       </Box>
       <Button

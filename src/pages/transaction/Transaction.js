@@ -2,7 +2,6 @@ import { Avatar, Box, Button, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React from "react";
 
-import GppBadIcon from "@mui/icons-material/GppBad";
 import { useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
 import { useAuthContext } from "../../context/AuthContex";
@@ -36,20 +35,10 @@ const Transaction = () => {
   const AxiousPrivate = useAxiousPrivate();
   const { user } = useAuthContext();
 
-  // const { isLoading, error, data, refetch } = useQuery("transaction", () =>
-  //   AxiousPrivate.get(
-  //     user?.Officers?.role === "Employee"
-  //       ? `/fine/fine/${user?.Officers?.id}`
-  //       : `/fine/fine/`
-  //   )
-  //     .then((result) => result.data)
-  //     .catch((err) => console.log(err))
-  // );
-
   const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
-  console.log(user?.Officers);
+
   const { data, error, isFetching, isLoading, isError, refetch } = useQuery(
     "transaction",
     async () => {
@@ -67,7 +56,7 @@ const Transaction = () => {
     },
     {
       refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
-      enabled: false, // We don't want to fetch data immediately when the component mounts
+      enabled: true, // We don't want to fetch data immediately when the component mounts
       refetchOnMount: true,
     }
   );
@@ -88,9 +77,9 @@ const Transaction = () => {
   }, [AxiousPrivate, user?.Officers?.role, refetch]);
 
   const mutation = useMutation(
-    ({ id, fineAmount, officerId }) => {
+    ({ id, officerId }) => {
       return AxiousPrivate.delete(`/fine/fine/${id}`, {
-        data: { fineAmount, officerId },
+        data: { officerId },
       });
     },
     {
@@ -157,13 +146,15 @@ const Transaction = () => {
 
   // const sortedData =
   //   data?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
-  const HandleDelete = (id, event) => {
+  const HandleDelete = (id, event, officerId) => {
     event.preventDefault();
+    console.log(officerId);
+    console.log(id);
+    console.log(data);
     try {
       mutation.mutate({
         id: id,
-        officerId: user?.Officers?.id,
-        fineAmount: "string",
+        officerId: officerId?.id,
       });
     } catch (error) {
       console.log(error);
@@ -310,39 +301,36 @@ const Transaction = () => {
         );
       },
     },
-    {
-      field: "",
-      headerName: "Delete",
-      renderCell: ({ row: { id } }) => {
-        return (
-          <Box
-            // onClick={() => Navigate(`${id}`)}
-            sx={{
-              // background:
-              //   theme.palette.mode === "light"
-              //     ? colors.redAccent[700]
-              //     : colors.redAccent[400],
-              p: 1,
-              cursor: "pointer",
-              // color: colors.primary[700],
-            }}
-          >
-            {" "}
-            <Button
-              sx={{
-                mt: 2,
-                color: colors.redAccent[400],
-              }}
-              variant="outlined"
-              startIcon={<DeleteIcon />}
-              onClick={(event) => HandleDelete(id, event)}
-            >
-              Delete
-            </Button>
-          </Box>
-        );
-      },
-    },
+    user?.Officers?.role === "Administrator"
+      ? {
+          field: user?.Officers?.role === "Administrator" ? "" : null,
+          headerName:
+            user?.Officers?.role === "Administrator" ? "Delete" : null,
+          renderCell: ({ row: { id, officerId } }) => {
+            return user?.Officers?.role === "Administrator" ? (
+              <Box
+                sx={{
+                  p: 1,
+                  cursor: "pointer",
+                }}
+              >
+                {" "}
+                <Button
+                  sx={{
+                    mt: 2,
+                    color: colors.redAccent[400],
+                  }}
+                  variant="outlined"
+                  startIcon={<DeleteIcon />}
+                  onClick={(event) => HandleDelete(id, event, officerId)}
+                >
+                  Delete
+                </Button>
+              </Box>
+            ) : null;
+          },
+        }
+      : {},
   ];
 
   return (
@@ -359,8 +347,8 @@ const Transaction = () => {
             title="Transaction"
             subtitle={
               user.Officers?.role === "Administrator"
-                ? "This page contain the List of all the transaction done by all the participants. "
-                : "This page contains the list of all the transaction you made. Here you will see all your previous transactions including those that are pending or completed"
+                ? "Welcome to the transaction history page, where you can find a comprehensive list of all transactions carried out by our valued participants. "
+                : "Welcome to your transaction history page! Here, you'll find a detailed list of all your past transactions, including both pending and completed ones. To explore more details about a specific transaction, simply click on 'Preview' for an in-depth view"
             }
           />
         </Box>

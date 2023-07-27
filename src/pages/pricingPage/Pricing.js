@@ -175,7 +175,7 @@ const Pricing = () => {
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header
             title="Pricing Page"
-            subtitle="This page contain all the price about each crime, or violation of the rule. Incase if you are new to the system you can visisted this page   frequently to see the liste of fine prices "
+            subtitle="Welcome to the comprehensive page containing all the prices for each crime or violation of the rules. Whether you're new to the system or just want to stay informed, this page is your go-to resource to access the complete list of fine prices. Keep yourself updated with the latest information and penalties effortlessly."
           />
         </Box>
         <Box

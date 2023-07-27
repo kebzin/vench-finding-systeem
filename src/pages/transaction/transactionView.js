@@ -64,7 +64,7 @@ const TransactionView = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header
           title="Viewing the transaction "
-          subtitle="Your are currently viewing the transaction you clicked one. To simplify things and making your navigation enjoyable, we make sure that all the nessery details  about this transaction are available"
+          subtitle="Congratulations! You are now viewing the transaction you selected. To enhance your navigation experience and ensure utmost convenience, we have provided all the necessary details about this transaction, making your journey through the information seamless and enjoyable. If you wish to have a physical copy, simply click on the `Print` button to get a printout of the transaction"
         />
       </Box>
       <IconButton

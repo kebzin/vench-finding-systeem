@@ -10,9 +10,11 @@ import React, { useState } from "react";
 import { tokens } from "../../theme";
 import BackupIcon from "@mui/icons-material/Backup";
 import { LoadingButton } from "@mui/lab";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useStateContext } from "../../context/Contex";
+import { useAuthContext } from "../../context/AuthContex";
+import { useEffect } from "react";
 
 const Bonus = () => {
   const theme = useTheme();
@@ -21,44 +23,88 @@ const Bonus = () => {
   const [bonusShore, setBonusShore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bonus, setBonus] = useState();
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
+  const [updateElementId, SetUpdateElementId] = useState();
 
   // hook
-
-  //   function
-  const HandleBonushShow = () => {
-    setBonusShore((prev) => !prev);
-  };
+  const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
+  // fetch bonus data
+
+  const { data, error, isLoading, isFetching, isError, refetch } = useQuery(
+    "bonus",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get("/bank/bonus");
+        console.log(response.data);
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      // refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: true, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
+    }
+  );
+  // useEffect(() => {
+  //   // Function to fetch data
+  //   const fetchData = async () => {
+  //     try {
+  //       await refetch(); // Fetch data using useQuery's refetch function
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+  //   fetchData();
+  // }, [AxiousPrivate, user?.Officers?.role, refetch]);
+
+  //   function
+  const HandleBonushShow = async (element) => {
+    SetUpdateElementId(element?.id);
+    setBonus(element?.Bonus);
+    setBonusShore((prev) => !prev);
+  };
 
   const mutation = useMutation(
     (newPost) => {
-      //   return AxiousPrivate.patch(`/price/prices/${updateitem.id}`, newPost);
+      return AxiousPrivate.put(`/fine/bonus/${updateElementId}`, newPost);
     },
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
         // Invalidate and refetch
         setLoading(false);
         setOPenDialog(true);
         setBonusShore(false);
-        setDialogMessage("Bonus successfully Updated");
-        queryclient.invalidateQueries("fine");
+        setDialogMessage(response?.data?.message);
+        queryclient.invalidateQueries("bonus");
       },
 
-      onError: () => {
+      onError: (error) => {
+        setOPenDialog(true);
+        setErrorIcon(true);
+        setDialogMessage(error?.response?.data?.message);
         setLoading(false);
       },
     }
   );
 
+  if (isLoading === true) {
+    return <Typography>Loading......</Typography>;
+  }
   //   const handle bonus update
   const HandleBonusUpdate = async (event) => {
     event.preventDefault();
     try {
       setLoading(true);
       await mutation.mutate({
-        bonus: bonus,
+        Bonus: bonus,
+        officerId: user?.Officers?.id,
       });
     } catch (error) {
       setLoading(false);
@@ -76,21 +122,31 @@ const Bonus = () => {
         <Typography sx={{ fontSize: 25, fontWeight: 400 }}>
           Bonus Amount per fine
         </Typography>
-        <Typography sx={{ color: color.redAccent[400] }} variant="h4">
-          GMD{"20"}
-        </Typography>
-        <Button
-          sx={{
-            mt: 1,
-            color: color.greenAccent[400],
-            border: `1px solid ${color.grey[500]}`,
-          }}
-          variant="outlined"
-          startIcon={<BackupIcon />}
-          onClick={HandleBonushShow}
-        >
-          update
-        </Button>
+        {isLoading === true || isFetching === true ? (
+          <Typography>Loading</Typography>
+        ) : data.lenght < 0 || data === undefined ? (
+          []
+        ) : (
+          data.map((element, index) => (
+            <Box key={index}>
+              <Typography sx={{ color: color.redAccent[400] }} variant="h4">
+                {element.Bonus}%
+              </Typography>
+              <Button
+                sx={{
+                  mt: 1,
+                  color: color.greenAccent[400],
+                  border: `1px solid ${color.grey[500]}`,
+                }}
+                variant="outlined"
+                startIcon={<BackupIcon />}
+                onClick={() => HandleBonushShow(element)}
+              >
+                update
+              </Button>
+            </Box>
+          ))
+        )}
       </Box>
       {bonusShore && (
         <Box
@@ -136,7 +192,7 @@ const Bonus = () => {
                   label="Update Bonus"
                   variant="outlined"
                   size="full"
-                  type="text"
+                  type="number"
                   required="true"
                   onChange={(event) => setBonus(event.target.value)}
                   value={bonus}

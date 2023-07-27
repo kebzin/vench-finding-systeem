@@ -14,6 +14,7 @@ import { tokens } from "../../theme";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ViewWanted from "../../components/ViewWanted";
 import { useStateContext } from "../../context/Contex";
+import { useAuthContext } from "../../context/AuthContex";
 const mockDataTeam = [
   {
     id: 1,
@@ -304,7 +305,7 @@ const Wanted = () => {
   ];
 
   const [addWanted, setAddWanted] = useState(false);
-
+  const { user } = useAuthContext();
   return (
     <Box
       sx={{
@@ -317,25 +318,27 @@ const Wanted = () => {
         <Header title="Wanted" subtitle="" />
       </Box>
       <Box>
-        <IconButton
-          sx={{
-            right: 20,
-            borderRadius: "5px",
-          }}
-          onClick={() => setAddWanted((previouseState) => !previouseState)}
-        >
-          <Chip
+        {user?.Officers?.role === "Administrator" ? (
+          <IconButton
             sx={{
-              float: "right",
+              right: 20,
               borderRadius: "5px",
-              fontSize: 15,
-              color: colors.greenAccent[500],
             }}
-            label="Add wanted person"
-            // onClick={handleClick}
-            icon={<GroupAddIcon />}
-          />
-        </IconButton>
+            onClick={() => setAddWanted((previouseState) => !previouseState)}
+          >
+            <Chip
+              sx={{
+                float: "right",
+                borderRadius: "5px",
+                fontSize: 15,
+                color: colors.greenAccent[500],
+              }}
+              label="Add wanted person"
+              // onClick={handleClick}
+              icon={<GroupAddIcon />}
+            />
+          </IconButton>
+        ) : null}
 
         {addWanted && <WantedAdd setAddWanted={setAddWanted} />}
         {showDetails && (

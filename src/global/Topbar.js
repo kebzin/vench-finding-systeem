@@ -36,7 +36,7 @@ const Topbar = ({}) => {
     sidebarWidth,
     setSidebarWidth,
   } = useStateContext();
-  const { setUser } = useAuthContext();
+  const { user } = useAuthContext();
   const Navigation = useNavigate();
 
   const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
@@ -166,13 +166,15 @@ const Topbar = ({}) => {
             )}
           </IconButton>
 
-          <IconButton
-            onClick={() => Navigation("/setting")}
-            type="button"
-            sx={{ p: 1 }}
-          >
-            <SettingsIcon />
-          </IconButton>
+          {user?.Officers?.role === "Administrator" ? (
+            <IconButton
+              onClick={() => Navigation("/setting")}
+              type="button"
+              sx={{ p: 1 }}
+            >
+              <SettingsIcon />
+            </IconButton>
+          ) : null}
           <IconButton
             type="button"
             sx={{ p: 1 }}

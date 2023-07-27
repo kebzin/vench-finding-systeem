@@ -1,6 +1,7 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
+  Avatar,
   Box,
   Button,
   colors,
@@ -22,6 +23,7 @@ import { tokens } from "../../theme";
 import { makeRequest } from "../../hooks/axious";
 import { encryptData } from "../../global/EncriptData";
 import { useLogout } from "../../hooks/logout";
+import downlad from "../../assets/illustration/download.jpg";
 
 const Login = ({}) => {
   const { setUser } = useAuthContext();
@@ -126,6 +128,14 @@ const Login = ({}) => {
         boxShadow="rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"
         border={`1px solid ${color.greenAccent[400]}`}
       >
+        <Avatar
+          src={downlad}
+          sx={{
+            width: 150,
+            height: 150,
+            margin: "auto",
+          }}
+        />
         <h1 style={{ textAlign: "center", fontSize: 40, fontWeight: "bolder" }}>
           Login
         </h1>

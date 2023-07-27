@@ -137,7 +137,7 @@ const MakeFine = ({ setToggleAdd }) => {
       onSuccess: (response) => {
         setOPenDialog(true);
         setNumberPlat("");
-        DriverName("");
+        setDriverName("");
         setOffenceCommited("");
         setfineAmount("");
         setfineDescription("");

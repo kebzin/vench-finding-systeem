@@ -190,16 +190,6 @@ const Dashboard = () => {
       );
     }
   };
-  // adding the total amount of all the fine including pending
-  // var TotalAmount = 0;
-  // for (let index = 0; index < data?.length; index++) {
-  //   const element = data[index]?.fineAmount.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
-  //   if (!Number.isNaN(element)) {
-  //     // add a check for NaN values
-  //     TotalAmount += parseFloat(element);
-  //     TotalAmount += parseFloat(element);
-  //   }
-  // }
 
   function calculateTotalAmount(data) {
     let TotalAmount = 0;
@@ -211,14 +201,15 @@ const Dashboard = () => {
 
     data.forEach((entry) => {
       const element = entry?.fineAmount?.replace(/[^\d.-]/g, ""); // extract the numerical value from the string
-      if (!Number.isNaN(element)) {
-        // add a check for NaN values
-        TotalAmount += parseFloat(element);
+      const parsedElement = parseFloat(element);
+      if (!isNaN(parsedElement)) {
+        // check if parsedElement is not NaN
+        TotalAmount += parsedElement;
       }
     });
-
     return TotalAmount;
   }
+
   const totalAmount = calculateTotalAmount(data);
   const HandleYer = (event) => {
     setYear(event.target.value);
@@ -260,15 +251,21 @@ const Dashboard = () => {
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
+          <Header
+            title="DASHBOARD"
+            subtitle={
+              user.Officers?.role === "Administrator" ||
+              user?.Officers?.role === "Sub Admin"
+                ? "Welcome to your personalized dashboard. We've customized your data to provide an effortless analysis experience. As an administrator, you have full control of the system, allowing you to efficiently manage every aspect. Gain valuable insights with tailored information. Enjoy a user-friendly and intuitive interface that empowers you to make well-informed decisions with ease."
+                : "Welcome! As a valued Employee, your role is vital in ensuring a safe and reliable service. Please use the provided user-friendly form to submit data and report any driver offenses. Entering all the necessary details helps us take prompt action. Your input maintains our community's high standards. "
+            }
+          />
         </Box>
         <Button
           sx={{
             mt: 1,
             ml: 3,
-            top: 70,
-            position: "fixed",
-            right: 100,
+            mb: 3,
             color: color.greenAccent[400],
             padding: 1,
           }}
