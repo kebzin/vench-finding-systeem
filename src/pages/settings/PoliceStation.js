@@ -28,7 +28,6 @@ const PoliceStation = () => {
   //   state
   const [bonusShore, setBonusShore] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [bonus, setBonus] = useState();
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
   const [Station, setStation] = useState("");
   const [StationAddShow, seetStationAddShow] = useState(false);

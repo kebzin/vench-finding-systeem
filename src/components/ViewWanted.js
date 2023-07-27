@@ -1,27 +1,12 @@
-import {
-  Avatar,
-  Box,
-  colors,
-  FormControl,
-  IconButton,
-  TextField,
-  useTheme,
-  RadioGroup,
-  Radio,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, useTheme, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useQueryClient } from "react-query";
 import { useAuthContext } from "../context/AuthContex";
 import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
 import { LoadingButton } from "@mui/lab";
 
-const ViewWanted = ({ preview, setShowDetails }) => {
+const ViewWanted = ({ setShowDetails }) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   // hooks

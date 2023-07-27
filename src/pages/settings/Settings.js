@@ -1,11 +1,7 @@
-import { LoadingButton } from "@mui/lab";
-import { Box, FormControl, TextField, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
-import React, { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { useAuthContext } from "../../context/AuthContex";
+import React from "react";
 import { useStateContext } from "../../context/Contex";
-import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { tokens } from "../../theme";
 import { Header } from "../../components";
 import { NavLink, Outlet } from "react-router-dom";

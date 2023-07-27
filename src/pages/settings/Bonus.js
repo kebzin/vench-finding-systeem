@@ -14,7 +14,6 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useStateContext } from "../../context/Contex";
 import { useAuthContext } from "../../context/AuthContex";
-import { useEffect } from "react";
 
 const Bonus = () => {
   const theme = useTheme();

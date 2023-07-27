@@ -28,7 +28,6 @@ const Banka = () => {
   //   state
   const [bonusShore, setBonusShore] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [bonus, setBonus] = useState();
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
   const [categoryName, setCategoryName] = useState("");
   const [categoryAddShoe, seetCategoryAddShoe] = useState(false);
