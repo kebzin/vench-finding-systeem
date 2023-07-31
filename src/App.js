@@ -66,7 +66,6 @@ function App() {
           } else {
             // Access token is expired, redirect to login
             navigate("/login");
-            console.log("access token espired");
           }
         } catch (error) {
           // Error decrypting data, redirect to login

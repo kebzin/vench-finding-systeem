@@ -147,10 +147,6 @@ const Transaction = () => {
   // const sortedData =
   //   data?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
   const HandleDelete = (id, event, officerId) => {
-    event.preventDefault();
-    console.log(officerId);
-    console.log(id);
-    console.log(data);
     try {
       mutation.mutate({
         id: id,

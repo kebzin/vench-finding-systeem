@@ -3,6 +3,9 @@ import {
   Box,
   colors,
   FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
   useTheme,
@@ -10,7 +13,7 @@ import {
 import { color } from "@mui/system";
 
 import React, { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
@@ -23,14 +26,7 @@ import PopUpMessage from "./PopUpMessage";
 const CrimePrcing = () => {
   const { setUser, user } = useAuthContext();
   const Navigate = useNavigate();
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("user"));
-  //   if (user) {
-  //     setUser(user);
-  //   } else {
-  //     Navigate("/login");
-  //   }
-  // }, []);
+
   const theme = useTheme();
   const COLORS = tokens(theme.palette.mode);
   const [loading, setLoading] = useState(false);
@@ -44,6 +40,25 @@ const CrimePrcing = () => {
   const AxiousPrivate = useAxiousPrivate();
 
   const queryclient = useQueryClient();
+
+  const { data, isLoading, isFetching, isError } = useQuery(
+    "category",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get("/category/category");
+
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      // refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: true, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
+    }
+  );
 
   const mutation = useMutation(
     (newPost) => {
@@ -137,18 +152,30 @@ const CrimePrcing = () => {
               />
             </FormControl>
 
-            <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
-              <TextField
-                id="outlined-basic"
-                label=" Enter offence category! eg:  cars, trucks"
-                variant="outlined"
-                size="full"
-                type="text"
-                required="true"
-                onChange={(event) => setOffenceCategory(event.target.value)}
+            <FormControl sx={{ m: 1, minWidth: "100%" }}>
+              <InputLabel id="demo-simple-select-autowidth-label">
+                Category
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
                 value={OffenceCategory}
-              />
+                onChange={(event) => setOffenceCategory(event.target.value)}
+                autoWidth
+                label="Category"
+              >
+                {isLoading === true || isFetching === true ? (
+                  <Typography>Loading....</Typography>
+                ) : (
+                  data?.map((value, index) => (
+                    <MenuItem key={index} value={value?.category}>
+                      {value?.category}
+                    </MenuItem>
+                  ))
+                )}
+              </Select>
             </FormControl>
+
             <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
               <TextField
                 id="outlined-basic"

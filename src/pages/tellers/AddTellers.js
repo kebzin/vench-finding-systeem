@@ -44,7 +44,6 @@ const AddTeller = ({ setAddeUsers }) => {
     },
     {
       onSuccess: (respond) => {
-        console.log(respond);
         setOPenDialog(true);
         setDialogMessage(respond.data.message);
         setLoading(false);

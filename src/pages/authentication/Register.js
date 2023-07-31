@@ -1,10 +1,7 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import SaveIcon from "@mui/icons-material/Save";
 import {
-  Alert,
   Box,
-  Button,
   FormControl,
   IconButton,
   InputAdornment,
@@ -13,12 +10,10 @@ import {
   TextField,
   useTheme,
 } from "@mui/material";
-import Checkbox from "@mui/material/Checkbox";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
 import axios from "axios";
-import { positions } from "@mui/system";
 import { useStateContext } from "../../context/Contex";
 import swal from "sweetalert";
 

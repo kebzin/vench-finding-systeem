@@ -42,7 +42,6 @@ const Adduser = ({ setAddeUsers }) => {
 
   const mutation = useMutation(
     (newPost) => {
-      console.log(newPost);
       return AxiousPrivate.post(`/auth/register`, newPost);
     },
     {

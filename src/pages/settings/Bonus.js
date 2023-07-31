@@ -36,7 +36,7 @@ const Bonus = () => {
     async () => {
       try {
         const response = await AxiousPrivate.get("/bank/bonus");
-        console.log(response.data);
+
         return response.data;
       } catch (error) {
         console.log(error);

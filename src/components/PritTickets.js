@@ -1,10 +1,10 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
-import React from "react";
+import React, { forwardRef } from "react";
 import { tokens } from "../theme";
 import Barcode from "react-barcode";
 
-const PritTickets = React.forwardRef((props, ref) => {
+const PritTickets = forwardRef((props, ref) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
   const timeElaps = Date.now();
@@ -16,7 +16,7 @@ const PritTickets = React.forwardRef((props, ref) => {
         ref={ref}
         sx={{
           objectFit: "contain",
-          position: "fixed",
+          // position: "fixed",
           height: "auto",
           top: 20,
           zIndex: 1000,
@@ -33,12 +33,7 @@ const PritTickets = React.forwardRef((props, ref) => {
                 }`,
         }}
       >
-        <Box
-          className="certificate"
-          sx={{
-            p: 3,
-          }}
-        >
+        <Box className="certificate" sx={{ m: 4 }}>
           <Typography variant="h2" sx={{ fontWeight: 700 }}>
             Ticket
           </Typography>

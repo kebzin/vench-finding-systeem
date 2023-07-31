@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useAuthContext } from "../context/AuthContex";
 import { axiousePrive } from "./axious";
 import useRefreshToken from "./useRefreshToken";
 
 const useAxiousPrivate = () => {
-  const { user, setUser } = useAuthContext();
+  const { user } = useAuthContext();
   const refresh = useRefreshToken();
   // intersepters
   useEffect(() => {

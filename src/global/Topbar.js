@@ -1,12 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  Badge,
-  Box,
-  colors,
-  IconButton,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Badge, Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../theme";
 import { InputBase } from "@mui/material";
@@ -19,11 +12,9 @@ import Person4Icon from "@mui/icons-material/Person4";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useStateContext } from "../context/Contex";
 import { MyProfile, Notification } from "../components";
-import { useNavigate, useNavigation } from "react-router-dom";
-import { decryptData } from "./EncriptData";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
 import { useState } from "react";
-import { isTokenExpired } from "../hooks/jwtExpired";
 
 const Topbar = ({}) => {
   const theme = useTheme();
@@ -40,8 +31,6 @@ const Topbar = ({}) => {
   const Navigation = useNavigate();
 
   const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
-
-  const navigate = useNavigate();
 
   // useEffect(() => {
   //   if (!checkedLocalStorage) {

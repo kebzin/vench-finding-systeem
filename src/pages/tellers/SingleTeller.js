@@ -41,7 +41,6 @@ const SingleTeller = () => {
           .catch((err) => console.log(err));
       } catch (err) {
         console.log(error);
-        console.log(error.status);
       }
     },
     {
@@ -83,7 +82,7 @@ const SingleTeller = () => {
         // setLoading(false);
         setOPenDialog(true);
         setErrorIcon(true);
-        console.log("error", error.response);
+
         setDialogMessage(error.response.error);
       },
     }
@@ -143,7 +142,6 @@ const SingleTeller = () => {
     );
   }
 
-  console.log(data);
   //   handle account status change
   const HanleAccountChange = async (event) => {
     event.preventDefault();

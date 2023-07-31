@@ -52,7 +52,6 @@ const ManageTellers = () => {
 
   const mutation = useMutation(
     (newPost) => {
-      console.log(newPost);
       return AxiousPrivate.delete(`/teller/${newPost.id}`, newPost);
     },
     {
@@ -67,7 +66,7 @@ const ManageTellers = () => {
         // setLoading(false);
         setOPenDialog(true);
         setErrorIcon(true);
-        console.log("error", error.response);
+
         setDialogMessage(error.response.error);
       },
     }

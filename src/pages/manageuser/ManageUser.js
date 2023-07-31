@@ -4,7 +4,7 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { Header } from "../../components";
 import { tokens } from "../../theme";
-import { DataGrid, enUS } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import GppMaybeIcon from "@mui/icons-material/GppMaybe";
 import GppBadIcon from "@mui/icons-material/GppBad";

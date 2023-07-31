@@ -1,5 +1,5 @@
 import { Box, useTheme, Typography, IconButton, Avatar } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { tokens } from "../theme";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import Person3Icon from "@mui/icons-material/Person3";
@@ -10,54 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContex";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import { useStateContext } from "../context/Contex";
-import { decryptData } from "./EncriptData";
 import Groups2Icon from "@mui/icons-material/Groups2";
-import { isTokenExpired } from "../hooks/jwtExpired";
 
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const Navigate = useNavigate();
-  const { user, setUser } = useAuthContext();
+  const { user } = useAuthContext();
   const { sidebarWidth, setSidebarWidth, screenSize } = useStateContext();
 
-  const navigate = useNavigate();
-  const [checkedLocalStorage, setCheckedLocalStorage] = useState(false);
-
-  // useEffect(() => {
-  //   if (!checkedLocalStorage) {
-  //     setCheckedLocalStorage(true);
-  //     const encryptedUserData = localStorage.getItem("user");
-
-  //     if (encryptedUserData) {
-  //       // Decrypt the user data from local storage
-  //       try {
-  //         // Parse the encrypted data as JSON before decrypting
-  //         const decryptedUserData = decryptData(
-  //           encryptedUserData,
-  //           "secret_key"
-  //         );
-  //         const parsedEncryptedData = JSON.parse(decryptedUserData);
-
-  //         const accessToken = parsedEncryptedData?.accessToken;
-
-  //         if (!isTokenExpired(accessToken)) {
-  //           // Access token is not expired, set the decrypted user data in the application state
-  //           setUser(parsedEncryptedData, accessToken);
-  //         } else {
-  //           // Access token is expired, redirect to login
-  //           navigate("/login");
-  //         }
-  //       } catch (error) {
-  //         // Error decrypting data, redirect to login
-  //         navigate("/login");
-  //       }
-  //     } else {
-  //       // No user data found in local storage, redirect to login
-  //       navigate("/login");
-  //     }
-  //   }
-  // }, [checkedLocalStorage, navigate, setUser]);
   const userProfile = "";
 
   const Menues = [

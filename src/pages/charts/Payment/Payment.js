@@ -63,7 +63,6 @@ const Payment = () => {
     }
   );
 
-  console.log(data);
   const mutation = useMutation(
     (newPost) => {
       return axios.put(
@@ -80,7 +79,8 @@ const Payment = () => {
         setShowButton(false);
         setHideButton(true);
         await refetch();
-        setTicketNumber(null);
+        setTicketNumber("");
+        handlePrint();
         queryclient.invalidateQueries("transaction");
       },
       onError: (error) => {
@@ -114,7 +114,6 @@ const Payment = () => {
   };
   const amountpa = parseInt(data?.fineAmount?.replace(/[^\d.-]/g, "")); // extract the numerical value from the string
 
-  console.log(amountpa);
   const HandlePaymentUpdate = (event) => {
     event.preventDefault();
     setLoading(true);

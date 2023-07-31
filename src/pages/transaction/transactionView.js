@@ -49,7 +49,7 @@ const TransactionView = () => {
       .then((result) => result.data)
       .catch((err) => console.log(err))
   );
-  console.log(data);
+
   const amountpa = parseInt(data?.fineAmount?.slice(3));
   const total = amountpa - data?.amountPaid;
 

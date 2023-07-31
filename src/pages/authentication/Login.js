@@ -4,7 +4,6 @@ import {
   Avatar,
   Box,
   Button,
-  colors,
   FormControl,
   IconButton,
   InputAdornment,
@@ -13,10 +12,10 @@ import {
   TextField,
   useTheme,
 } from "@mui/material";
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContex";
 import { useStateContext } from "../../context/Contex";
 import { tokens } from "../../theme";
@@ -47,7 +46,6 @@ const Login = ({}) => {
   const [error, setError] = useState(null);
   // hooks
   const Navigate = useNavigate();
-  const Location = useLocation();
 
   // functions
   const handleClick = async (event) => {

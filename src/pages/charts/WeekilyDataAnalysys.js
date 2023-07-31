@@ -34,7 +34,6 @@ const WeekilyDataAnalysys = ({ month, year }) => {
   function filterDataForYearAndMonth(data, year, month) {
     // Check if data is not available or is null
     if (!data) {
-      console.log("no data avelable");
       return []; // Return an empty array if data is not available yet or is null.
     }
     // Convert data to an array if it's not already

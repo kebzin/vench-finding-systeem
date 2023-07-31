@@ -3,12 +3,10 @@ import {
   Avatar,
   Box,
   Button,
-  Divider,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -19,7 +17,6 @@ import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import { useStateContext } from "../../context/Contex";
 import { useAuthContext } from "../../context/AuthContex";
-import { useNavigate } from "react-router-dom";
 import { WeekilyDataAnalysys } from "../../pages/index";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { isError, useQuery } from "react-query";

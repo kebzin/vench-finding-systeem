@@ -86,7 +86,6 @@ const Pricing = () => {
 
   const mutation = useMutation(
     (newPost) => {
-      console.log(newPost);
       return AxiousPrivate.delete(`/price/prices/${newPost.id}`, newPost);
     },
     {
