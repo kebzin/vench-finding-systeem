@@ -18,6 +18,7 @@ import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
 import ReactToPrint, { useReactToPrint } from "react-to-print";
 import PritTickets from "./PritTickets";
+import GeocodingComponent from "./GeocodingComponent";
 
 const addButtonContainer = {
   display: "flex",
@@ -54,7 +55,8 @@ const MakeFine = ({ setToggleAdd }) => {
   const [fineCategory, setFineCategory] = useState("");
   const [showprint, setShowPrint] = useState(false);
   const [fineToPrint, setFineToPrint] = useState(null);
-
+  const geolocationData = GeocodingComponent(); // Call the GeolocationComponent as a function to get the data
+  const [region, setRegion] = useState();
   const [categoryData, setCategoryData] = useState();
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
 

@@ -15,8 +15,7 @@ import {
 import React, { useState } from "react";
 import { tokens } from "../../theme";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useStateContext } from "../../context/Contex";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 
@@ -45,10 +44,17 @@ const Adduser = ({ setAddeUsers }) => {
       return AxiousPrivate.post(`/auth/register`, newPost);
     },
     {
+      // when the request is sussefull we wan to perform this operation: reset everythin to defalut
       onSuccess: (respond) => {
         setOPenDialog(true);
         setDialogMessage(respond.data.message);
+        setLastName("");
+        setPhoneNumber("");
+        setPoliceStation("");
+        setemail("");
+        setrank("");
         setLoading(false);
+        setAddeUsers((previouseState) => !previouseState);
         queryclient.invalidateQueries("users");
       },
       onError: (error) => {
@@ -205,17 +211,6 @@ const Adduser = ({ setAddeUsers }) => {
 
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
-                    id="outlined-basic4"
-                    label="Enter Email Address"
-                    variant="outlined"
-                    size="full"
-                    type="email"
-                    required={true}
-                    onChange={(event) => setemail(event.target.value)}
-                  />
-                </FormControl>
-                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                  <TextField
                     id="outlined-basic5"
                     label="Enter Phone Number"
                     variant="outlined"
@@ -223,6 +218,17 @@ const Adduser = ({ setAddeUsers }) => {
                     type="text"
                     required={true}
                     onChange={(event) => setPhoneNumber(event.target.value)}
+                  />
+                </FormControl>
+                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                  <TextField
+                    id="outlined-basic4"
+                    label="Enter Email Address"
+                    variant="outlined"
+                    size="full"
+                    type="email"
+                    required={true}
+                    onChange={(event) => setemail(event.target.value)}
                   />
                 </FormControl>
 

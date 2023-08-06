@@ -202,20 +202,6 @@ const Login = ({}) => {
               >
                 <span style={{ padding: "10px" }}>Login</span>
               </LoadingButton>
-              <Link
-                style={{
-                  textDecoration: "none",
-                  paddingTop: "10px",
-                  paddingBlockEnd: "10px",
-                  color:
-                    theme.palette.mode === "dark"
-                      ? color.greenAccent[400]
-                      : null,
-                }}
-                to="/register"
-              >
-                Don't have an Account
-              </Link>
             </FormControl>
             <span>{error && error}</span>
           </Box>

@@ -34,21 +34,22 @@ const WantedAdd = ({ setAddWanted }) => {
   const [file, setfile] = useState(null);
   const [location_commited, setLocation_commited] = useState();
   const [colorr, setColor] = useState();
+
   // hooks
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
   const { setDialogMessage, setOPenDialog } = useStateContext();
 
-  // upload inage function
-  const formData = new FormData();
-  formData.append("selectedFile", file);
-
   const upload = async () => {
+    // upload inage function
+    const formData = new FormData();
+    formData.append("file", file);
     console.log(formData);
     try {
-      console.log(formData);
+      console.log("form data", formData);
       const respond = await AxiousPrivate.post("/officers/upload", formData);
+      console.log(respond.data);
       return respond.data;
     } catch (error) {
       console.log(error);
@@ -83,7 +84,7 @@ const WantedAdd = ({ setAddWanted }) => {
     try {
       setLoading(true);
       let imageurl = "";
-      if (file) imageurl = await upload();
+      imageurl = await upload();
 
       await mutation.mutate({
         name: name,
@@ -98,7 +99,6 @@ const WantedAdd = ({ setAddWanted }) => {
         image: imageurl,
         officersid: user?.Officers?.id,
       });
-      console.log(file);
     } catch (error) {
       console.log(error.message);
       setLoading(false);
@@ -139,7 +139,7 @@ const WantedAdd = ({ setAddWanted }) => {
                 hidden
                 accept="image/*"
                 type="file"
-                name="selectedFile"
+                name="file"
                 onChange={(event) => setfile(event.target.files[0])}
               />
             </form>
