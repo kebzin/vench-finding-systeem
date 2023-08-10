@@ -11,6 +11,7 @@ import { tokens } from "../../../theme";
 import { useReactToPrint } from "react-to-print";
 import PaymentDetails from "./paymentDetails";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../context/AuthContex";
 
 const Payment = () => {
   // states
@@ -34,6 +35,8 @@ const Payment = () => {
   const [loading, setLoading] = useState(false);
   const [Erro, SetError] = useState("");
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
+
+  const { user } = useAuthContext();
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -142,6 +145,7 @@ const Payment = () => {
       mutation.mutate({
         amountPaid: data?.amountPaid + parseInt(Price),
         status: CheckAmount === amountpa ? "Completed" : "Pending",
+        tellerId: "64bef27d7aeae73a0e7bedc1",
       });
     } catch (error) {
       setLoading(false);

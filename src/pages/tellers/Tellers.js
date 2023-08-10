@@ -71,6 +71,7 @@ const ManageTellers = () => {
       },
     }
   );
+  console.log(data);
 
   if (isLoading) {
     return (
@@ -182,6 +183,11 @@ const ManageTellers = () => {
     {
       field: "PhoneNumber",
       headerName: "Phone Number",
+      flex: 1,
+    },
+    {
+      field: "bankName",
+      headerName: "Working At",
       flex: 1,
     },
 
@@ -315,7 +321,7 @@ const ManageTellers = () => {
         startIcon={<GroupAddIcon />}
         onClick={() => setAddTeller((prev) => !prev)}
       >
-        Add Users
+        Add New Teller
       </Button>
       {adddTeller && <AddTeller setAddeUsers={setAddTeller} />}
       <Box>

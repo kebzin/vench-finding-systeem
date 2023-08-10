@@ -34,6 +34,7 @@ import ManageTellers from "./pages/tellers/Tellers";
 import SingleTeller from "./pages/tellers/SingleTeller";
 import Banks from "./pages/settings/Banks";
 import PoliceStation from "./pages/settings/PoliceStation";
+import SingleWantted from "./pages/Wanted/SingleWanted";
 
 function App() {
   const { setUser } = useAuthContext();
@@ -112,6 +113,7 @@ function App() {
                 <Route path="/transaction/:id" element={<TransactionView />} />
                 <Route path="/wanted" element={<Wanted />} />
                 <Route path="/Charts" element={<Charts />} />
+                <Route path="/wanted/:id" element={<SingleWantted />} />
               </Route>
 
               <Route path="/welcom" element={<Welcome />} />

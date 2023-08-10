@@ -19,7 +19,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import { LoadingButton } from "@mui/lab";
 import { useStateContext } from "../context/Contex";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 const WantedAdd = ({ setAddWanted }) => {
   const theme = useTheme();
   const Color = tokens(theme.palette.mode);
@@ -31,7 +31,7 @@ const WantedAdd = ({ setAddWanted }) => {
   const [location, setLocation] = useState();
   const [age, setAge] = useState();
   const [description, setDescription] = useState();
-  const [file, setfile] = useState(null);
+  const [file, setFile] = useState([]);
   const [location_commited, setLocation_commited] = useState();
   const [colorr, setColor] = useState();
 
@@ -39,26 +39,34 @@ const WantedAdd = ({ setAddWanted }) => {
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
-  const { setDialogMessage, setOPenDialog } = useStateContext();
+  const { setDialogMessage, setErrorIcon, setOPenDialog } = useStateContext();
 
-  const upload = async () => {
-    // upload inage function
+  const handleUpload = async () => {
+    setLoading(true);
+
     const formData = new FormData();
-    formData.append("file", file);
-    console.log(formData);
+    for (const image of file) {
+      formData.append("images", image);
+    }
+
     try {
-      console.log("form data", formData);
-      const respond = await AxiousPrivate.post("/officers/upload", formData);
-      console.log(respond.data);
-      return respond.data;
+      const response = await AxiousPrivate.post("/wanted/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Add this line
+        },
+      });
+
+      return response?.data?.imagePaths;
+      // Continue with other form data and mutation logic
     } catch (error) {
-      console.log(error);
+      console.error("Error uploading image", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const mutation = useMutation(
     (newPost) => {
-      console.log(newPost);
       return AxiousPrivate.post(
         `/officers/wanted/${user?.Officers?.id}`,
         newPost
@@ -66,14 +74,17 @@ const WantedAdd = ({ setAddWanted }) => {
     },
 
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
         setOPenDialog(true);
         setDialogMessage("Sussefully Added");
         setLoading(false);
         queryclient.invalidateQueries("wanted");
       },
-      onError: () => {
+      onError: (error) => {
         setLoading(false);
+        setOPenDialog(true);
+        setErrorIcon(true);
+        setDialogMessage(error.response.data);
       },
     }
   );
@@ -83,9 +94,9 @@ const WantedAdd = ({ setAddWanted }) => {
     event.preventDefault();
     try {
       setLoading(true);
-      let imageurl = "";
-      imageurl = await upload();
-
+      let imageURLL = [];
+      imageURLL = await handleUpload();
+      console.log("urll", imageURLL);
       await mutation.mutate({
         name: name,
         gender: gender,
@@ -96,7 +107,7 @@ const WantedAdd = ({ setAddWanted }) => {
         description: description,
         age: age,
         color: colorr,
-        image: imageurl,
+        imageURi: imageURLL,
         officersid: user?.Officers?.id,
       });
     } catch (error) {
@@ -106,6 +117,13 @@ const WantedAdd = ({ setAddWanted }) => {
     }
   };
 
+  const handleImageChange = (event) => {
+    const newImages = Array.from(event.target.files);
+    setFile((prevImages) => [...prevImages, ...newImages]);
+  };
+  const handleDeleteImage = (image) => {
+    setFile((prevImages) => prevImages.filter((_, index) => index !== image));
+  };
   return (
     <Box
       display="flex"
@@ -139,8 +157,9 @@ const WantedAdd = ({ setAddWanted }) => {
                 hidden
                 accept="image/*"
                 type="file"
-                name="file"
-                onChange={(event) => setfile(event.target.files[0])}
+                multiple
+                name="image"
+                onChange={handleImageChange}
               />
             </form>
             <AddAPhotoIcon
@@ -154,6 +173,36 @@ const WantedAdd = ({ setAddWanted }) => {
             />
           </IconButton>
         </Box>
+        {/* displayong the image */}
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+          {file &&
+            file?.map((image, index) => (
+              <Box key={index + 1} sx={{ position: "relative" }}>
+                <IconButton
+                  onClick={(event) => handleDeleteImage(index)}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    background: Color.grey[900],
+                  }}
+                >
+                  <DeleteIcon
+                    sx={{ color: Color.redAccent[500], width: 30, height: 30 }}
+                  />
+                </IconButton>
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`Uploaded ${index + 1}`}
+                  style={{
+                    maxWidth: "150px",
+                    maxHeight: "150px",
+                  }}
+                />
+              </Box>
+            ))}
+        </Box>
+
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <FormControl
             sx={{ mt: 1, width: "100%" }}

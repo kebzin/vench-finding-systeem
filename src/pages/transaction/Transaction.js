@@ -55,7 +55,7 @@ const Transaction = () => {
       }
     },
     {
-      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      refetchOnWindowFocus: false, // This will refetch data when the component comes into focus
       enabled: true, // We don't want to fetch data immediately when the component mounts
       refetchOnMount: true,
     }
@@ -158,11 +158,11 @@ const Transaction = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "NO" },
+    // { field: "id", headerName: "NO" },
 
     {
       field: "officerId",
-      headerName: "Officers",
+      headerName: "Conducted BY",
       flex: 1,
       cursor: "pointer",
 
@@ -221,6 +221,16 @@ const Transaction = () => {
       cellClassName: "name-column--cell",
       renderCell: ({ row: { LicenNumber } }) => {
         return <Typography>{LicenNumber}</Typography>;
+      },
+    },
+    {
+      field: "bonus", // this field is talking about the data
+      headerName: "Bonus Optain",
+      headerAlign: "left",
+      flex: 1,
+      align: "left",
+      renderCell: ({ row: { bonus } }) => {
+        return <Typography>{bonus}</Typography>;
       },
     },
     {
@@ -335,7 +345,7 @@ const Transaction = () => {
         sx={{
           marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
           transition: " all 1s",
-          marginRight: "15p;",
+          marginRight: "15px;",
         }}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -386,7 +396,11 @@ const Transaction = () => {
             ) : (
               <DataGrid
                 pagination
-                rows={data}
+                rows={data
+                  ?.slice()
+                  ?.sort(
+                    (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt)
+                  )}
                 columns={columns}
                 editMode={"row"}
               />

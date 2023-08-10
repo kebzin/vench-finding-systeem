@@ -17,6 +17,7 @@
     "@nivo/line": "^0.80.0",
     "@nivo/pie": "^0.80.0",
     "@nivo/sunburst": "^0.80.0",
+    "@react-google-maps/api": "^2.19.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -24,6 +25,7 @@
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
     "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.2.1",
     "javascript-time-ago": "^2.5.9",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
@@ -32,6 +34,7 @@
     "react-dom": "^18.2.0",
     "react-geocode": "^0.2.3",
     "react-geolocated": "^4.1.2",
+    "react-leaflet": "^4.2.1",
     "react-pro-sidebar": "^1.0.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.1",
@@ -65,5 +68,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@ubilabs/google-maps-react-hooks": "^2.0.2"
   }
 }

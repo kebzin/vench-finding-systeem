@@ -13,6 +13,7 @@ import ReplyIcon from "@mui/icons-material/Reply";
 import PrintIcon from "@mui/icons-material/Print";
 import { tokens } from "../../theme";
 import { Header } from "../../components";
+import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
 
 import PritTickets from "../../components/PritTickets";
 import { useQuery } from "react-query";
@@ -53,6 +54,20 @@ const TransactionView = () => {
   const amountpa = parseInt(data?.fineAmount?.slice(3));
   const total = amountpa - data?.amountPaid;
 
+  // google map: rendering the map:
+
+  const mapOptions = {
+    zoom: 12,
+    center: {
+      lat: data?.Latitude,
+      lng: data?.Longititude,
+    },
+  };
+  const containerStyle = {
+    height: "500px",
+    width: "500px",
+  };
+
   return (
     <Box
       sx={{
@@ -77,9 +92,7 @@ const TransactionView = () => {
       >
         Back
       </IconButton>
-
       <br />
-
       {/* offince details */}
       <Box
         sx={{
@@ -228,11 +241,38 @@ const TransactionView = () => {
               >
                 <Typography variant="h6" sx={{}}>
                   {" "}
+                  Bonuse Gain from transaction
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  GMD {data?.bonus}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ px: 2, py: 1, gap: 4, textAlign: "left" }}
+              >
+                <Typography variant="h6" sx={{}}>
+                  {" "}
+                  Region:
+                </Typography>
+                <Typography sx={{ color: color.grey[400] }}>
+                  {data?.region}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ px: 2, py: 1, gap: 4, textAlign: "left" }}
+              >
+                <Typography variant="h6" sx={{}}>
+                  {" "}
                   Offence Description
                 </Typography>
                 <Typography sx={{ color: color.grey[400] }}>
-                  {" "}
-                  Offence Description
+                  {data?.fineDescription}
                 </Typography>
               </Stack>
               <Stack
@@ -246,8 +286,7 @@ const TransactionView = () => {
                   Location of Offence
                 </Typography>
                 <Typography sx={{ color: color.grey[400] }}>
-                  {" "}
-                  Location of Offence
+                  {data?.Location}
                 </Typography>
               </Stack>
             </Box>
@@ -264,20 +303,24 @@ const TransactionView = () => {
                   p: 1,
                 }}
               >
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3881.2450536361803!2d-16.708478284742203!3d13.397147209021204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xec2993eb33fc795%3A0xf45b86605e2b921b!2sSukuta%20Traffic%20Light!5e0!3m2!1sen!2sgm!4v1678199179149!5m2!1sen!2sgm"
-                  // width="600"
-                  // height="450"
-                  // style="border:0;"
-                  style={{
-                    width: "100%",
-                    height: 300,
-                    border: "0px ",
-                  }}
-                  allowFullScreen={true}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+                {isLoading ? (
+                  <Typography>loading the map</Typography>
+                ) : (
+                  <LoadScript googleMapsApiKey="AIzaSyCeme5ngsB5BXH_mO3HdGGmwQ-JyDlzuSo">
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={{ lat: data?.Latitude, lng: data?.Longititude }}
+                      zoom={12}
+                    >
+                      <Marker
+                        position={{
+                          lat: data?.Latitude,
+                          lng: data?.Longititude,
+                        }}
+                      />
+                    </GoogleMap>
+                  </LoadScript>
+                )}
               </Box>
             </Box>
             <Box>
@@ -304,7 +347,6 @@ const TransactionView = () => {
                       data?.officerId?.lastName}
                   </Typography>
                   <Typography sx={{ color: color.grey[200], p: 1 }}>
-                    {" "}
                     : Officer Rank{" "}
                   </Typography>
                   <Typography sx={{ color: color.grey[200], p: 1 }}>
@@ -316,7 +358,6 @@ const TransactionView = () => {
           </Box>
         )}
       </Box>
-
       <Box
         sx={{
           background: color.primary[400],
@@ -368,7 +409,6 @@ const TransactionView = () => {
           </Button>
         </Box>
       </Box>
-
       {showprint && <PritTickets ref={componentRef} data={data} />}
     </Box>
   );

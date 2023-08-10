@@ -15,246 +15,101 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ViewWanted from "../../components/ViewWanted";
 import { useStateContext } from "../../context/Contex";
 import { useAuthContext } from "../../context/AuthContex";
-const mockDataTeam = [
-  {
-    id: 1,
-    name: "Jon Snow",
-    email: "jonsnow@gmail.com",
-    age: 35,
-    phone: "(665)121-5454",
-    access: "admin",
-    status: "Wanted",
-  },
-  {
-    id: 2,
-    name: "Cersei Lannister",
-    email: "cerseilannister@gmail.com",
-    age: 42,
-    phone: "(421)314-2288",
-    status: "Wanted",
-  },
-  {
-    id: 3,
-    name: "Jaime Lannister",
-    email: "jaimelannister@gmail.com",
-    age: 45,
-    phone: "(422)982-6739",
-    access: "Resolved",
-  },
-  {
-    id: 4,
-    name: "Anya Stark",
-    email: "anyastark@gmail.com",
-    age: 16,
-    phone: "(921)425-6742",
-    access: "admin",
-    status: "Wanted",
-  },
-  {
-    id: 5,
-    name: "Daenerys Targaryen",
-    email: "daenerystargaryen@gmail.com",
-    age: 31,
-    phone: "(421)445-1189",
-    status: "Wanted",
-  },
-  {
-    id: 6,
-    name: "Ever Melisandre",
-    email: "evermelisandre@gmail.com",
-    age: 150,
-    phone: "(232)545-6483",
-    access: "Wanted",
-    status: "Resolved",
-  },
-  {
-    id: 7,
-    name: "Ferrara Clifford",
-    email: "ferraraclifford@gmail.com",
-    age: 44,
-    phone: "(543)124-0123",
-    status: "Wanted",
-  },
-  {
-    id: 8,
-    name: "Rossini Frances",
-    email: "rossinifrances@gmail.com",
-    age: 36,
-    phone: "(222)444-5555",
-    status: "Resolved",
-  },
-  {
-    id: 9,
-    name: "Harvey Roxie",
-    email: "harveyroxie@gmail.com",
-    age: 65,
-    phone: "(444)555-6239",
-    access: "admin",
-    status: "Wanted",
-  },
-];
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
+import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import { useEffect } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReactTimeAgo from "react-time-ago";
+
 const Wanted = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [preview, setPreview] = useState();
   const [showDetails, setShowDetails] = useState(false);
-  const { sidebarWidth } = useStateContext();
-  const columns = [
-    { field: "id", headerName: "NO" },
 
+  const [addWanted, setAddWanted] = useState(false);
+
+  // hooks
+  const queryclient = useQueryClient();
+  const Navigate = useNavigate();
+  const AxiousPrivate = useAxiousPrivate();
+  const { user } = useAuthContext();
+  const { setDialogMessage, setOPenDialog, sidebarWidth } = useStateContext();
+
+  const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
+
+  // function to featch data:
+  const { data, error, isFetching, isLoading, isError, refetch } = useQuery(
+    "wanted",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get(`/wanted/wanted`);
+
+        return response.data;
+      } catch (error) {
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      refetchOnWindowFocus: false, // This will refetch data when the component comes into focus
+      enabled: true, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
+    }
+  );
+
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      setIsLoadingData(true); // Show loading message while fetching data
+      try {
+        await refetch(); // Fetch data using useQuery's refetch function
+      } catch (error) {
+        console.error(error);
+      }
+      setIsLoadingData(false); // Hide loading message after data fetching is done
+    };
+
+    // Fetch data when the component is mounted or when the dependencies (month, year, etc.) change
+    fetchData();
+  }, [AxiousPrivate, user?.Officers?.role, refetch]);
+
+  const column = [
     {
       field: "name",
-      headerName: "Name",
+      headerName: "Person Full Name",
       flex: 1,
-
-      cursor: "pointer",
-      headerAlign: "left",
-      align: "left",
-      renderCell: ({ row: { name } }) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              p: 2,
-            }}
-          >
-            <Avatar
-              sx={{
-                borderRadius: 1,
-                width: 55,
-                height: 55,
-                background: colors.greenAccent[100],
-              }}
-            />
-            <Typography variant="h6">{name}</Typography>
-          </Box>
-        ); // payment status
-      },
     },
-
+    {
+      field: "location",
+      headerName: "Person Location",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
     {
       field: "age",
-      headerName: "age",
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "height ",
-      headerName: "Height of Individual",
-
-      headerAlign: "center",
-      align: "center",
-      renderCell: ({ row: { status } }) => {
-        return (
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: "12px",
-            }}
-          >
-            5 feet
-          </Typography>
-        ); // payment status
-      },
-    },
-    {
-      field: "bodycolor ",
-      headerName: "Body color",
-
-      headerAlign: "center",
-      align: "center",
-      renderCell: ({ row: { status } }) => {
-        return (
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: "12px",
-            }}
-          >
-            brown
-          </Typography>
-        ); // payment status
-      },
-    },
-    {
-      field: "Gender ",
-      headerName: "Gender",
-
-      headerAlign: "center",
-      align: "center",
-      renderCell: ({ row: { status } }) => {
-        return (
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: "12px",
-            }}
-          >
-            Male
-          </Typography>
-        ); // payment status
-      },
-    },
-
-    // {
-    //   field: "name",
-    //   headerName: "Driver Licen No",
-    //   flex: 1,
-    // },
-    // {
-    //   field: "name", // this field is talking about the data
-    //   headerName: "Offence Commited",
-    //   headerAlign: "left",
-    //   flex: 1,
-    // },
-
-    {
-      field: "location from ",
-      headerName: "Location of Individual",
+      headerName: "Person Age",
       flex: 1,
-      headerAlign: "center",
-      align: "center",
-      renderCell: ({ row: { status } }) => {
-        return (
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: "12px",
-              color: colors.blueAccent[400],
-            }}
-          >
-            Sukuta Trafic Light
-          </Typography>
-        ); // payment status
-      },
+      cellClassName: "name-column--cell",
     },
     {
-      field: "commited",
-      headerName: "Location Crime  Comitted",
+      field: "height", // this field is talking about the data
+      headerName: "Person Height",
+      headerAlign: "left",
       flex: 1,
-      headerAlign: "center",
-      align: "center",
-      renderCell: ({ row: { status } }) => {
-        return (
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: "12px",
-              color: colors.blueAccent[400],
-            }}
-          >
-            Sukuta Trafic Light
-          </Typography>
-        ); // payment status
-      },
     },
+    {
+      field: "crime", // this field is talking about the data
+      headerName: "Wanted For",
+      headerAlign: "left",
+      flex: 1,
+    },
+
     {
       field: "status",
-      headerName: "Problem Status",
+      headerName: "Payment Status",
       flex: 1,
-      headerAlign: "center",
       align: "center",
       renderCell: ({ row: { status } }) => {
         return (
@@ -263,9 +118,11 @@ const Wanted = () => {
             sx={{
               fontSize: "12px",
               color:
-                status === "Resolved"
+                status === "Pending"
+                  ? colors.redAccent[400]
+                  : status === "Completed"
                   ? colors.greenAccent[400]
-                  : colors.redAccent[400],
+                  : colors.blueAccent[400],
             }}
           >
             {status}
@@ -273,19 +130,29 @@ const Wanted = () => {
         ); // payment status
       },
     },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      renderCell: ({ row: { createdAt } }) => {
+        return (
+          <Typography>
+            <ReactTimeAgo date={Date.parse(createdAt)} />
+            {/* {createdAt} */}
+          </Typography>
+        ); // number of fine mad by the user
+      },
+    },
 
     {
       field: "preview",
       headerName: "Preview",
-      headerAlign: "center",
-      align: "center",
-      renderCell: ({ row }) => {
+      renderCell: ({ row: { id } }) => {
         return (
           <Box
-            onClick={() => {
-              setPreview(row);
-              setShowDetails(true);
-            }}
+            onClick={() => Navigate(`${id}`)}
             sx={{
               background:
                 theme.palette.mode === "light"
@@ -302,16 +169,74 @@ const Wanted = () => {
         );
       },
     },
+    user?.Officers?.role === "Administrator"
+      ? {
+          field: user?.Officers?.role === "Administrator" ? "" : null,
+          headerName:
+            user?.Officers?.role === "Administrator" ? "Delete" : null,
+          renderCell: ({ row: { id, officerId } }) => {
+            return user?.Officers?.role === "Administrator" ? (
+              <Box
+                sx={{
+                  p: 1,
+                  cursor: "pointer",
+                }}
+              >
+                {" "}
+                <Button
+                  sx={{
+                    mt: 2,
+                    color: colors.redAccent[400],
+                  }}
+                  variant="outlined"
+                  startIcon={<DeleteIcon />}
+                  onClick={(event) => HandleDelete(id, event, officerId)}
+                >
+                  Delete
+                </Button>
+              </Box>
+            ) : null;
+          },
+        }
+      : {},
   ];
+  //  Handle wanted person delete mutation
+  const DeleteMutation = useMutation(
+    ({ id, officerId }) => {
+      return AxiousPrivate.delete(`/wanted/wanted/${id}`, {
+        data: { officerId },
+      });
+    },
+    {
+      onSuccess: (res) => {
+        setOPenDialog(true);
+        setDialogMessage(res.data.message);
+        queryclient.invalidateQueries("wanted");
+      },
 
-  const [addWanted, setAddWanted] = useState(false);
-  const { user } = useAuthContext();
+      onError: (error) => {
+        setOPenDialog(true);
+        setDialogMessage(error.message);
+      },
+    }
+  );
+  // Handle delete wanted person
+  const HandleDelete = (id, event, officerId) => {
+    try {
+      DeleteMutation.mutate({
+        id: id,
+        officerId: officerId?.id,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Box
       sx={{
         marginLeft: sidebarWidth === "180px" ? "210px" : "20px",
         transition: " all 1s",
-        marginRight: "15px;",
+        marginRight: "20px;",
       }}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -374,15 +299,26 @@ const Wanted = () => {
             "& .MuiCheckbox-root": {},
           }}
         >
-          {" "}
-          {
+          {/* {data?.length > 0 && ( */}
+          {isLoading === true || isFetching === true || data.length < 0 ? (
+            <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 15 }}>
+              loading....{" "}
+            </Typography>
+          ) : data?.length < 0 || data === undefined ? (
+            []
+          ) : (
             <DataGrid
               pagination
-              rows={mockDataTeam}
-              columns={columns}
-              rowHeight={64}
+              rows={data
+                ?.slice()
+                ?.sort(
+                  (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt)
+                )}
+              columns={column}
+              editMode={"row"}
             />
-          }
+          )}
+          {/* )} */}
         </Box>
       </Box>
     </Box>

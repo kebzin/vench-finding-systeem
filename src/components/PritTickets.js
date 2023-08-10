@@ -105,7 +105,7 @@ const PritTickets = forwardRef((props, ref) => {
                 </Typography>
                 <Typography sx={{ color: color.grey[400] }}>
                   {" "}
-                  {props.data?.OffenceCommited}
+                  {props.data?.Location}
                 </Typography>
               </Stack>
               <Stack

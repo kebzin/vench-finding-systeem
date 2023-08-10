@@ -56,27 +56,9 @@ const MakeFine = ({ setToggleAdd }) => {
   const [showprint, setShowPrint] = useState(false);
   const [fineToPrint, setFineToPrint] = useState(null);
   const geolocationData = GeocodingComponent(); // Call the GeolocationComponent as a function to get the data
-  const [region, setRegion] = useState();
+
   const [categoryData, setCategoryData] = useState();
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
-
-  // const [latituid, setLatituid] = useState(null);
-  // const [longitituid, setLongitituid] = useState(null);
-
-  // useEffect(() => {
-  //   const getLocation = () => {
-  //     if (!navigator.geolocation) {
-  //       window.alert("Geolocation is not supported by this browser");
-  //     }
-  //     navigator.geolocation.getCurrentPosition((position) => {
-  //       setLatituid(position.coords.latitude);
-  //       setLongitituid(position.coords.longitude);
-  //       console.log(latituid, " ", longitituid);
-  //     });
-  //   };
-  // });
-
-  // hooks
 
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
@@ -194,6 +176,10 @@ const MakeFine = ({ setToggleAdd }) => {
         wanted: wanted,
         category: category,
         fineCategory: fineCategory,
+        Location: geolocationData.formatedAddress,
+        region: geolocationData.region,
+        Latitude: geolocationData.Latitude,
+        Longititude: geolocationData.Longititude,
       });
     } catch (error) {
       setLoading(false);

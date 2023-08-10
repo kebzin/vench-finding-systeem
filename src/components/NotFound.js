@@ -39,7 +39,11 @@ const NotFound = () => {
         </Typography>
         <LoadingButton
           color="primary"
-          onClick={() => Navigate(-1)}
+          onClick={() => {
+            Navigate(-1);
+            setIsSidebar(true);
+            setTopbar(true);
+          }}
           variant="contained"
           style={{ backgroundColor: color.greenAccent[600] }}
         >
