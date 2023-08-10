@@ -32,7 +32,7 @@ const WantedAdd = ({ setAddWanted }) => {
   const [age, setAge] = useState();
   const [description, setDescription] = useState();
   const [file, setFile] = useState([]);
-  const [location_commited, setLocation_commited] = useState();
+  // const [location_commited, setLocation_commited] = useState();
   const [colorr, setColor] = useState();
 
   // hooks
@@ -103,7 +103,6 @@ const WantedAdd = ({ setAddWanted }) => {
         crime: crime,
         height: height,
         location: location,
-        location_commited: location_commited,
         description: description,
         age: age,
         color: colorr,

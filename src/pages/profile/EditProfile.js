@@ -19,6 +19,7 @@ const EditProfile = ({ setEditProfile, data }) => {
   const [PoliceStation, setPoliceStation] = useState(data?.PoliceStation);
   const [PhoneNumber, setPhoneNumber] = useState(data?.PhoneNumber);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
 
   //hooks
   const AxiousPrivate = useAxiousPrivate();
@@ -59,6 +60,7 @@ const EditProfile = ({ setEditProfile, data }) => {
       PoliceStation: PoliceStation,
       rank: rank,
       PhoneNumber: PhoneNumber,
+      password: password,
     });
   };
 
@@ -162,6 +164,20 @@ const EditProfile = ({ setEditProfile, data }) => {
               size="full"
               type="number"
               value={PhoneNumber}
+            />
+          </FormControl>
+          <FormControl
+            sx={{ mt: 2, width: "100%" }}
+            variant="outlined"
+            onChange={(event) => setPassword(event.target.value)}
+          >
+            <TextField
+              id="outlined-basic"
+              placeholder="Update Password"
+              variant="outlined"
+              size="full"
+              type="text"
+              value={password}
             />
           </FormControl>
           <LoadingButton

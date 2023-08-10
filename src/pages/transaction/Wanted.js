@@ -81,24 +81,14 @@ const Wanted = () => {
       headerName: "Person Full Name",
       flex: 1,
     },
-    {
-      field: "location",
-      headerName: "Person Location",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
+
     {
       field: "age",
       headerName: "Person Age",
       flex: 1,
       cellClassName: "name-column--cell",
     },
-    {
-      field: "height", // this field is talking about the data
-      headerName: "Person Height",
-      headerAlign: "left",
-      flex: 1,
-    },
+
     {
       field: "crime", // this field is talking about the data
       headerName: "Wanted For",
@@ -108,7 +98,7 @@ const Wanted = () => {
 
     {
       field: "status",
-      headerName: "Payment Status",
+      headerName: "Problem Status",
       flex: 1,
       align: "center",
       renderCell: ({ row: { status } }) => {
@@ -210,6 +200,7 @@ const Wanted = () => {
     {
       onSuccess: (res) => {
         setOPenDialog(true);
+
         setDialogMessage(res.data.message);
         queryclient.invalidateQueries("wanted");
       },
