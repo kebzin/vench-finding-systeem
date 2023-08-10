@@ -10,6 +10,7 @@ import PopUpMessage from "./PopUpMessage";
 import LineChartAdmin from "./LineChartAdmin";
 import EditProfile from "../pages/profile/EditProfile";
 import WantedAdd from "./WantedAdd";
+GeolocationComponent;
 
 export {
   SideBar,
