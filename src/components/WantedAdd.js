@@ -97,18 +97,25 @@ const WantedAdd = ({ setAddWanted }) => {
       let imageURLL = [];
       imageURLL = await handleUpload();
       console.log("urll", imageURLL);
-      await mutation.mutate({
-        name: name,
-        gender: gender,
-        crime: crime,
-        height: height,
-        location: location,
-        description: description,
-        age: age,
-        color: colorr,
-        imageURi: imageURLL,
-        officersid: user?.Officers?.id,
-      });
+      if (imageURLL) {
+        await mutation.mutate({
+          name: name,
+          gender: gender,
+          crime: crime,
+          height: height,
+          location: location,
+          description: description,
+          age: age,
+          color: colorr,
+          imageURi: imageURLL,
+          officersid: user?.Officers?.id,
+        });
+      } else {
+        setLoading(false);
+        setOPenDialog(true);
+        setErrorIcon(true);
+        setDialogMessage("An Error occure while uploading and image");
+      }
     } catch (error) {
       console.log(error.message);
       setLoading(false);

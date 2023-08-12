@@ -196,7 +196,7 @@ const ManageUser = () => {
     (newPost) => {
       console.log(newPost);
       return AxiousPrivate.delete(
-        `/deleteOfficers/${user?.Officers?.id}`,
+        `/officers/deleteOfficers/${newPost.id}`,
         newPost
       );
     },
@@ -212,7 +212,7 @@ const ManageUser = () => {
         setOPenDialog(true);
         setErrorIcon(true);
         console.log("error", error.response);
-        setDialogMessage(error.response.error);
+        setDialogMessage(error.response.data.message);
       },
     }
   );
@@ -295,6 +295,7 @@ const ManageUser = () => {
   // delete user mutation
 
   const HandleDelete = ({ _id, fines }) => {
+    console.log(_id);
     try {
       if (fines?.length > 0) {
         return (

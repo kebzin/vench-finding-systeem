@@ -15,7 +15,7 @@ import {
 import React, { useState } from "react";
 import { tokens } from "../../theme";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useStateContext } from "../../context/Contex";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 
@@ -33,14 +33,35 @@ const Adduser = ({ setAddeUsers }) => {
   const [role, SetRole] = useState("");
   const { setDialogMessage, setOPenDialog, setErrorIcon } = useStateContext();
   const [loading, setLoading] = useState(false);
+  const [officerBatchNumber, setOfficersBatchNumber] = useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
 
+  const { data, error, isLoading, isFetching, isError, refetch } = useQuery(
+    "station",
+    async () => {
+      try {
+        const response = await AxiousPrivate.get("/station/station");
+
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to fetch data.");
+      }
+    },
+    {
+      // refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      enabled: true, // We don't want to fetch data immediately when the component mounts
+      refetchOnMount: true,
+    }
+  );
+
   const mutation = useMutation(
     (newPost) => {
+      console.log(newPost);
       return AxiousPrivate.post(`/auth/register`, newPost);
     },
     {
@@ -77,7 +98,8 @@ const Adduser = ({ setAddeUsers }) => {
         Boolean(PhoneNumber),
         Boolean(rank),
         Boolean(password),
-        Boolean(email))
+        Boolean(email),
+        Boolean(officerBatchNumber))
       ) {
         return (
           setOPenDialog(true),
@@ -95,6 +117,7 @@ const Adduser = ({ setAddeUsers }) => {
         PhoneNumber: PhoneNumber,
         password: password,
         rank: rank,
+        BatchNumber: officerBatchNumber,
         // AdminID: user.Officers.id,
       });
     } catch (error) {
@@ -174,19 +197,46 @@ const Adduser = ({ setAddeUsers }) => {
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
                     id="outlined-basic2"
-                    label="Enter Your post Station"
+                    label="Enter officer batch number"
                     variant="outlined"
                     size="full"
                     required={true}
                     type="text"
-                    onChange={(event) => setPoliceStation(event.target.value)}
+                    value={officerBatchNumber}
+                    onChange={(event) =>
+                      setOfficersBatchNumber(event.target.value)
+                    }
                   />
+                </FormControl>
+                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                  <InputLabel id="demo-simple-select-label2">
+                    Select Police Station
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={PoliceStation}
+                    label="Role"
+                    onChange={(event) => setPoliceStation(event.target.value)}
+                  >
+                    {isLoading === true || isFetching === true ? (
+                      <Typography>
+                        Please wait while loading stations
+                      </Typography>
+                    ) : (
+                      data?.map((element, index) => (
+                        <MenuItem value={element.StationName}>
+                          {element.StationName}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
                 </FormControl>
 
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <TextField
                     id="outlined-basic3"
-                    label="Enter Your Rank"
+                    label="Enter officer's Rank"
                     variant="outlined"
                     size="full"
                     required={true}

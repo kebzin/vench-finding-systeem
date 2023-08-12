@@ -163,14 +163,24 @@ const MakeFine = ({ setToggleAdd }) => {
     //   );
     // }
 
+    if (LicenNumber.length >= 5) {
+      return (
+        setOPenDialog(true),
+        setErrorIcon(true),
+        setDialogMessage(
+          "The driver licen number you enter is incorrect pleas retry again "
+        )
+      );
+    }
+
     try {
       setLoading(true);
       mutation.mutate({
         OffenceCommited: OffenceCommited?.OffenceName,
         fineAmount: fineAmount,
         fineDescription: fineDescription,
-        DriverAddress: DriverAddress,
-        DriverName: DriverName,
+        // DriverAddress: DriverAddress,
+        // DriverName: DriverName,
         NumberPlat: NumberPlat,
         LicenNumber: LicenNumber,
         wanted: wanted,
@@ -207,20 +217,6 @@ const MakeFine = ({ setToggleAdd }) => {
         `${driver.driversFirstName || ""} ${driver.driversLastName || ""}`
       );
       setDriverAddress(driver.driversAddress || "");
-    }
-    if (licenseNumber.length >= 5) {
-      return (
-        setOPenDialog(true),
-        setErrorIcon(true),
-        setDialogMessage(
-          "The driver licen number you enter is incorrect pleas retry again "
-        ),
-        // Handle the case when no driver is found with the given license number
-        setDriverName(""),
-        setDriverAddress("")
-      );
-
-      // You could show an error message or take other actions as needed.
     }
   };
 
@@ -285,7 +281,7 @@ const MakeFine = ({ setToggleAdd }) => {
                 />
               </FormControl>
 
-              <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
+              {/* <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
                 <TextField
                   id="outlined-basic"
                   variant="outlined"
@@ -301,7 +297,7 @@ const MakeFine = ({ setToggleAdd }) => {
                   }
                   disabled
                 />
-              </FormControl>
+              </FormControl> 
 
               <FormControl
                 sx={{ mt: 2, width: "100%" }}
@@ -324,7 +320,7 @@ const MakeFine = ({ setToggleAdd }) => {
                   placeholder="Driver Address"
                   disabled
                 />
-              </FormControl>
+              </FormControl> */}
 
               <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
                 <Select

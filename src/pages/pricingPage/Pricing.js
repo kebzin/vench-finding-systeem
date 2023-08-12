@@ -298,7 +298,8 @@ const Pricing = () => {
                         Delete
                       </Button>
                     )}
-                    {user?.Officers?.role === "Employee" ? null : (
+                    {user?.Officers?.role === "Employee" ||
+                    user?.Officers?.role === "Trafic Officer" ? null : (
                       <Button
                         sx={{
                           mt: 1,
@@ -323,7 +324,8 @@ const Pricing = () => {
       <Box>
         {/* add botten */}
         {toggleAdd && <CrimePrcing />}
-        {user?.Officers?.role === "Employee" ? null : (
+        {user?.Officers?.role === "Employee" ||
+        user?.Officers?.role === "Trafic Officer" ? null : (
           <Box
             sx={addButtonContainer}
             onClick={() => setToggleAdd((previousestate) => !previousestate)}

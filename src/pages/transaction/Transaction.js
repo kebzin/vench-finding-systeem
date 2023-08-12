@@ -43,11 +43,7 @@ const Transaction = () => {
     "transaction",
     async () => {
       try {
-        const response = await AxiousPrivate.get(
-          user?.Officers?.role === "Employee"
-            ? `/fine/fine/${user?.Officers?.id}`
-            : `/fine/fine/`
-        );
+        const response = await AxiousPrivate.get(`/fine/fine/`);
 
         return response.data;
       } catch (error) {
