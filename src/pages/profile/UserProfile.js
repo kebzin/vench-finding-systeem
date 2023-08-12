@@ -53,6 +53,7 @@ const UserProfile = () => {
 
   // state
 
+  console.log(data);
   const [accountStatus, setAccountStatus] = useState(
     data?.status === "Active" ? true : false
   );
@@ -297,9 +298,9 @@ const UserProfile = () => {
                     <MilitaryTechIcon />
                   </IconButton>
                   <Typography sx={{ display: "flex", alignItems: "center" }}>
-                    Rank:{" "}
+                    Rank:
                     <Typography sx={{ ml: 1, color: color.blueAccent[300] }}>
-                      Trafic Officer
+                      {data?.rank}
                     </Typography>
                   </Typography>
                 </Box>
@@ -308,7 +309,7 @@ const UserProfile = () => {
                     <LocationOnIcon />
                   </IconButton>
                   <Typography sx={{ display: "flex", alignItems: "center" }}>
-                    Live in:{" "}
+                    Live in:
                     <Typography sx={{ ml: 1, color: color.blueAccent[300] }}>
                       Trafic Officer
                     </Typography>
@@ -319,7 +320,7 @@ const UserProfile = () => {
                     <AssuredWorkloadIcon />
                   </IconButton>
                   <Typography sx={{ display: "flex", alignItems: "center" }}>
-                    Work at:{" "}
+                    Work at:
                     <Typography sx={{ ml: 1, color: color.blueAccent[300] }}>
                       {data?.PoliceStation}
                     </Typography>
@@ -330,7 +331,7 @@ const UserProfile = () => {
                     <LocalPhoneIcon />
                   </IconButton>
                   <Typography sx={{ display: "flex", alignItems: "center" }}>
-                    Phone Number:{" "}
+                    Phone Number:
                     <Typography sx={{ ml: 1, color: color.blueAccent[300] }}>
                       +220 {data?.PhoneNumber}
                     </Typography>
