@@ -66,24 +66,42 @@ const SingleTeller = () => {
     fetchData();
   }, [AxiousPrivate, refetch]);
 
-  const mutation = useMutation(
+  // const mutation = useMutation(
+  //   (newPost) => {
+  //     return AxiousPrivate.patch(`/teller/teller/${id}`, { newPost });
+  //   },
+  //   {
+  //     onSuccess: (respond) => {
+  //       setOPenDialog(true);
+  //       setDialogMessage(respond.data.message);
+  //       // setLoading(false);
+  //       queryclient.invalidateQueries("teller");
+  //     },
+
+  //     onError: (error) => {
+  //       // setLoading(false);
+  //       setOPenDialog(true);
+  //       setErrorIcon(true);
+
+  //       setDialogMessage(error.response.error);
+  //     },
+  //   }
+  // );
+  const HamdleAccountRoleChangeMutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.patch(`/teller/teller/${id}`, { newPost });
+      return AxiousPrivate.put(`/teller/teller/${id}`, newPost);
     },
     {
-      onSuccess: (respond) => {
+      onSuccess: (res) => {
         setOPenDialog(true);
-        setDialogMessage(respond.data.message);
-        // setLoading(false);
-        queryclient.invalidateQueries("teller");
+        setDialogMessage(res.data.message);
+        refetch();
+        // QueryClient.invalidateQueries("user");
       },
 
       onError: (error) => {
-        // setLoading(false);
         setOPenDialog(true);
-        setErrorIcon(true);
-
-        setDialogMessage(error.response.error);
+        setDialogMessage(error.message);
       },
     }
   );
@@ -159,6 +177,18 @@ const SingleTeller = () => {
       console.log(error);
       setErrorIcon(true);
       setDialogMessage(error?.response?.error);
+    }
+  };
+
+  const HandleAccountRoleChange = (event) => {
+    const newAccountStatus = event.target.checked;
+    try {
+      HamdleAccountRoleChangeMutation.mutate({
+        id: id,
+        role: newAccountStatus === true ? "Suspended" : "Active",
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -307,7 +337,7 @@ const SingleTeller = () => {
                 <Switch
                   color="secondary"
                   checked={accountStatusChange}
-                  onChange={(event) => HanleAccountChange(event)}
+                  onChange={HandleAccountRoleChange}
                   sx={{}}
                   disabled={false}
                 />

@@ -16,9 +16,10 @@ import { useAuthContext } from "../context/AuthContex";
 import { useStateContext } from "../context/Contex";
 import useAxiousPrivate from "../hooks/useAxiousPrivate";
 import { tokens } from "../theme";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import PritTickets from "./PritTickets";
 import GeocodingComponent from "./GeocodingComponent";
+import CameraCapture from "./CameraScan";
 
 const addButtonContainer = {
   display: "flex",
@@ -40,7 +41,7 @@ const MenuProps = {
   },
 };
 
-const MakeFine = ({ setToggleAdd }) => {
+const MakeFine = React.memo(({ setToggleAdd }) => {
   // states
   const [loading, setLoading] = useState(false);
   const [NumberPlat, setNumberPlat] = useState("");
@@ -62,7 +63,6 @@ const MakeFine = ({ setToggleAdd }) => {
 
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
-  const queryclient = useQueryClient();
 
   // ref
   const componentRef = useRef();
@@ -250,6 +250,9 @@ const MakeFine = ({ setToggleAdd }) => {
               <Typography sx={{ pb: 1, fontSize: 20, fontWeight: 600 }}>
                 Make a Fine
               </Typography>
+
+              {/* <CameraCapture /> */}
+
               <FormControl
                 sx={{ width: "100%" }}
                 variant="outlined"
@@ -488,6 +491,6 @@ const MakeFine = ({ setToggleAdd }) => {
       </Box>
     </Box>
   );
-};
+});
 
 export default MakeFine;

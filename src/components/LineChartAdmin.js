@@ -3,187 +3,190 @@ import { ResponsiveLine } from "@nivo/line";
 import React from "react";
 import { tokens } from "../theme";
 
-const data = [
-  {
-    id: "Greater Banjul",
-    color: "hsl(139, 70%, 50%)",
-    data: [
-      {
-        x: "Vench",
-        y: 1,
-      },
-      {
-        x: "bus",
-        y: 12,
-      },
-      {
-        x: "car",
-        y: 0,
-      },
-      {
-        x: "moto",
-        y: 15,
-      },
-      {
-        x: "bicycle",
-        y: 32,
-      },
-
-      {
-        x: "Trucks",
-        y: 34,
-      },
-      {
-        x: "others",
-        y: 18,
-      },
-    ],
-  },
-  {
-    id: "West Coast Region",
-    color: "hsl(293, 70%, 50%)",
-    data: [
-      {
-        x: "Vench",
-        y: 9,
-      },
-      {
-        x: "bus",
-        y: 13,
-      },
-      {
-        x: "car",
-        y: 0,
-      },
-      {
-        x: "moto",
-        y: 26,
-      },
-      {
-        x: "bicycle",
-        y: 10,
-      },
-
-      {
-        x: "Trucks",
-        y: 29,
-      },
-      {
-        x: "others",
-        y: 20,
-      },
-    ],
-  },
-  {
-    id: "Nort Bank Region",
-    color: "hsl(220, 70%, 50%)",
-    data: [
-      {
-        x: "Vench",
-        y: 2,
-      },
-      {
-        x: "bus",
-        y: 22,
-      },
-      {
-        x: "car",
-        y: 32,
-      },
-      {
-        x: "moto",
-        y: 18,
-      },
-      {
-        x: "bicycle",
-        y: 15,
-      },
-
-      {
-        x: "Trucks",
-        y: 25,
-      },
-      {
-        x: "others",
-        y: 17,
-      },
-    ],
-  },
-  {
-    id: "Rower River Region",
-    color: "hsl(215, 70%, 50%)",
-    data: [
-      {
-        x: "Vench",
-        y: 2,
-      },
-      {
-        x: "bus",
-        y: 32,
-      },
-      {
-        x: "car",
-        y: 19,
-      },
-      {
-        x: "moto",
-        y: 14,
-      },
-      {
-        x: "bicycle",
-        y: 11,
-      },
-
-      {
-        x: "Trucks",
-        y: 10,
-      },
-      {
-        x: "others",
-        y: 12,
-      },
-    ],
-  },
-  {
-    id: "Center River Region",
-    color: "hsl(290, 70%, 50%)",
-    data: [
-      {
-        x: "Vench",
-        y: 0,
-      },
-      {
-        x: "bus",
-        y: 16,
-      },
-      {
-        x: "car",
-        y: 18,
-      },
-      {
-        x: "moto",
-        y: 16,
-      },
-      {
-        x: "bicycle",
-        y: 0,
-      },
-
-      {
-        x: "Trucks",
-        y: 2,
-      },
-      {
-        x: "others",
-        y: 20,
-      },
-    ],
-  },
-];
-
-const LineChartAdmin = () => {
+const LineChartAdmin = ({ data }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  console.log(data);
+
+  const BrikamaRegion = data?.filter((element) => element.region === "Brikama");
+
+  // vicle in brikama
+  const BrikamaCars = BrikamaRegion?.filter(
+    (element) => element?.fineCategory === "Car"
+  );
+  // Truck in brikama
+  const BrikamaTruck = BrikamaRegion?.filter(
+    (element) => element?.fineCategory === "truck"
+  );
+  // brikama Bus
+  const BrikamaBus = BrikamaRegion?.filter(
+    (element) => element.fineCategory === "Bus"
+  );
+  const BrikamaMotocar = BrikamaRegion?.filter(
+    (element) => element.fineCategory === "Motocar"
+  );
+  const BrikamaOthers = BrikamaRegion?.filter(
+    (element) => element.fineCategory !== "Motocar" && "Bus" && "Car" && "Truck"
+  );
+
+  // filtering by "Kanifing"
+  const KanaifngRegion = data?.filter(
+    (element) => element.region === "Brikama"
+  );
+  const KanafingCars = KanaifngRegion?.filter(
+    (element) => element?.fineCategory === "Car"
+  );
+  const KanafingBus = KanaifngRegion?.filter(
+    (element) => element.fineCategory === "Bus"
+  );
+
+  const KanafinMotocar = KanaifngRegion?.filter(
+    (element) => element.fineCategory === "Motocar"
+  );
+  const KanafinOthers = KanaifngRegion?.filter(
+    (element) => element.fineCategory !== "Motocar" && "Bus" && "Car" && "Truck"
+  );
+  // Truck in brikama
+  const KanafinTruck = KanaifngRegion?.filter(
+    (element) => element?.fineCategory === "truck"
+  );
+  const RegionDataAnalysis = [
+    {
+      id: "Brikama Region",
+      color: "hsl(139, 70%, 50%)",
+      data: [
+        {
+          x: "Bus",
+          y: BrikamaBus?.length,
+        },
+        {
+          x: "Car",
+          y: BrikamaCars?.length,
+        },
+        {
+          x: "MotoCars",
+          y: BrikamaMotocar?.length,
+        },
+
+        {
+          x: "Trucks",
+          y: BrikamaTruck?.length,
+        },
+        {
+          x: "others",
+          y: BrikamaOthers?.length,
+        },
+      ],
+    },
+    {
+      id: "Kanifing Region",
+      color: "hsl(293, 70%, 50%)",
+      data: [
+        {
+          x: "Bus",
+          y: KanafingBus?.length,
+        },
+        {
+          x: "Car",
+          y: KanafingCars?.length,
+        },
+        {
+          x: "MotoCars",
+          y: KanafinMotocar?.length,
+        },
+
+        {
+          x: "Trucks",
+          y: KanafinTruck?.length,
+        },
+        {
+          x: "others",
+          y: KanafinOthers?.length,
+        },
+      ],
+    },
+    {
+      id: "Nort Bank Region",
+      color: "hsl(220, 70%, 50%)",
+      data: [
+        {
+          x: "Bus",
+          y: BrikamaBus?.length,
+        },
+        {
+          x: "Car",
+          y: BrikamaCars?.length,
+        },
+        {
+          x: "MotoCars",
+          y: BrikamaMotocar?.length,
+        },
+
+        {
+          x: "Trucks",
+          y: BrikamaTruck?.length,
+        },
+        {
+          x: "others",
+          y: BrikamaOthers?.length,
+        },
+      ],
+    },
+    {
+      id: "Rower River Region",
+      color: "hsl(215, 70%, 50%)",
+      data: [
+        {
+          x: "Bus",
+          y: 32,
+        },
+        {
+          x: "Car",
+          y: 19,
+        },
+        {
+          x: "MotoCars",
+          y: 14,
+        },
+
+        {
+          x: "Trucks",
+          y: 10,
+        },
+        {
+          x: "others",
+          y: 12,
+        },
+      ],
+    },
+    {
+      id: "Center River Region",
+      color: "hsl(290, 70%, 50%)",
+      data: [
+        {
+          x: "Bus",
+          y: 16,
+        },
+        {
+          x: "Car",
+          y: 18,
+        },
+        {
+          x: "MotoCars",
+          y: 16,
+        },
+
+        {
+          x: "Trucks",
+          y: 2,
+        },
+        {
+          x: "others",
+          y: 20,
+        },
+      ],
+    },
+  ];
   return (
     <Box
       sx={{
@@ -194,7 +197,7 @@ const LineChartAdmin = () => {
         Regions Analysis
       </Typography>
       <ResponsiveLine
-        data={data}
+        data={RegionDataAnalysis}
         theme={{
           axis: {
             domain: {

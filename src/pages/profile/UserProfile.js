@@ -9,8 +9,11 @@ import {
   Avatar,
   Button,
   Stack,
+  MenuItem,
+  Select,
+  InputLabel,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header, EditProfile } from "../../components";
 import { tokens } from "../../theme";
 import { LoadingButton } from "@mui/lab";
@@ -21,7 +24,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import ProfileChart from "./ProfileChart";
-import { useQuery } from "react-query";
+import { QueryClient, useMutation, useQuery } from "react-query";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import fixing from "../../assets/illustration/fixing.svg";
 import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
@@ -53,21 +56,12 @@ const UserProfile = () => {
 
   // state
 
-  console.log(data);
-  const [accountStatus, setAccountStatus] = useState(
-    data?.status === "Active" ? true : false
-  );
-  const [emailVerify, setEvailVerify] = useState(
-    data?.status === "Active" ? true : false
-  );
+  const [accountStatus, setAccountStatus] = useState(null);
+
   const [editProfile, setEditProfile] = useState(false);
 
-  const [AdminstratorStatus, setAdminstratorStatus] = useState(
-    data?.role === "Administrator" || "Sub Admin" ? true : false
-  );
-  const [suspemdAccount, setSupemdAccount] = useState(
-    data?.status === "Suspended" ? true : false
-  );
+  const [AdminstratorStatus, setAdminstratorStatus] = useState(null);
+
   const [message, setMessage] = useState(false);
 
   //  function
@@ -75,49 +69,10 @@ const UserProfile = () => {
     return setMessageOpen((previouseState) => !previouseState);
   };
 
-  const HanleAccountChange = async (event) => {
-    setAdminstratorStatus(event.target.checked);
-
-    try {
-      const update = await AxiousPrivate.put(`/officers/officers/${id}`, {
-        role: AdminstratorStatus === true ? "Administrator" : "Employee",
-      });
-      setOPenDialog(true);
-      setDialogMessage(update.data?.message);
-    } catch (error) {
-      setOPenDialog(true);
-      setDialogMessage(error.message);
-    }
-  };
-
-  const HandleEmailVerify = async (event) => {
-    try {
-      setEvailVerify(event.target.checked);
-      const verify = await AxiousPrivate.put(`/officers/officers/${id}`, {
-        status: "Active",
-      });
-      setOPenDialog(true);
-      setDialogMessage(verify.data?.message);
-    } catch (error) {
-      console.log(error.message);
-      setOPenDialog(true);
-      setDialogMessage(error.message);
-    }
-  };
-
-  const HandleSuspendAccount = async (event) => {
-    try {
-      setSupemdAccount(event.target.checked);
-      const suspend = await AxiousPrivate.put(`/officers/officers/${id}`, {
-        status: "Suspended",
-      });
-      setOPenDialog(true);
-      setDialogMessage(suspend.data.message);
-    } catch (error) {
-      setOPenDialog(true);
-      setDialogMessage(error.message);
-    }
-  };
+  useEffect(() => {
+    setAccountStatus(data?.status);
+    setAdminstratorStatus(data?.role);
+  }, [data, refetch]);
 
   const DisableSwitch =
     user?.Officers?.id === id || user?.Officers?.role === "Sub Admin"
@@ -128,6 +83,72 @@ const UserProfile = () => {
     user?.Officers?.id === id
       ? Navigate(`/notification/${id}`)
       : setMessage((prev) => !prev);
+  };
+  // handle account role change
+  const HamdleAccountRoleChangeMutation = useMutation(
+    (newPost) => {
+      return AxiousPrivate.put(`/officers/officers/${newPost.id}`, newPost);
+    },
+    {
+      onSuccess: (res) => {
+        setOPenDialog(true);
+        setDialogMessage(res.data.message);
+        refetch();
+        // QueryClient.invalidateQueries("user");
+      },
+
+      onError: (error) => {
+        setOPenDialog(true);
+        setDialogMessage(error.message);
+      },
+    }
+  );
+  // Handle Account Change mutation
+  const HamdleAccountChangeMutation = useMutation(
+    (newPost) => {
+      return AxiousPrivate.put(`/officers/officers/${newPost.id}`, newPost);
+    },
+    {
+      onSuccess: (res) => {
+        setOPenDialog(true);
+        setDialogMessage(res.data.message);
+        setAccountStatus(res.data.status);
+        refetch();
+        // QueryClient.invalidateQueries("user");
+      },
+
+      onError: (error) => {
+        setOPenDialog(true);
+        setDialogMessage(error.message);
+      },
+    }
+  );
+
+  // handle Status Change
+  const HandleAccountChange = (event) => {
+    const newAccountStatus = event.target.value;
+
+    try {
+      HamdleAccountChangeMutation.mutate({
+        id: id,
+        status: newAccountStatus,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // handle account role change
+  const HandleAccountRoleChange = (event) => {
+    const newAccountStatus = event.target.value;
+    try {
+      HamdleAccountRoleChangeMutation.mutate({
+        id: id,
+        role: newAccountStatus,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -362,16 +383,28 @@ const UserProfile = () => {
                     <Typography style={{ color: color.greenAccent[500] }}>
                       {data?.status}
                     </Typography>
-                    <Switch
-                      color="secondary"
-                      checked={accountStatus}
-                      onChange={(event) => HanleAccountChange(event)}
-                      sx={{}}
-                      disabled={DisableSwitch}
-                    />
+                    <FormControl sx={{ m: 1, minWidth: "25%", width: "25%" }}>
+                      <InputLabel id="demo-simple-select-autowidth-label">
+                        Account Status
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        value={accountStatus}
+                        onChange={(event) => HandleAccountChange(event)}
+                        autoWidth
+                        label="Age"
+                      >
+                        <MenuItem defaultValue={accountStatus}>
+                          {accountStatus}
+                        </MenuItem>
+                        <MenuItem value={`Active`}>Active</MenuItem>
+                        <MenuItem value={`Suspended`}>Suspended</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Stack>
 
-                  <Stack
+                  {/* <Stack
                     direction="row"
                     alignItems="center"
                     justifyContent="space-between"
@@ -387,9 +420,9 @@ const UserProfile = () => {
                       checked={emailVerify}
                       disabled={DisableSwitch}
                     />
-                  </Stack>
+                  </Stack> */}
 
-                  <Stack
+                  {/* <Stack
                     direction="row"
                     alignItems="center"
                     justifyContent="space-between"
@@ -405,7 +438,8 @@ const UserProfile = () => {
                       checked={suspemdAccount}
                       disabled={DisableSwitch}
                     />
-                  </Stack>
+                  </Stack> */}
+
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -416,12 +450,37 @@ const UserProfile = () => {
                     <Typography style={{ color: color.greenAccent[500] }}>
                       {data?.role}
                     </Typography>
-                    <Switch
+                    {/* <Switch
                       color="secondary"
                       onChange={HanleAccountChange}
                       checked={AdminstratorStatus}
                       disabled={DisableSwitch}
-                    />
+                    /> */}
+                    <FormControl sx={{ m: 1, minWidth: "25%", width: "25%" }}>
+                      <InputLabel id="demo-simple-select-autowidth-label">
+                        USer Role
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        value={AdminstratorStatus}
+                        onChange={(event) => HandleAccountRoleChange(event)}
+                        autoWidth
+                        label="Age"
+                      >
+                        <MenuItem
+                          value={AdminstratorStatus}
+                          defaultValue={AdminstratorStatus}
+                        >
+                          {AdminstratorStatus}
+                        </MenuItem>
+                        <MenuItem value={`Employee`}>Trafic Officer</MenuItem>
+                        <MenuItem value={`Sub Admin`}>Sub Admin</MenuItem>
+                        <MenuItem value={`Administrator`}>
+                          Administrator
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
                   </Stack>
                 </Box>
               </Box>

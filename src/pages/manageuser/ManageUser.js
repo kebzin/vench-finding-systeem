@@ -429,7 +429,7 @@ const ManageUser = () => {
             sx={{
               fontSize: "12px",
               color:
-                status === "suspended"
+                status === "Suspended"
                   ? colors.redAccent[400]
                   : status === "Active"
                   ? colors.greenAccent[400]

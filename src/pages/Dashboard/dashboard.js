@@ -23,6 +23,7 @@ import { isError, useQuery } from "react-query";
 import { GMD_CURRENC_FORMAT } from "../../global/GlobalVeriableFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import undraw_exams_re_4ios from "../../assets/illustration/undraw_exams_re_4ios (copy).svg";
+import TopOfficers from "../../components/TopOfficers";
 
 const addButtonContainer = {
   position: "fixed",
@@ -32,7 +33,6 @@ const addButtonContainer = {
 };
 
 // recent transaction .map
-const recentTransaction = [{}, {}, {}, {}, {}];
 
 const Dashboard = () => {
   const {
@@ -68,33 +68,28 @@ const Dashboard = () => {
   const todayMonth = new Date(date); // getting the full date of the current year
 
   // states
-  const [dateValue, setDateValue] = useState();
   const [month, setMonth] = useState(todayMonth.getMonth()); // the current month
   const [year, setYear] = useState(todayMonth.getFullYear()); // the current year
-  // const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
-  // const [TopOfficersYear, setTopOfficersYear] = useState(
-  //   todayMonth.getFullYear() // the current year
-  // );
+  const [TopOfficerMonth, setTopOfficerMonth] = useState(todayMonth.getMonth()); // the current month
+  const [TopOfficersYear, setTopOfficersYear] = useState(
+    todayMonth.getFullYear() // the current year
+  );
   const [isLoadingData, setIsLoadingData] = useState(true); // Set initial loading state to true
 
   // functions
 
-  const { data, error, isLoading, refetch, isFetching } = useQuery(
+  const { data, error, isLoading, refetch } = useQuery(
     "transaction",
     async () => {
       try {
-        const response = await AxiousPrivate.get(
-          user?.Officers?.role === "Employee"
-            ? `/fine/fine/${user?.Officers?.id}`
-            : `/fine/fine/`
-        );
+        const response = await AxiousPrivate.get(`/fine/fine/`);
         return response.data;
       } catch (error) {
         throw new Error("Failed to fetch data.");
       }
     },
     {
-      refetchOnWindowFocus: true, // This will refetch data when the component comes into focus
+      refetchOnWindowFocus: false, // This will refetch data when the component comes into focus
       enabled: true, // We don't want to fetch data immediately when the component mounts
       refetchOnMount: true,
     }
@@ -170,24 +165,6 @@ const Dashboard = () => {
     );
   }
 
-  // filtering to show the data base on the user selection date
-  const currentMonthAndYear = data?.filter((element) =>
-    element?.createdAt?.startsWith(`${year}-${month}`)
-  );
-
-  const HandleMonthFilter = (event) => {
-    setMonth(event.target.value);
-    if (month > todayMonth.getMonth()) {
-      // checking if the usere click on the a particulare month that is yet to come
-      setOPenDialog(true);
-      setErrorIcon(true);
-      return setDialogMessage(
-        // if thats the case then the user will be notefied that, that particuler month is not valid for data processing to be perform
-        `OOps this month you selected is yet to come. No data processing will be performed`
-      );
-    }
-  };
-
   function calculateTotalAmount(data) {
     let TotalAmount = 0;
 
@@ -206,8 +183,45 @@ const Dashboard = () => {
     });
     return TotalAmount;
   }
-
   const totalAmount = calculateTotalAmount(data);
+
+  const HandleMonthFilter = (event) => {
+    setMonth(event.target.value);
+    if (month > todayMonth.getMonth()) {
+      // checking if the usere click on the a particulare month that is yet to come
+      setOPenDialog(true);
+      setErrorIcon(true);
+      return setDialogMessage(
+        // if thats the case then the user will be notefied that, that particuler month is not valid for data processing to be perform
+        `OOps this month you selected is yet to come. No data processing will be performed`
+      );
+    }
+  };
+  //  top officer month filter
+  const HandleTopOfficerMonthFilter = (event) => {
+    setTopOfficerMonth(event.target.value);
+    if (TopOfficerMonth > todayMonth.getMonth()) {
+      // checking if the usere click on the a particulare month that is yet to come
+      setOPenDialog(true);
+      setErrorIcon(true);
+      return setDialogMessage(
+        // if thats the case then the user will be notefied that, that particuler month is not valid for data processing to be perform
+        `OOps this month you selected is yet to come. No data processing will be performed`
+      );
+    }
+  };
+  const HandleTopOfficerYearFilter = (event) => {
+    setTopOfficersYear(event.target.value);
+    if (TopOfficerMonth > todayMonth.getMonth()) {
+      // checking if the usere click on the a particulare month that is yet to come
+      setOPenDialog(true);
+      setErrorIcon(true);
+      return setDialogMessage(
+        // if thats the case then the user will be notefied that, that particuler month is not valid for data processing to be perform
+        `OOps this month you selected is yet to come. No data processing will be performed`
+      );
+    }
+  };
   const HandleYer = (event) => {
     setYear(event.target.value);
     if (year > todayMonth.getFullYear()) {
@@ -258,7 +272,7 @@ const Dashboard = () => {
             }
           />
         </Box>
-        <Button
+        {/* <Button
           sx={{
             mt: 1,
             ml: 3,
@@ -271,7 +285,7 @@ const Dashboard = () => {
           onClick={() => setToggleAdd((prev) => !prev)}
         >
           make fine
-        </Button>
+        </Button> */}
         {user?.Officers?.role === "Administrator" ||
         user?.Officers?.role === "Sub Admin" ? (
           <Box>
@@ -360,7 +374,7 @@ const Dashboard = () => {
                   background: color.primary[400],
                 }}
               >
-                <LineChartAdmin />
+                <LineChartAdmin data={data} />
               </Box>
 
               <Box
@@ -458,7 +472,7 @@ const Dashboard = () => {
                 }}
               >
                 <Typography variant="h4" sx={{ fontWeight: 500 }}>
-                  Top Officers
+                  Top Officers Of the Month
                 </Typography>
 
                 <Box sx={{}}>
@@ -474,13 +488,16 @@ const Dashboard = () => {
                     <Select
                       labelId="demo-simple-select-autowidth-label"
                       id="demo-simple-select-autowidth"
-                      value={month}
-                      onChange={(event) => HandleMonthFilter(event)}
+                      value={TopOfficersYear}
+                      onChange={(event) => HandleTopOfficerMonthFilter(event)}
                       autoWidth
                       label="Age"
                     >
-                      <MenuItem value={month} defaultValue={month}>
-                        {month}
+                      <MenuItem
+                        value={TopOfficerMonth}
+                        defaultValue={TopOfficerMonth}
+                      >
+                        {TopOfficerMonth}
                       </MenuItem>
                       <MenuItem value={`01`}>Jan</MenuItem>
                       <MenuItem value={`02`}>Feb</MenuItem>
@@ -503,13 +520,16 @@ const Dashboard = () => {
                     <Select
                       labelId="demo-simple-select-autowidth-label"
                       id="demo-simple-select-autowidth"
-                      value={year}
-                      onChange={(event) => HandleYer(event)}
+                      value={TopOfficersYear}
+                      onChange={(event) => HandleTopOfficerYearFilter(event)}
                       autoWidth
                       label="Year"
                     >
-                      <MenuItem value={year} defaultValue={year}>
-                        {year}
+                      <MenuItem
+                        value={TopOfficersYear}
+                        defaultValue={TopOfficersYear}
+                      >
+                        {TopOfficersYear}
                       </MenuItem>
                       <MenuItem value={2023}>2023</MenuItem>
                       <MenuItem value={2024}>2024</MenuItem>
@@ -523,83 +543,22 @@ const Dashboard = () => {
                   </FormControl>
                 </Box>
               </Box>
-              <Box>
-                <Typography variant="h4" sx={{ pl: 2, textAlign: "center" }}>
-                  {" "}
-                  {`This  are the five top officers `}{" "}
-                </Typography>
-              </Box>
 
               <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  p: 2,
-                  gap: 2,
-                  flexWrap: "wrap",
-                  justifyContent: "space-evenly",
-                }}
+              // sx={{
+              //   display: "flex",
+              //   alignItems: "center",
+              //   p: 2,
+              //   gap: 2,
+              //   flexWrap: "wrap",
+              //   justifyContent: "space-evenly",
+              // }}
               >
-                {recentTransaction.map((item, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      border: `1px solid ${color.greenAccent[500]}`,
-                      borderRadius: 1,
-                      p: 1,
-                      textAlign: "right",
-                      "&:hover": {
-                        background: color.greenAccent[400],
-                        transition: "all 1s",
-                      },
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Avatar sx={{ background: color.redAccent[200], mb: 1 }} />
-                    <Box>
-                      <Typography
-                        sx={{ display: "flex", alignItems: "center", gap: 3 }}
-                      >
-                        Name:{" "}
-                        <Typography sx={{ color: color.grey[400] }}>
-                          {"kebba waiga"}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ display: "flex", alignItems: "center", gap: 3 }}
-                      >
-                        Rank:{" "}
-                        <Typography sx={{ color: color.grey[400] }}>
-                          {"kebba waiga"}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ display: "flex", alignItems: "center", gap: 3 }}
-                      >
-                        Region:{" "}
-                        <Typography sx={{ color: color.grey[400] }}>
-                          {"kebba waiga"}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ display: "flex", alignItems: "center", gap: 3 }}
-                      >
-                        Total Fine:{" "}
-                        <Typography sx={{ color: color.grey[400] }}>
-                          {"kebba waiga"}
-                        </Typography>
-                      </Typography>
-                      <Typography
-                        sx={{ display: "flex", alignItems: "center", gap: 3 }}
-                      >
-                        Police Station:{" "}
-                        <Typography sx={{ color: color.grey[400] }}>
-                          {"kebba waiga"}
-                        </Typography>
-                      </Typography>
-                    </Box>
-                  </Box>
-                ))}
+                <TopOfficers
+                  month={TopOfficerMonth}
+                  year={TopOfficersYear}
+                  data={data}
+                />
               </Box>
             </Box>
           </Box>

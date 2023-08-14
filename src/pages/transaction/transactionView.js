@@ -64,8 +64,8 @@ const TransactionView = () => {
     },
   };
   const containerStyle = {
-    Width: "100%",
-    Height: "400px",
+    Width: "300px",
+    Height: "300px",
   };
 
   return (

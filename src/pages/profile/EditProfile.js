@@ -15,7 +15,7 @@ const EditProfile = ({ setEditProfile, data }) => {
   // states
   const [firstName, setFirstName] = useState(data?.firstName);
   const [lastName, setLastName] = useState(data?.lastName);
-  const [rank, setRank] = useState("");
+  const [rank, setRank] = useState(data?.rank);
   const [PoliceStation, setPoliceStation] = useState(data?.PoliceStation);
   const [PhoneNumber, setPhoneNumber] = useState(data?.PhoneNumber);
   const [loading, setLoading] = useState(false);
