@@ -64,8 +64,8 @@ const TransactionView = () => {
     },
   };
   const containerStyle = {
-    Width: "300px",
-    Height: "300px",
+    Width: "400%",
+    Height: "400px",
   };
 
   return (
@@ -88,7 +88,7 @@ const TransactionView = () => {
           background: color.primary[400],
           borderRadius: 2,
         }}
-        onClick={() => Navigate("/transaction")}
+        onClick={() => Navigate(-1)}
       >
         Back
       </IconButton>
@@ -301,26 +301,27 @@ const TransactionView = () => {
                   border: `1px solid ${color.greenAccent[700]}`,
                   borderRadius: 1,
                   p: 1,
+                  width: 300,
+                  height: 300,
                 }}
               >
-                {isLoading ? (
-                  <Typography>loading the map</Typography>
-                ) : (
-                  <LoadScript googleMapsApiKey="AIzaSyCeme5ngsB5BXH_mO3HdGGmwQ-JyDlzuSo">
-                    <GoogleMap
-                      mapContainerStyle={containerStyle}
-                      center={{ lat: data?.Latitude, lng: data?.Longititude }}
-                      zoom={12}
-                    >
-                      <Marker
-                        position={{
-                          lat: data?.Latitude,
-                          lng: data?.Longititude,
-                        }}
-                      />
-                    </GoogleMap>
-                  </LoadScript>
-                )}
+                <LoadScript
+                  googleMapsApiKey="AIzaSyCeme5ngsB5BXH_mO3HdGGmwQ-JyDlzuSo"
+                  // ... (other props)
+                >
+                  <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={{ lat: data?.Latitude, lng: data?.Longititude }}
+                    zoom={12}
+                  >
+                    <Marker
+                      position={{
+                        lat: data?.Latitude,
+                        lng: data?.Longititude,
+                      }}
+                    />
+                  </GoogleMap>
+                </LoadScript>
               </Box>
             </Box>
             <Box>
@@ -378,7 +379,7 @@ const TransactionView = () => {
           }}
         >
           <Button
-            onClick={() => Navigate("/transaction")}
+            onClick={() => Navigate(-1)}
             sx={{
               backgroundColor:
                 theme.palette.mode === "light"

@@ -383,24 +383,23 @@ const Transaction = () => {
             }}
           >
             {/* {data?.length > 0 && ( */}
-            {isLoading === true || isFetching === true || data.length < 0 ? (
+            {isLoading === true || isFetching === true || data?.length < 0 ? (
               <Typography variant="h3" sx={{ fontWeight: 700, fontSize: 15 }}>
-                loading....{" "}
+                Loading...
               </Typography>
-            ) : data?.length < 0 || data === undefined ? (
-              []
-            ) : (
+            ) : data?.length === 0 || data === undefined ? null : (
               <DataGrid
                 pagination
                 rows={data
-                  ?.slice()
-                  ?.sort(
+                  .slice()
+                  .sort(
                     (a, b) => new Date(b?.createdAt) - new Date(a?.createdAt)
                   )}
                 columns={columns}
-                editMode={"row"}
+                editMode="row"
               />
             )}
+
             {/* )} */}
           </Box>
         </Box>
