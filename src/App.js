@@ -18,6 +18,7 @@ import {
   Charts,
   Wanted,
   Payment,
+  History,
 } from "./pages";
 import { useStateContext } from "./context/Contex";
 import RequirAuth from "./components/RequirAuth";
@@ -110,6 +111,7 @@ function App() {
                   <Route path="stations" element={<PoliceStation />} />
                   <Route path="banks" element={<Banks />} />
                 </Route>
+                <Route path="/history" element={<History />} />
                 <Route path="/transaction/:id" element={<TransactionView />} />
                 <Route path="/wanted" element={<Wanted />} />
                 <Route path="/Charts" element={<Charts />} />

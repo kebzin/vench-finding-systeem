@@ -234,7 +234,8 @@ const Wanted = () => {
         <Header title="Wanted" subtitle="" />
       </Box>
       <Box>
-        {user?.Officers?.role === "Administrator" ? (
+        {user?.Officers?.role === "Administrator" ||
+        user?.Officers?.role === "Sub Admin" ? (
           <IconButton
             sx={{
               right: 20,

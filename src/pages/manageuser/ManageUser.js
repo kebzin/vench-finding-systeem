@@ -306,6 +306,23 @@ const ManageUser = () => {
           )
         );
       }
+      // if (user?.Officers?.role === "Sub Admin") {
+      //   setErrorIcon(true),
+      //     setOPenDialog(true),
+      //     setDialogMessage(
+      //       `Sorry,  you do not have the authorization to delete a user.`
+      //     );
+      // }
+      if (user?.Officers?.role === "Sub Admin") {
+        return (
+          setErrorIcon(true),
+          setOPenDialog(true),
+          setDialogMessage(
+            `Sorry,  you do not have the authorization to delete a user`
+          )
+        );
+      }
+
       mutation.mutate({
         id: _id,
       });

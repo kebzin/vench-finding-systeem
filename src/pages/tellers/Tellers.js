@@ -71,7 +71,6 @@ const ManageTellers = () => {
       },
     }
   );
-  console.log(data);
 
   if (isLoading) {
     return (
@@ -94,7 +93,7 @@ const ManageTellers = () => {
     return (
       <Box>
         <Typography variant="h1" sx={{ textAlign: "center" }}>
-          Oops something wrong{" "}
+          Oops something wrong
         </Typography>
         <Typography>pleas try refetch the data manually </Typography>
         <Typography>Check your internet and try refreshing </Typography>
@@ -120,6 +119,15 @@ const ManageTellers = () => {
   // delete user mutation
 
   const HandleDelete = ({ _id }) => {
+    if (user?.Officers?.role === "Sub Admin") {
+      return (
+        setErrorIcon(true),
+        setOPenDialog(true),
+        setDialogMessage(
+          `Sorry,  you do not have the authorization to delete a user`
+        )
+      );
+    }
     try {
       mutation.mutate({
         id: _id,

@@ -383,7 +383,10 @@ const UserProfile = () => {
                     <Typography style={{ color: color.greenAccent[500] }}>
                       {data?.status}
                     </Typography>
-                    <FormControl sx={{ m: 1, minWidth: "25%", width: "25%" }}>
+                    <FormControl
+                      sx={{ m: 1, minWidth: "25%", width: "25%" }}
+                      disabled={DisableSwitch}
+                    >
                       <InputLabel id="demo-simple-select-autowidth-label">
                         Account Status
                       </InputLabel>
@@ -456,7 +459,10 @@ const UserProfile = () => {
                       checked={AdminstratorStatus}
                       disabled={DisableSwitch}
                     /> */}
-                    <FormControl sx={{ m: 1, minWidth: "25%", width: "25%" }}>
+                    <FormControl
+                      sx={{ m: 1, minWidth: "25%", width: "25%" }}
+                      disabled={DisableSwitch}
+                    >
                       <InputLabel id="demo-simple-select-autowidth-label">
                         USer Role
                       </InputLabel>

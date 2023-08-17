@@ -155,7 +155,8 @@ const Topbar = ({}) => {
             )}
           </IconButton>
 
-          {user?.Officers?.role === "Administrator" ? (
+          {user?.Officers?.role === "Administrator" ||
+          user?.Officers?.role === "Sub Admin" ? (
             <IconButton
               onClick={() => Navigation("/setting")}
               type="button"

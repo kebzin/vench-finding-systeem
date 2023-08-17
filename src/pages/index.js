@@ -12,6 +12,7 @@ import WeekilyDataAnalysys from "./charts/WeekilyDataAnalysys";
 import Wanted from "./transaction/Wanted";
 import SendMEssage from "./profile/SendMessage";
 import Payment from "./charts/Payment/Payment";
+import History from "./History/History";
 
 export {
   Dashboard,
@@ -28,4 +29,5 @@ export {
   Wanted,
   SendMEssage,
   Payment,
+  History,
 };

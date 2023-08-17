@@ -60,6 +60,12 @@ const Sidebar = () => {
       link: "/wanted",
       icons: <DirectionsRunIcon sx={{ fontSize: 30 }} />,
     },
+    {
+      name: "Payment History",
+      link: "/history",
+      icons: <ReceiptLongIcon />,
+      admin: user?.Officers?.role,
+    },
   ];
 
   return (
