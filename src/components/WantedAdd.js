@@ -56,7 +56,7 @@ const WantedAdd = ({ setAddWanted }) => {
         },
       });
 
-      return response?.data?.imagePaths;
+      return response?.data?.uploadedImages;
       // Continue with other form data and mutation logic
     } catch (error) {
       console.error("Error uploading image", error.message);
@@ -96,7 +96,7 @@ const WantedAdd = ({ setAddWanted }) => {
       setLoading(true);
       let imageURLL = [];
       imageURLL = await handleUpload();
-      console.log("urll", imageURLL);
+
       if (imageURLL) {
         await mutation.mutate({
           name: name,

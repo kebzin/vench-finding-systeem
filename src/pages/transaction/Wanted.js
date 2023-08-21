@@ -59,6 +59,7 @@ const Wanted = () => {
     }
   );
 
+  console.log(data);
   useEffect(() => {
     // Function to fetch data
     const fetchData = async () => {

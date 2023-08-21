@@ -20,7 +20,7 @@ import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { useEffect } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const Wanted = () => {
+const SingleWanted = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -147,9 +147,9 @@ const Wanted = () => {
           }}
         >
           <img
-            src={`/upload/${
+            src={
               showPreviewImage === null ? data?.imageURi[0] : showPreviewImage
-            }`}
+            }
             alt={`Image`}
             style={{ width: "100%", height: "100%" }}
           />
@@ -181,7 +181,7 @@ const Wanted = () => {
               >
                 <img
                   onClick={() => HandleImageChange(element)}
-                  src={`/upload/${element}`}
+                  src={element}
                   alt={`Image ${index}`}
                   style={{ width: "100%", height: "100%" }}
                 />
@@ -283,4 +283,4 @@ const Wanted = () => {
   );
 };
 
-export default Wanted;
+export default SingleWanted;
