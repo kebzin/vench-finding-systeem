@@ -63,7 +63,6 @@ const MakeFine = React.memo(({ setToggleAdd }) => {
 
   const { user } = useAuthContext();
   const AxiousPrivate = useAxiousPrivate();
-
   // ref
   const componentRef = useRef();
 
@@ -145,6 +144,7 @@ const MakeFine = React.memo(({ setToggleAdd }) => {
 
   const HandleFineSubmit = async (event) => {
     event.preventDefault();
+
     // // if (
     // //   (Boolean(NumberPlat),
     // //   Boolean(LicenNumber),
@@ -175,6 +175,7 @@ const MakeFine = React.memo(({ setToggleAdd }) => {
 
     try {
       setLoading(true);
+
       mutation.mutate({
         OffenceCommited: OffenceCommited?.OffenceName,
         fineAmount: fineAmount,
@@ -186,13 +187,19 @@ const MakeFine = React.memo(({ setToggleAdd }) => {
         wanted: wanted,
         category: category,
         fineCategory: fineCategory,
-        Location: geolocationData.formatedAddress,
+        Location: geolocationData.formatAddress,
         region: geolocationData.region,
-        Latitude: geolocationData.Latitude,
-        Longititude: geolocationData.Longititude,
+        Latitude: geolocationData.latitude,
+        Longititude: geolocationData.longitude,
       });
     } catch (error) {
+      console.log(error);
       setLoading(false);
+      setErrorIcon(true);
+      setOPenDialog(true);
+      setDialogMessage(
+        "OOps something went wrong, please try age or refresh the page"
+      );
     }
   };
 
@@ -427,7 +434,7 @@ const MakeFine = React.memo(({ setToggleAdd }) => {
                       : COLORS.greenAccent[500],
                   "&:hover": { background: COLORS.greenAccent[500] },
                 }}
-                onClick={HandleFineSubmit}
+                onClick={(event) => HandleFineSubmit(event)}
                 loading={loading}
                 loadingPosition="end"
                 variant="contained"
