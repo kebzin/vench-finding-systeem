@@ -70,13 +70,13 @@ const EditProfile = ({ setEditProfile, data }) => {
         position: "fixed",
 
         height: "auto",
-        top: "30%",
+        top: "10%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         margin: "auto",
         justifyItems: "center",
-
+        minWidth: 100,
         borderRadius: 2,
 
         zIndex: 100,

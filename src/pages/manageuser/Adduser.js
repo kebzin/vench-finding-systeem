@@ -18,6 +18,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useStateContext } from "../../context/Contex";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
+import { useAuthContext } from "../../context/AuthContex";
 
 const Adduser = ({ setAddeUsers }) => {
   const theme = useTheme();
@@ -39,6 +40,7 @@ const Adduser = ({ setAddeUsers }) => {
 
   const AxiousPrivate = useAxiousPrivate();
   const queryclient = useQueryClient();
+  const { user } = useAuthContext();
 
   const { data, error, isLoading, isFetching, isError, refetch } = useQuery(
     "station",
@@ -105,6 +107,15 @@ const Adduser = ({ setAddeUsers }) => {
           setOPenDialog(true),
           setErrorIcon(true),
           setDialogMessage("All field are require")
+        );
+      }
+      if (user?.Officers?.role !== "Administrator") {
+        return (
+          setOPenDialog(true),
+          setErrorIcon(true),
+          setDialogMessage(
+            "You cannot give  Administrator role to this person  because your are not an Admin "
+          )
         );
       }
       setLoading(true);
