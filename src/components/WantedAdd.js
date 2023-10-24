@@ -79,7 +79,7 @@ const WantedAdd = ({ setAddWanted }) => {
         setDialogMessage("Sussefully Added");
         setLoading(false);
         setAddWanted(false);
-        false;
+
         queryclient.invalidateQueries("wanted");
       },
       onError: (error) => {

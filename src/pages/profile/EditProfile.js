@@ -8,7 +8,7 @@ import { useStateContext } from "../../context/Contex";
 import useAxiousPrivate from "../../hooks/useAxiousPrivate";
 import { tokens } from "../../theme";
 
-const EditProfile = ({ setEditProfile, data }) => {
+const EditProfile = ({ setEditProfile, data, id }) => {
   const theme = useTheme();
   const color = tokens(theme.palette.mode);
 
@@ -29,10 +29,7 @@ const EditProfile = ({ setEditProfile, data }) => {
 
   const mutation = useMutation(
     (newPost) => {
-      return AxiousPrivate.put(
-        `/officers/officers/${user?.Officers?.id}`,
-        newPost
-      );
+      return AxiousPrivate.put(`/officers/officers/${id}`, newPost);
     },
     {
       onSuccess: (res) => {

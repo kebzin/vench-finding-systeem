@@ -407,42 +407,6 @@ const UserProfile = () => {
                     </FormControl>
                   </Stack>
 
-                  {/* <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Verify Email</Typography>
-                    <Typography style={{ color: color.greenAccent[500] }}>
-                      {data?.status}
-                    </Typography>
-                    <Switch
-                      color="secondary"
-                      onChange={HandleEmailVerify}
-                      checked={emailVerify}
-                      disabled={DisableSwitch}
-                    />
-                  </Stack> */}
-
-                  {/* <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ px: 2, py: 1 }}
-                  >
-                    <Typography>Suspend Account</Typography>
-                    <Typography style={{ color: color.greenAccent[500] }}>
-                      {data?.status}
-                    </Typography>
-                    <Switch
-                      color="secondary"
-                      onChange={HandleSuspendAccount}
-                      checked={suspemdAccount}
-                      disabled={DisableSwitch}
-                    />
-                  </Stack> */}
-
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -453,12 +417,7 @@ const UserProfile = () => {
                     <Typography style={{ color: color.greenAccent[500] }}>
                       {data?.role}
                     </Typography>
-                    {/* <Switch
-                      color="secondary"
-                      onChange={HanleAccountChange}
-                      checked={AdminstratorStatus}
-                      disabled={DisableSwitch}
-                    /> */}
+
                     <FormControl
                       sx={{ m: 1, minWidth: "25%", width: "25%" }}
                       disabled={DisableSwitch}
@@ -650,7 +609,7 @@ const UserProfile = () => {
       )}
       {messageOpen && <SendMessage setMessageOpen={setMessageOpen} />}
       {editProfile && (
-        <EditProfile setEditProfile={setEditProfile} data={data} />
+        <EditProfile setEditProfile={setEditProfile} data={data} id={id} />
       )}
       {message && <SendMEssage data={data} setMessage={setMessage} />}
     </Box>
